@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Integers</title> 
+</head>
+<body>
+{#for i in integers}{i}{#if i_hasNext}:{/if}{/for}
+Name: {cdi:vertxRequest.getParam('name')}
+</body>
+</html>

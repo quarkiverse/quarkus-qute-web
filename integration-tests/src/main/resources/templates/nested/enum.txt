@@ -1,0 +1,1 @@
+{#each Code:values}{#if Code:ZERO == it}OK{/if}{/each}

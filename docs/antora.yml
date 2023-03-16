@@ -1,0 +1,5 @@
+name: quarkus-quteserverpages
+title: Quarkus QuteServerPages
+version: dev
+nav:
+  - modules/ROOT/nav.adoc

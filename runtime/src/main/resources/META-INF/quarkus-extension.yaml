@@ -1,0 +1,9 @@
+name: QuteServerPages
+description: Automatically expose qute templates via HTTP
+metadata:
+#  keywords:
+#    - qutepages
+#  guide: https://quarkiverse.github.io/quarkiverse-docs/qutepages/dev/
+#  categories:
+#    - "miscellaneous"
+#  status: "preview"
