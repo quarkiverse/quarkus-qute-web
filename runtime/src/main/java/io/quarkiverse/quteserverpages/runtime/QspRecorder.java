@@ -13,10 +13,12 @@ import io.vertx.ext.web.RoutingContext;
 @Recorder
 public class QspRecorder {
 
-    private final HttpBuildTimeConfig httpBuildTimeConfig;
+    private final HttpBuildTimeConfig httpConfig;
+    private final QspBuildTimeConfig qspConfig;
 
-    public QspRecorder(HttpBuildTimeConfig httpBuildTimeConfig) {
-        this.httpBuildTimeConfig = httpBuildTimeConfig;
+    public QspRecorder(HttpBuildTimeConfig httpConfig, QspBuildTimeConfig qspConfig) {
+        this.httpConfig = httpConfig;
+        this.qspConfig = qspConfig;
     }
 
     public Consumer<Route> initializeRoute() {
@@ -25,11 +27,14 @@ public class QspRecorder {
             @Override
             public void accept(Route r) {
                 r.method(HttpMethod.GET);
+                if (qspConfig.routeOrder.isPresent()) {
+                    r.order(qspConfig.routeOrder.get());
+                }
             }
         };
     }
 
     public Handler<RoutingContext> handler(String rootPath, Set<String> templatePaths) {
-        return new QspHandler(rootPath, templatePaths, httpBuildTimeConfig);
+        return new QspHandler(rootPath, templatePaths, httpConfig);
     }
 }

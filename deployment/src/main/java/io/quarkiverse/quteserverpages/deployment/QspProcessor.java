@@ -5,6 +5,7 @@ import java.util.Set;
 
 import org.jboss.logging.Logger;
 
+import io.quarkiverse.quteserverpages.runtime.QspBuildTimeConfig;
 import io.quarkiverse.quteserverpages.runtime.QspRecorder;
 import io.quarkus.deployment.annotations.BuildStep;
 import io.quarkus.deployment.annotations.ExecutionTime;

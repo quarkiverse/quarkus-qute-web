@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 import javax.enterprise.event.Event;
@@ -40,7 +41,8 @@ public class QspHandler implements Handler<RoutingContext> {
 
     private final String rootPath;
     private final Set<String> templatePaths;
-    private final HttpBuildTimeConfig httpBuildTimeConfig;
+    private final List<String> compressMediaTypes;
+    private final Map<String, String> extractedPaths;
 
     private final Event<SecurityIdentity> securityIdentityEvent;
     private final CurrentIdentityAssociation currentIdentity;
@@ -52,7 +54,10 @@ public class QspHandler implements Handler<RoutingContext> {
     public QspHandler(String rootPath, Set<String> templatePaths, HttpBuildTimeConfig httpBuildTimeConfig) {
         this.rootPath = rootPath;
         this.templatePaths = templatePaths;
-        this.httpBuildTimeConfig = httpBuildTimeConfig;
+        this.compressMediaTypes = httpBuildTimeConfig.enableCompression
+                ? httpBuildTimeConfig.compressMediaTypes.orElse(List.of())
+                : null;
+        this.extractedPaths = new ConcurrentHashMap<>();
         ArcContainer container = Arc.container();
         this.securityIdentityEvent = container.beanManager().getEvent().select(SecurityIdentity.class);
         this.currentVertxRequest = container.instance(CurrentVertxRequest.class).get();
@@ -109,7 +114,7 @@ public class QspHandler implements Handler<RoutingContext> {
 
     private void handlePage(RoutingContext rc) {
         // Extract the template path, e.g. /qp/item.html -> item
-        String path = extractTemplatePath(rc, rootPath);
+        String path = extractedPaths.computeIfAbsent(rc.request().path(), this::extractTemplatePath);
 
         if (path != null && templatePaths.contains(path)) {
             Template template = templateProducer.get().getInjectableTemplate(path);
@@ -138,9 +143,8 @@ public class QspHandler implements Handler<RoutingContext> {
                 rc.response().putHeader(HttpHeaders.CONTENT_TYPE, selected.getContentType());
 
                 // Compression support - only compress the response if the content type matches the config value
-                if (httpBuildTimeConfig.enableCompression
-                        && httpBuildTimeConfig.compressMediaTypes.orElse(List.of())
-                                .contains(selected.getContentType())) {
+                if (compressMediaTypes != null
+                        && compressMediaTypes.contains(selected.getContentType())) {
                     String contentEncoding = rc.response().headers().get(HttpHeaders.CONTENT_ENCODING);
                     if (contentEncoding != null && HttpHeaders.IDENTITY.toString().equals(contentEncoding)) {
                         rc.response().headers().remove(HttpHeaders.CONTENT_ENCODING);
@@ -165,8 +169,9 @@ public class QspHandler implements Handler<RoutingContext> {
                 });
             }
         } else {
-            LOG.errorf("Template page not found: %s", rc.request().path());
-            rc.response().setStatusCode(404).end();
+            LOG.debugf("Template page not found: %s", rc.request().path());
+            rc.next();
+            ;
         }
     }
 
@@ -192,7 +197,7 @@ public class QspHandler implements Handler<RoutingContext> {
     }
 
     /**
-     * Extract the template path:
+     * Extract the template path, e.g.:
      * <p>
      * {@code /qsp/item.html} -> {@code item}
      * <p>
@@ -201,11 +206,9 @@ public class QspHandler implements Handler<RoutingContext> {
      * {@code /qsp/nested/item.html?foo=bar} -> {@code nested/item}
      *
      * @param rc
-     * @param rootPath
      * @return the template path without suffix
      */
-    private String extractTemplatePath(RoutingContext rc, String rootPath) {
-        String path = rc.request().path();
+    private String extractTemplatePath(String path) {
         if (path.length() > rootPath.length()) {
             path = path.substring(rootPath.length());
             if (path.startsWith("/")) {

@@ -1,12 +1,13 @@
-package io.quarkiverse.quteserverpages.deployment;
+package io.quarkiverse.quteserverpages.runtime;
 
+import java.util.Optional;
 import java.util.regex.Pattern;
 
 import io.quarkus.runtime.annotations.ConfigItem;
 import io.quarkus.runtime.annotations.ConfigPhase;
 import io.quarkus.runtime.annotations.ConfigRoot;
 
-@ConfigRoot(phase = ConfigPhase.BUILD_TIME)
+@ConfigRoot(phase = ConfigPhase.BUILD_AND_RUN_TIME_FIXED)
 public class QspBuildTimeConfig {
 
     /**
@@ -37,5 +38,13 @@ public class QspBuildTimeConfig {
      */
     @ConfigItem(defaultValue = "tags/.*")
     public Pattern hiddenTemplates;
+
+    /**
+     * The order of a route which handles the templates.
+     *
+     * @asciidoclet
+     */
+    @ConfigItem
+    public Optional<Integer> routeOrder;
 
 }
