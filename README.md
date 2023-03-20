@@ -1,25 +1,16 @@
-# Quarkus Qutepages
+# Quarkus QuteServerPages
 
 [![Version](https://img.shields.io/maven-central/v/io.quarkiverse.qutepages/quarkus-qutepages?logo=apache-maven&style=flat-square)](https://search.maven.org/artifact/io.quarkiverse.qutepages/quarkus-qutepages)
 
-## Welcome to Quarkiverse!
+The goal of this simple extension is to expose all Qute templates located in the `src/main/resource/templates` directory via HTTP. No controllers needed. For example, a template located in `src/main/resource/templates/foo.html` will be served from the paths `/qsp/foo` and `/qsp/foo.html` by default.
 
-Congratulations and thank you for creating a new Quarkus extension project in Quarkiverse!
+## Accessing Data
 
-Feel free to replace this content with the proper description of your new project and necessary instructions how to use and contribute to it.
+In a template you can access:
 
-You can find the basic info, Quarkiverse policies and conventions in [the Quarkiverse wiki](https://github.com/quarkiverse/quarkiverse/wiki).
-
-In case you are creating a Quarkus extension project for the first time, please follow [Building My First Extension](https://quarkus.io/guides/building-my-first-extension) guide.
-
-Other useful articles related to Quarkus extension development can be found under the [Writing Extensions](https://quarkus.io/guides/#writing-extensions) guide category on the [Quarkus.io](https://quarkus.io) website.
-
-Thanks again, good luck and have fun!
-
-## Documentation
-
-The documentation for this extension should be maintained as part of this repository and it is stored in the `docs/` directory.
-
-The layout should follow the [Antora's Standard File and Directory Set](https://docs.antora.org/antora/2.3/standard-directories/).
-
-Once the docs are ready to be published, please open a PR including this repository in the [Quarkiverse Docs Antora playbook](https://github.com/quarkiverse/quarkiverse-docs/blob/main/antora-playbook.yml#L7). See an example [here](https://github.com/quarkiverse/quarkiverse-docs/pull/1).
+- [`@Named` CDI beans](https://quarkus.io/guides/qute-reference#injecting-beans-directly-in-templates); similar to EL; e.g. `{cdi:myBean.findItems()}`
+- [static members of a class](https://quarkus.io/guides/qute-reference#accessing-static-fields-and-methods) annotated with `@TemplateData`
+- [enums](https://quarkus.io/guides/qute-reference#convenient-annotation-for-enums) annotated with `@TemplateEnum`
+- [Namespace Extension Methods](https://quarkus.io/guides/qute-reference#namespace_extension_methods) in general
+- [global variables](https://quarkus.io/guides/qute-reference#global_variables)
+- the current `io.vertx.core.http.HttpServerRequest` via CDI, e.g. `{cdi:vertxRequest.getParam('foo')}`
