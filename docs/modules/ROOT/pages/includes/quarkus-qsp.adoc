@@ -1,0 +1,58 @@
+
+:summaryTableId: quarkus-qsp
+[.configuration-legend]
+icon:lock[title=Fixed at build time] Configuration property fixed at build time - All other configuration properties are overridable at runtime
+[.configuration-reference.searchable, cols="80,.^10,.^10"]
+|===
+
+h|[[quarkus-qsp_configuration]]link:#quarkus-qsp_configuration[Configuration property]
+
+h|Type
+h|Default
+
+a|icon:lock[title=Fixed at build time] [[quarkus-qsp_quarkus.qsp.root-path]]`link:#quarkus-qsp_quarkus.qsp.root-path[quarkus.qsp.root-path]`
+
+[.description]
+--
+The root path. All templates will be served relative to this path which is relative to the HTTP root path.
+
+If the template name ends with a suffix listed in the `quarkus.qute.suffixes` config property then the suffix may be
+omitted.
+
+For example, a template located in `src/main/resource/templates/foo.html` will be served from the paths `/qsp/foo` and
+`/qsp/foo.html` by default.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_QSP_ROOT_PATH+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_QSP_ROOT_PATH+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|`/qsp`
+
+
+a|icon:lock[title=Fixed at build time] [[quarkus-qsp_quarkus.qsp.hidden-templates]]`link:#quarkus-qsp_quarkus.qsp.hidden-templates[quarkus.qsp.hidden-templates]`
+
+[.description]
+--
+This regular expression is used to hide template files from the `src/main/resource/templates` directory. Hidden templates
+are not exposed.
+
+All template file paths are matched, including the versions without suffixes. The matched input is the file path relative
+from the `templates` directory and the `/` is used as a path separator. For example, a template located in
+`src/main/resource/templates/foo.html` will be matched for `foo.tml` and `foo`.
+
+By default, the user tags from the `src/main/resource/templates/tags` directory are hidden.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_QSP_HIDDEN_TEMPLATES+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_QSP_HIDDEN_TEMPLATES+++`
+endif::add-copy-button-to-env-var[]
+--|link:https://docs.oracle.com/javase/8/docs/api/java/util/regex/Pattern.html[Pattern]
+ 
+|`tags/.*`
+
+|===

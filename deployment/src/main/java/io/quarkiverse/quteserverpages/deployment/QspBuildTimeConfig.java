@@ -11,7 +11,10 @@ public class QspBuildTimeConfig {
 
     /**
      * The root path. All templates will be served relative to this path which is relative to the HTTP root path.
-     * <p>
+     *
+     * If the template name ends with a suffix listed in the `quarkus.qute.suffixes` config property then the suffix may be
+     * omitted.
+     *
      * For example, a template located in `src/main/resource/templates/foo.html` will be served from the paths `/qsp/foo` and
      * `/qsp/foo.html` by default.
      *
@@ -23,11 +26,11 @@ public class QspBuildTimeConfig {
     /**
      * This regular expression is used to hide template files from the `src/main/resource/templates` directory. Hidden templates
      * are not exposed.
-     * <p>
+     *
      * All template file paths are matched, including the versions without suffixes. The matched input is the file path relative
-     * from the {@code templates} directory and the {@code /} is used as a path separator. For example, a template located in
+     * from the `templates` directory and the `/` is used as a path separator. For example, a template located in
      * `src/main/resource/templates/foo.html` will be matched for `foo.tml` and `foo`.
-     * <p>
+     *
      * By default, the user tags from the `src/main/resource/templates/tags` directory are hidden.
      *
      * @asciidoclet

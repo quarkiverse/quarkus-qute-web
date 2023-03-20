@@ -1,27 +1,52 @@
-= Quarkus Qutepages
+= Quarkus QuteServerPages
 
 include::./includes/attributes.adoc[]
 
-TIP: Describe what the extension does here.
+The goal of this simple extension is to expose all Qute templates located in the `src/main/resource/templates` directory via HTTP. No controllers needed. For example, a template located in `src/main/resource/templates/foo.html` will be served from the paths `/qsp/foo` and `/qsp/foo.html` by default.
 
 == Installation
 
-If you want to use this extension, you need to add the `io.quarkiverse.qutepages:quarkus-qutepages` extension first to your build file.
+If you want to use this extension, you need to add the `io.quarkiverse.quteserverpages:quarkus-qute-server-pages` extension first to your build file.
 
 For instance, with Maven, add the following dependency to your POM file:
 
 [source,xml,subs=attributes+]
 ----
 <dependency>
-    <groupId>io.quarkiverse.qutepages</groupId>
-    <artifactId>quarkus-qutepages</artifactId>
+    <groupId>io.quarkiverse.quteserverpages</groupId>
+    <artifactId>quarkus-qute-server-pages</artifactId>
     <version>{project-version}</version>
 </dependency>
 ----
 
+== Accessing Data
+
+In a template you can access:
+
+- https://quarkus.io/guides/qute-reference#injecting-beans-directly-in-templates[`@Named` CDI beans]; similar to EL; e.g. `{cdi:myBean.findItems()}`
+- https://quarkus.io/guides/qute-reference#accessing-static-fields-and-methods[static members of a class] annotated with `@TemplateData`
+- https://quarkus.io/guides/qute-reference#convenient-annotation-for-enums[enums] annotated with `@TemplateEnum`
+- https://quarkus.io/guides/qute-reference#namespace_extension_methods[Namespace Extension Methods] in general
+- https://quarkus.io/guides/qute-reference#global_variables[global variables]
+- the current `io.vertx.core.http.HttpServerRequest` via CDI, e.g. `{cdi:vertxRequest.getParam('foo')}`
+
+== Compression Support
+
+If the HTTP compression support is enabled by means of `quarkus.http.enable-compression=true` then the response body is compressed if the `Content-Type` header derived from the template file name is a compressed media type as configured via `quarkus.http.compress-media-types`.
+
+
+== Template Fragments
+
+It is possible to specify the template fragment via the `frag` query param.
+For example, if there is a template `foo.html` that defines a https://quarkus.io/guides/qute-reference#fragments[fragment] with id `bar` then the fragment is served from the path `/qsp/foo?frag=bar`.
+
+
+== Content Negotiation
+
+This extension attempts to serve the appropriate template and set the HTTP `Content-type` header based on the selected template variant and the value of `Accept` header.
+For example, if there are templates `src/main/resource/templates/foo.html` and `src/main/resource/templates/foo.xml` and the client sends the `Accept: text/html, application/xml;q=0.9` header then `foo.html` is rendeder and the `Content-type: text/html` header is set.
+
 [[extension-configuration-reference]]
 == Extension Configuration Reference
 
-TIP: Remove this section if you don't have Quarkus configuration properties in your extension.
-
-include::includes/quarkus-qutepages.adoc[leveloffset=+1, opts=optional]
+include::includes/quarkus-qsp.adoc[leveloffset=+1, opts=optional]

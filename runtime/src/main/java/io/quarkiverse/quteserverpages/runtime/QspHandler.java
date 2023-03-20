@@ -194,11 +194,11 @@ public class QspHandler implements Handler<RoutingContext> {
     /**
      * Extract the template path:
      * <p>
-     * {@code /qp/item.html} -> {@code item}
+     * {@code /qsp/item.html} -> {@code item}
      * <p>
-     * {@code /qp/item?id=1} -> {@code item}
+     * {@code /qsp/item?id=1} -> {@code item}
      * <p>
-     * {@code /qp/nested/item.html?foo=bar} -> {@code nested/item}
+     * {@code /qsp/nested/item.html?foo=bar} -> {@code nested/item}
      *
      * @param rc
      * @param rootPath

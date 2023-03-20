@@ -67,7 +67,7 @@
                             <resources>
                                 <resource>
                                     <directory>${project.basedir}/../target/asciidoc/generated/config/</directory>
-                                    <include>quarkus-qutepages.adoc</include>
+                                    <include>quarkus-qsp.adoc</include>
                                     <filtering>false</filtering>
                                 </resource>
                                 <resource>
