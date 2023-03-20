@@ -1,6 +1,7 @@
 # Quarkus QuteServerPages
 
-[![Version](https://img.shields.io/maven-central/v/io.quarkiverse.qutepages/quarkus-qutepages?logo=apache-maven&style=flat-square)](https://search.maven.org/artifact/io.quarkiverse.quteserverpages/quarkus-qute-server-pages)
+[![Version](https://img.shields.io/maven-central/v/io.quarkiverse.quteserverpages/quarkus-qute-server-pages.svg?label=Maven%20Central)](https://search.maven.org/artifact/io.quarkiverse.quteserverpages/quarkus-qute-server-pages)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 The goal of this simple extension is to expose all Qute templates located in the `src/main/resource/templates` directory via HTTP. No controllers needed. For example, a template located in `src/main/resource/templates/foo.html` will be served from the paths `/qsp/foo` and `/qsp/foo.html` by default.
 
