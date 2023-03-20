@@ -4,8 +4,6 @@
 
 The goal of this simple extension is to expose all Qute templates located in the `src/main/resource/templates` directory via HTTP. No controllers needed. For example, a template located in `src/main/resource/templates/foo.html` will be served from the paths `/qsp/foo` and `/qsp/foo.html` by default.
 
-## Accessing Data
-
 In a template you can access:
 
 - [`@Named` CDI beans](https://quarkus.io/guides/qute-reference#injecting-beans-directly-in-templates); similar to EL; e.g. `{cdi:myBean.findItems()}`
@@ -14,3 +12,5 @@ In a template you can access:
 - [Namespace Extension Methods](https://quarkus.io/guides/qute-reference#namespace_extension_methods) in general
 - [global variables](https://quarkus.io/guides/qute-reference#global_variables)
 - the current `io.vertx.core.http.HttpServerRequest` via CDI, e.g. `{cdi:vertxRequest.getParam('foo')}`
+
+Read the full [documentation](https://quarkiverse.github.io/quarkiverse-docs/quarkus-quteserverpages/dev/index.html).
