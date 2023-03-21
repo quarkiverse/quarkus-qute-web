@@ -40,11 +40,19 @@ public class QspBuildTimeConfig {
     public Pattern hiddenTemplates;
 
     /**
-     * The order of a route which handles the templates.
+     * The order of the qsp route which handles the templates.
      *
      * @asciidoclet
      */
     @ConfigItem
     public Optional<Integer> routeOrder;
+
+    /**
+     * If set to `true` then the qsp route should use a blocking handler.
+     *
+     * @asciidoclet
+     */
+    @ConfigItem(defaultValue = "true")
+    public boolean useBlockingHandler;
 
 }

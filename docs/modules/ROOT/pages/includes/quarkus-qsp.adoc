@@ -60,7 +60,7 @@ a|icon:lock[title=Fixed at build time] [[quarkus-qsp_quarkus.qsp.route-order]]`l
 
 [.description]
 --
-The order of a route which handles the templates.
+The order of the qsp route which handles the templates.
 
 ifdef::add-copy-button-to-env-var[]
 Environment variable: env_var_with_copy_button:+++QUARKUS_QSP_ROUTE_ORDER+++[]
@@ -70,5 +70,21 @@ Environment variable: `+++QUARKUS_QSP_ROUTE_ORDER+++`
 endif::add-copy-button-to-env-var[]
 --|int 
 |
+
+
+a|icon:lock[title=Fixed at build time] [[quarkus-qsp_quarkus.qsp.use-blocking-handler]]`link:#quarkus-qsp_quarkus.qsp.use-blocking-handler[quarkus.qsp.use-blocking-handler]`
+
+[.description]
+--
+If set to `true` then the qsp route should use a blocking handler.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_QSP_USE_BLOCKING_HANDLER+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_QSP_USE_BLOCKING_HANDLER+++`
+endif::add-copy-button-to-env-var[]
+--|boolean 
+|`true`
 
 |===

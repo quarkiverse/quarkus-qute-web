@@ -14,6 +14,7 @@ import io.quarkus.deployment.builditem.FeatureBuildItem;
 import io.quarkus.qute.deployment.TemplateFilePathsBuildItem;
 import io.quarkus.vertx.http.deployment.HttpRootPathBuildItem;
 import io.quarkus.vertx.http.deployment.RouteBuildItem;
+import io.quarkus.vertx.http.runtime.HandlerType;
 
 class QspProcessor {
 
@@ -41,6 +42,7 @@ class QspProcessor {
         }
         return httpRootPath.routeBuilder()
                 .routeFunction(httpRootPath.relativePath(config.rootPath + "/*"), recorder.initializeRoute())
+                .handlerType(config.useBlockingHandler ? HandlerType.BLOCKING : HandlerType.NORMAL)
                 .handler(recorder.handler(httpRootPath.relativePath(config.rootPath), templatePaths))
                 .build();
     }
