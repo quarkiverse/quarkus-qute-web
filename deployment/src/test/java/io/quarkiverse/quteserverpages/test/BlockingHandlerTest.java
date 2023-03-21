@@ -19,7 +19,7 @@ public class BlockingHandlerTest {
     static final QuarkusUnitTest config = new QuarkusUnitTest().withApplicationRoot(root -> {
         root
                 .addAsResource(new StringAsset(
-                        "{cdi:bean.isOnWorkerThread}"),
+                        "blocking={cdi:bean.isOnWorkerThread}"),
                         "templates/blocking.txt")
                 .addAsResource(new StringAsset(
                         "quarkus.qsp.use-blocking-handler=true"),
@@ -32,7 +32,7 @@ public class BlockingHandlerTest {
                 .when().get("/qsp/blocking")
                 .then()
                 .statusCode(200)
-                .body(containsString("true"));
+                .body(containsString("blocking=true"));
 
     }
 

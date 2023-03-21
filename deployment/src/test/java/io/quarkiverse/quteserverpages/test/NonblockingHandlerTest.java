@@ -13,13 +13,13 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import io.quarkus.test.QuarkusUnitTest;
 import io.vertx.core.Context;
 
-public class NormalHandlerTest {
+public class NonblockingHandlerTest {
 
     @RegisterExtension
     static final QuarkusUnitTest config = new QuarkusUnitTest().withApplicationRoot(root -> {
         root
                 .addAsResource(new StringAsset(
-                        "{cdi:bean.isOnWorkerThread}"),
+                        "blocking={cdi:bean.isOnWorkerThread}"),
                         "templates/nonblocking.txt")
                 .addAsResource(new StringAsset(
                         "quarkus.qsp.use-blocking-handler=false"),
@@ -32,7 +32,7 @@ public class NormalHandlerTest {
                 .when().get("/qsp/nonblocking")
                 .then()
                 .statusCode(200)
-                .body(containsString("false"));
+                .body(containsString("blocking=false"));
 
     }
 

@@ -161,7 +161,7 @@ public class QspHandler implements Handler<RoutingContext> {
             } else {
                 instance.renderAsync().whenComplete((r, t) -> {
                     if (t != null) {
-                        LOG.errorf(t, "Error occured during rendering template: %s", path);
+                        LOG.errorf(t, "Error occured while rendering the template: %s", path);
                         rc.response().setStatusCode(500).end();
                     } else {
                         rc.response().setStatusCode(200).end(r);
@@ -171,7 +171,6 @@ public class QspHandler implements Handler<RoutingContext> {
         } else {
             LOG.debugf("Template page not found: %s", rc.request().path());
             rc.next();
-            ;
         }
     }
 
