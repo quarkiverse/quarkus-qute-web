@@ -2,7 +2,7 @@
 
 include::./includes/attributes.adoc[]
 
-The goal of this simple extension is to expose all Qute templates located in the `src/main/resource/templates` directory via HTTP. No controllers needed. For example, a template located in `src/main/resource/templates/foo.html` will be served from the paths `/qsp/foo` and `/qsp/foo.html` by default.
+The goal of this simple extension is to expose https://quarkus.io/guides/qute-reference[Qute] templates located in the `src/main/resource/templates` directory via HTTP. Automatically, no controllers needed. For example, the template `src/main/resource/templates/foo.html` will be served from the paths `/qsp/foo` and `/qsp/foo.html` by default.
 
 == Installation
 
