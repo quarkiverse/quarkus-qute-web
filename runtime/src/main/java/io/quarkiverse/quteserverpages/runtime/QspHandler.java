@@ -7,7 +7,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
-import javax.enterprise.event.Event;
+import jakarta.enterprise.event.Event;
 
 import org.jboss.logging.Logger;
 
