@@ -161,8 +161,9 @@ public class QspHandler implements Handler<RoutingContext> {
             } else {
                 instance.renderAsync().whenComplete((r, t) -> {
                     if (t != null) {
-                        LOG.errorf(t, "Error occured while rendering the template: %s", path);
-                        rc.response().setStatusCode(500).end();
+                        Throwable rootCause = rootCause(t);
+                        LOG.errorf("Error occured while rendering the template [%s]: %s", path, rootCause.toString());
+                        rc.fail(rootCause);
                     } else {
                         rc.response().setStatusCode(200).end(r);
                     }
@@ -172,6 +173,14 @@ public class QspHandler implements Handler<RoutingContext> {
             LOG.debugf("Template page not found: %s", rc.request().path());
             rc.next();
         }
+    }
+
+    private Throwable rootCause(Throwable t) {
+        Throwable root = t;
+        while (root.getCause() != null) {
+            root = root.getCause();
+        }
+        return root;
     }
 
     private Variant trySelectVariant(RoutingContext rc, TemplateInstance instance, List<MIMEHeader> acceptableTypes) {
