@@ -4,7 +4,7 @@
   <parent>
     <groupId>io.quarkiverse.quteserverpages</groupId>
     <artifactId>quarkus-qute-server-pages-parent</artifactId>
-    <version>2.0.0.Alpha1</version>
+    <version>999-SNAPSHOT</version>
   </parent>
   <artifactId>quarkus-qute-server-pages-integration-tests</artifactId>
   <name>Quarkus QuteServerPages - Integration Tests</name>
