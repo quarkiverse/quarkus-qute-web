@@ -6,7 +6,9 @@ import java.util.stream.Collectors;
 import org.jboss.logging.Logger;
 
 import io.quarkiverse.quteserverpages.runtime.QspBuildTimeConfig;
+import io.quarkiverse.quteserverpages.runtime.QspExtensions;
 import io.quarkiverse.quteserverpages.runtime.QspRecorder;
+import io.quarkus.arc.deployment.AdditionalBeanBuildItem;
 import io.quarkus.arc.deployment.SyntheticBeansRuntimeInitBuildItem;
 import io.quarkus.deployment.annotations.BuildProducer;
 import io.quarkus.deployment.annotations.BuildStep;
@@ -28,6 +30,12 @@ class QspProcessor {
     @BuildStep
     FeatureBuildItem feature() {
         return new FeatureBuildItem(FEATURE);
+    }
+
+    @BuildStep
+    AdditionalBeanBuildItem beans() {
+        // QspExtensions is not a bean but we need to make it a part of the bean archive index
+        return new AdditionalBeanBuildItem(QspExtensions.class);
     }
 
     @BuildStep

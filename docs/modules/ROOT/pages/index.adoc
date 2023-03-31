@@ -28,7 +28,8 @@ In a template you can access:
 - https://quarkus.io/guides/qute-reference#convenient-annotation-for-enums[enums] annotated with `@TemplateEnum`
 - https://quarkus.io/guides/qute-reference#namespace_extension_methods[Namespace Extension Methods] in general
 - https://quarkus.io/guides/qute-reference#global_variables[global variables]
-- the current `io.vertx.core.http.HttpServerRequest` via CDI, e.g. `{cdi:vertxRequest.getParam('foo')}`
+- the current `io.vertx.core.http.HttpServerRequest` via the `qsp:` namespace, e.g. `{qsp:request.path}`
+- the query parameters via the `qsp:` namespace, e.g. `{qsp:param('name')}` and `{qsp:param('name','Foo'}`
 
 == Compression Support
 
