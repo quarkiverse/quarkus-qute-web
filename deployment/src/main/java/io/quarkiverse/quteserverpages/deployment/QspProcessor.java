@@ -7,8 +7,10 @@ import org.jboss.logging.Logger;
 
 import io.quarkiverse.quteserverpages.runtime.QspBuildTimeConfig;
 import io.quarkiverse.quteserverpages.runtime.QspRecorder;
+import io.quarkus.arc.deployment.SyntheticBeansRuntimeInitBuildItem;
 import io.quarkus.deployment.annotations.BuildProducer;
 import io.quarkus.deployment.annotations.BuildStep;
+import io.quarkus.deployment.annotations.Consume;
 import io.quarkus.deployment.annotations.ExecutionTime;
 import io.quarkus.deployment.annotations.Record;
 import io.quarkus.deployment.builditem.FeatureBuildItem;
@@ -42,6 +44,7 @@ class QspProcessor {
 
     @BuildStep
     @Record(ExecutionTime.RUNTIME_INIT)
+    @Consume(SyntheticBeansRuntimeInitBuildItem.class)
     public RouteBuildItem produceTemplatesRoute(QspRecorder recorder, List<QspTemplatePathBuildItem> templatePaths,
             HttpRootPathBuildItem httpRootPath, QspBuildTimeConfig config) {
         return httpRootPath.routeBuilder()
