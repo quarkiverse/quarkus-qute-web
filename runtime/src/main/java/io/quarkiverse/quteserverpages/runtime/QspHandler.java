@@ -49,7 +49,7 @@ public class QspHandler implements Handler<RoutingContext> {
     private final CurrentVertxRequest currentVertxRequest;
     private final ManagedContext requestContext;
     private final LazyValue<TemplateProducer> templateProducer;
-    private final LazyValue<QuteContext> quteContext;
+    private final QuteContext quteContext;
 
     public QspHandler(String rootPath, Set<String> templatePaths, HttpBuildTimeConfig httpBuildTimeConfig) {
         this.rootPath = rootPath;
@@ -66,7 +66,7 @@ public class QspHandler implements Handler<RoutingContext> {
         // TemplateProducer is singleton and we want to initialize lazily
         this.templateProducer = new LazyValue<>(
                 () -> Arc.container().instance(TemplateProducer.class).get());
-        this.quteContext = new LazyValue<>(() -> Arc.container().instance(QuteContext.class).get());
+        this.quteContext = Arc.container().instance(QuteContext.class).get();
     }
 
     @Override
@@ -223,7 +223,7 @@ public class QspHandler implements Handler<RoutingContext> {
                 path = path.substring(1);
             }
             if (path.contains(".")) {
-                Map<String, List<String>> allVariants = quteContext.get().getVariants();
+                Map<String, List<String>> allVariants = quteContext.getVariants();
                 for (Entry<String, List<String>> e : allVariants.entrySet()) {
                     if (e.getValue().contains(path)) {
                         path = e.getKey();
