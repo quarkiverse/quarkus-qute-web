@@ -4,6 +4,8 @@ include::./includes/attributes.adoc[]
 
 The goal of this simple extension is to expose https://quarkus.io/guides/qute-reference[Qute] templates located in the `src/main/resource/templates` directory via HTTP. Automatically, no controllers needed. For example, the template `src/main/resource/templates/foo.html` will be served from the paths `/qsp/foo` and `/qsp/foo.html` by default.
 
+NOTE: The `index.html` pages are handled specifically, i.e. they are also served as a "default page" of the containing directory. For example, the template `src/main/resource/templates/index.html` will be served from the paths `/qsp/index`, `/qsp/index.html` and `/qsp/` by default.
+
 == Installation
 
 If you want to use this extension, you need to add the `io.quarkiverse.quteserverpages:quarkus-qute-server-pages` extension first to your build file.

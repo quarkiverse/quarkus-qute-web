@@ -17,6 +17,12 @@ public class HttpRootPathTest {
                 "Hello {name ?: 'world'}!"),
                 "templates/hello.txt")
                 .addAsResource(new StringAsset(
+                        "Index root!"),
+                        "templates/index.html")
+                .addAsResource(new StringAsset(
+                        "Index foo!"),
+                        "templates/foo/index.html")
+                .addAsResource(new StringAsset(
                         "quarkus.qsp.root-path=/"),
                         "application.properties");
     });
@@ -28,6 +34,20 @@ public class HttpRootPathTest {
                 .then()
                 .statusCode(200)
                 .body(containsString("Hello world!"));
-
+        given()
+                .when().get("/")
+                .then()
+                .statusCode(200)
+                .body(containsString("Index root!"));
+        given()
+                .when().get("/foo/")
+                .then()
+                .statusCode(200)
+                .body(containsString("Index foo!"));
+        given()
+                .when().get("/foo/index")
+                .then()
+                .statusCode(200)
+                .body(containsString("Index foo!"));
     }
 }
