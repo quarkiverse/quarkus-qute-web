@@ -113,8 +113,11 @@ public class QspHandler implements Handler<RoutingContext> {
     }
 
     private void handlePage(RoutingContext rc) {
+        String requestPath = rc.request().path();
+        LOG.debugf("Handle page: %s", requestPath);
+
         // Extract the template path, e.g. /qp/item.html -> item
-        String path = extractedPaths.computeIfAbsent(rc.request().path(), this::extractTemplatePath);
+        String path = extractedPaths.computeIfAbsent(requestPath, this::extractTemplatePath);
 
         if (path != null && templatePaths.contains(path)) {
             Template template = templateProducer.get().getInjectableTemplate(path);
@@ -206,20 +209,25 @@ public class QspHandler implements Handler<RoutingContext> {
 
     /**
      * Extract the template path, e.g.:
-     * <p>
-     * {@code /qsp/item.html} -> {@code item}
-     * <p>
-     * {@code /qsp/item?id=1} -> {@code item}
-     * <p>
-     * {@code /qsp/nested/item.html?foo=bar} -> {@code nested/item}
+     * <ul>
+     * <li>{@code /qsp/item.html} => {@code item}</li>
+     * <li>{@code /qsp/item?id=1} => {@code item}</li>
+     * <li>{@code /qsp/nested/item.html?foo=bar} => {@code nested/item}</li>
+     * </ul>
      *
-     * @param rc
+     * Note that a path that ends with {@code /} is handled specifically. The {@code index.html} is appended to the path.
+     *
+     * @param path
      * @return the template path without suffix
      */
     private String extractTemplatePath(String path) {
-        if (path.length() > rootPath.length()) {
+        if (path.length() >= rootPath.length()) {
+            if (path.endsWith("/")) {
+                path = path + "index.html";
+            }
             path = path.substring(rootPath.length());
             if (path.startsWith("/")) {
+                // /item.html => item.html
                 path = path.substring(1);
             }
             if (path.contains(".")) {
