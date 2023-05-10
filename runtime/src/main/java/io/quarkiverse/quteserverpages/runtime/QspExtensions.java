@@ -1,5 +1,7 @@
 package io.quarkiverse.quteserverpages.runtime;
 
+import static io.quarkus.qute.TemplateExtension.ANY;
+
 import jakarta.enterprise.inject.Vetoed;
 
 import io.quarkus.arc.Arc;
@@ -20,6 +22,24 @@ public class QspExtensions {
 
     static String param(String name, String defaultValue) {
         return request().getParam(name, defaultValue);
+    }
+
+    static String header(String name) {
+        return request().getHeader(name);
+    }
+
+    static Headers headers() {
+        return Headers.INSTANCE;
+    }
+
+    @TemplateExtension(matchName = ANY)
+    static String headers(Headers headers, String name) {
+        // Note that http headers are case-insensitive
+        return request().getHeader(name);
+    }
+
+    public enum Headers {
+        INSTANCE
     }
 
 }

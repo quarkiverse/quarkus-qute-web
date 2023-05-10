@@ -31,7 +31,7 @@ In a template you can access:
 - https://quarkus.io/guides/qute-reference#namespace_extension_methods[Namespace Extension Methods] in general
 - https://quarkus.io/guides/qute-reference#global_variables[global variables]
 - the current `io.vertx.core.http.HttpServerRequest` via the `qsp:` namespace, e.g. `{qsp:request.path}`
-- the query parameters via the `qsp:` namespace, e.g. `{qsp:param('name')}` and `{qsp:param('name','Foo'}`
+- the query parameters via the <<qsp_namespace,`qsp:` namespace>>, e.g. `{qsp:param('name')}` and `{qsp:param('name','Foo')}`
 
 == Compression Support
 
@@ -48,6 +48,36 @@ For example, if there is a template `foo.html` that defines a https://quarkus.io
 
 This extension attempts to serve the appropriate template and set the HTTP `Content-type` header based on the selected template variant and the value of `Accept` header.
 For example, if there are templates `src/main/resource/templates/foo.html` and `src/main/resource/templates/foo.xml` and the client sends the `Accept: text/html, application/xml;q=0.9` header then `foo.html` is rendeder and the `Content-type: text/html` header is set.
+
+[[qsp_namespace]]
+== `qsp:` Namespace
+
+Some useful https://quarkus.io/guides/qute-reference#namespace_extension_methods[template extension methods] that handle the `qsp` namespace are registered automatically.
+
+|===
+|Name|Description|Example
+
+|`qsp:request`
+|Returns the current `io.vertx.core.http.HttpServerRequest`
+|`{qsp:request.path}`
+
+|`qsp:param`
+|Returns the first HTTP request query param value with the specified name
+|`{qsp:param('page')}` or `{qsp:param('name', 'default value')}`
+
+|`qsp:header`
+|Return the first HTTP request header value with the specified name
+|`{qsp:header('HX-Request')}`
+
+|`qsp:headers`
+|Makes it possible to access HTTP header values like properties
+|`{qsp:headers.Accept-Encoding}` or `{qsp:headers.accept-encoding}`
+
+|===
+
+NOTE: HTTP header names are case-insensitive.
+
+TIP: If you need to obtain all values of a specific HTTP header then you can use something similar to `{qsp:request.headers.getAll('My-Header')}`.
 
 [[extension-configuration-reference]]
 == Extension Configuration Reference
