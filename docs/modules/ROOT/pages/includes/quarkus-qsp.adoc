@@ -12,6 +12,7 @@ h|Default
 
 a|icon:lock[title=Fixed at build time] [[quarkus-qsp_quarkus.qsp.root-path]]`link:#quarkus-qsp_quarkus.qsp.root-path[quarkus.qsp.root-path]`
 
+
 [.description]
 --
 The root path. All templates will be served relative to this path which is relative to the HTTP root path.
@@ -33,6 +34,7 @@ endif::add-copy-button-to-env-var[]
 
 
 a|icon:lock[title=Fixed at build time] [[quarkus-qsp_quarkus.qsp.hidden-templates]]`link:#quarkus-qsp_quarkus.qsp.hidden-templates[quarkus.qsp.hidden-templates]`
+
 
 [.description]
 --
@@ -58,6 +60,7 @@ endif::add-copy-button-to-env-var[]
 
 a|icon:lock[title=Fixed at build time] [[quarkus-qsp_quarkus.qsp.route-order]]`link:#quarkus-qsp_quarkus.qsp.route-order[quarkus.qsp.route-order]`
 
+
 [.description]
 --
 The order of the qsp route which handles the templates.
@@ -73,6 +76,7 @@ endif::add-copy-button-to-env-var[]
 
 
 a|icon:lock[title=Fixed at build time] [[quarkus-qsp_quarkus.qsp.use-blocking-handler]]`link:#quarkus-qsp_quarkus.qsp.use-blocking-handler[quarkus.qsp.use-blocking-handler]`
+
 
 [.description]
 --
