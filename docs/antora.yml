@@ -1,5 +1,5 @@
-name: quarkus-quteserverpages
-title: QuteServerPages
+name: quarkus-qute-web
+title: Qute Web
 version: dev
 nav:
   - modules/ROOT/nav.adoc

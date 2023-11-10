@@ -1,4 +1,4 @@
-package io.quarkiverse.quteserverpages.it;
+package io.quarkiverse.qute.web.it;
 
 import io.quarkus.qute.TemplateEnum;
 

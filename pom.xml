@@ -17,9 +17,9 @@
     <module>docs</module>
   </modules>
   <scm>
-    <connection>scm:git:git@github.com:quarkiverse/quarkus-qute-server-pages.git</connection>
-    <developerConnection>scm:git:git@github.com:quarkiverse/quarkus-qute-server-pages.git</developerConnection>
-    <url>https://github.com/quarkiverse/quarkus-qute-server-pages</url>
+    <connection>scm:git:git@github.com:quarkiverse/quarkus-qute-web.git</connection>
+    <developerConnection>scm:git:git@github.com:quarkiverse/quarkus-qute-web.git</developerConnection>
+    <url>https://github.com/quarkiverse/quarkus-qute-web</url>
     <tag>HEAD</tag>
   </scm>
   <properties>
