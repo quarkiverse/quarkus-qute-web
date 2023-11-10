@@ -1,0 +1,115 @@
+
+:summaryTableId: quarkus-qute-web
+[.configuration-legend]
+icon:lock[title=Fixed at build time] Configuration property fixed at build time - All other configuration properties are overridable at runtime
+[.configuration-reference.searchable, cols="80,.^10,.^10"]
+|===
+
+h|[[quarkus-qute-web_configuration]]link:#quarkus-qute-web_configuration[Configuration property]
+
+h|Type
+h|Default
+
+a|icon:lock[title=Fixed at build time] [[quarkus-qute-web_quarkus.qute.web.root-path]]`link:#quarkus-qute-web_quarkus.qute.web.root-path[quarkus.qute.web.root-path]`
+
+
+[.description]
+--
+The root path. All templates will be served relative to this path which is relative to the HTTP root path.
+
+If the template name ends with a suffix listed in the `quarkus.qute.suffixes` config property then the suffix may be
+omitted.
+
+For example, a template located in `src/main/resource/templates/foo.html` will be served from the paths `/foo` and
+`/foo.html` by default.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_QUTE_WEB_ROOT_PATH+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_QUTE_WEB_ROOT_PATH+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|`/`
+
+
+a|icon:lock[title=Fixed at build time] [[quarkus-qute-web_quarkus.qute.web.web-templates-dir]]`link:#quarkus-qute-web_quarkus.qute.web.web-templates-dir[quarkus.qute.web.web-templates-dir]`
+
+
+[.description]
+--
+The directory from which the templates are served. The path is relative to the `src/main/resource/templates` directory.
+For example, the value `ping` is translated to `src/main/resource/templates/ping`.
+
+By default, the templates located in the `src/main/resource/templates/web` directory are served.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_QUTE_WEB_WEB_TEMPLATES_DIR+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_QUTE_WEB_WEB_TEMPLATES_DIR+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|`web`
+
+
+a|icon:lock[title=Fixed at build time] [[quarkus-qute-web_quarkus.qute.web.hidden-templates]]`link:#quarkus-qute-web_quarkus.qute.web.hidden-templates[quarkus.qute.web.hidden-templates]`
+
+
+[.description]
+--
+This regular expression is used to hide template files from the web templates path. Hidden templates are not exposed.
+
+All template file paths are matched, including the versions without suffixes. The matched input is the file path relative
+from the web templates path (for example `templates/web`) and the `/` is used as a path separator. For example, a
+template located in `src/main/resource/templates/web/foo.html` will be matched for `foo.tml` and `foo`.
+
+By default, no templates are are hidden.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_QUTE_WEB_HIDDEN_TEMPLATES+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_QUTE_WEB_HIDDEN_TEMPLATES+++`
+endif::add-copy-button-to-env-var[]
+--|link:https://docs.oracle.com/javase/8/docs/api/java/util/regex/Pattern.html[Pattern]
+ 
+|
+
+
+a|icon:lock[title=Fixed at build time] [[quarkus-qute-web_quarkus.qute.web.route-order]]`link:#quarkus-qute-web_quarkus.qute.web.route-order[quarkus.qute.web.route-order]`
+
+
+[.description]
+--
+The order of the route which handles the templates.
+
+By default, the route is executed before the default routes (static resources, etc.).
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_QUTE_WEB_ROUTE_ORDER+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_QUTE_WEB_ROUTE_ORDER+++`
+endif::add-copy-button-to-env-var[]
+--|int 
+|`1000`
+
+
+a|icon:lock[title=Fixed at build time] [[quarkus-qute-web_quarkus.qute.web.use-blocking-handler]]`link:#quarkus-qute-web_quarkus.qute.web.use-blocking-handler[quarkus.qute.web.use-blocking-handler]`
+
+
+[.description]
+--
+If set to `true` then the route should use a blocking handler.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_QUTE_WEB_USE_BLOCKING_HANDLER+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_QUTE_WEB_USE_BLOCKING_HANDLER+++`
+endif::add-copy-button-to-env-var[]
+--|boolean 
+|`true`
+
+|===

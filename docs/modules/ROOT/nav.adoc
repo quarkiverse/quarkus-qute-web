@@ -1,1 +1,1 @@
-* xref:index.adoc[Quarkus QuteServerPages]
+* xref:index.adoc[Quarkus Qute Web]

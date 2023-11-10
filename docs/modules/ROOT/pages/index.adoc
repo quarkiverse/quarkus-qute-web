@@ -1,22 +1,24 @@
-= Quarkus QuteServerPages
+= Quarkus Qute Web
 
 include::./includes/attributes.adoc[]
 
-The goal of this simple extension is to expose https://quarkus.io/guides/qute-reference[Qute] templates located in the `src/main/resource/templates` directory via HTTP. Automatically, no controllers needed. For example, the template `src/main/resource/templates/foo.html` will be served from the paths `/qsp/foo` and `/qsp/foo.html` by default.
+The goal of this extension is to expose https://quarkus.io/guides/qute-reference[Qute] templates located in the `src/main/resource/templates/web` directory via HTTP.
+Automatically, no controllers needed. 
+For example, the template `src/main/resource/templates/web/foo.html` will be served from the paths `/foo` and `/foo.html` by default.
 
-NOTE: The `index.html` pages are handled specifically, i.e. they are also served as a "default page" of the containing directory. For example, the template `src/main/resource/templates/index.html` will be served from the paths `/qsp/index`, `/qsp/index.html` and `/qsp/` by default.
+NOTE: The `index.html` pages are handled specifically, i.e. they are also served as a "default page" of the containing directory. For example, the template `src/main/resource/templates/web/index.html` will be served from the paths `/index`, `/index.html` and `/` by default.
 
 == Installation
 
-If you want to use this extension, you need to add the `io.quarkiverse.quteserverpages:quarkus-qute-server-pages` extension first to your build file.
+If you want to use this extension, you need to add the `io.quarkiverse.qute.web:quarkus-qute-web` extension first to your build file.
 
 For instance, with Maven, add the following dependency to your POM file:
 
 [source,xml,subs=attributes+]
 ----
 <dependency>
-    <groupId>io.quarkiverse.quteserverpages</groupId>
-    <artifactId>quarkus-qute-server-pages</artifactId>
+    <groupId>io.quarkiverse.qute.web</groupId>
+    <artifactId>quarkus-qute-web</artifactId>
     <version>{project-version}</version>
 </dependency>
 ----
@@ -30,8 +32,8 @@ In a template you can access:
 - https://quarkus.io/guides/qute-reference#convenient-annotation-for-enums[enums] annotated with `@TemplateEnum`
 - https://quarkus.io/guides/qute-reference#namespace_extension_methods[Namespace Extension Methods] in general
 - https://quarkus.io/guides/qute-reference#global_variables[global variables]
-- the current `io.vertx.core.http.HttpServerRequest` via the `qsp:` namespace, e.g. `{qsp:request.path}`
-- the query parameters via the <<qsp_namespace,`qsp:` namespace>>, e.g. `{qsp:param('name')}` and `{qsp:param('name','Foo')}`
+- the current `io.vertx.core.http.HttpServerRequest` via the `http:` namespace, e.g. `{http:request.path}`
+- the query parameters via the <<http_namespace,`http:` namespace>>, e.g. `{http:param('name')}` and `{http:param('name','Foo')}`
 
 == Compression Support
 
@@ -41,45 +43,45 @@ If the HTTP compression support is enabled by means of `quarkus.http.enable-comp
 == Template Fragments
 
 It is possible to specify the template fragment via the `frag` query param.
-For example, if there is a template `foo.html` that defines a https://quarkus.io/guides/qute-reference#fragments[fragment] with id `bar` then the fragment is served from the path `/qsp/foo?frag=bar`.
+For example, if there is a template `foo.html` that defines a https://quarkus.io/guides/qute-reference#fragments[fragment] with id `bar` then the fragment is served from the path `/foo?frag=bar`.
 
 
 == Content Negotiation
 
 This extension attempts to serve the appropriate template and set the HTTP `Content-type` header based on the selected template variant and the value of `Accept` header.
-For example, if there are templates `src/main/resource/templates/foo.html` and `src/main/resource/templates/foo.xml` and the client sends the `Accept: text/html, application/xml;q=0.9` header then `foo.html` is rendeder and the `Content-type: text/html` header is set.
+For example, if there are templates `src/main/resource/templates/web/foo.html` and `src/main/resource/templates/web/foo.txt` and the client sends the `Accept: text/html, text/plain;q=0.9` header then `foo.html` is rendeder and the `Content-type: text/html` header is set.
 
-[[qsp_namespace]]
-== `qsp:` Namespace
+[[http_namespace]]
+== `http:` Namespace
 
-Some useful https://quarkus.io/guides/qute-reference#namespace_extension_methods[template extension methods] that handle the `qsp` namespace are registered automatically.
+Some useful https://quarkus.io/guides/qute-reference#namespace_extension_methods[template extension methods] that handle the `http` namespace are registered automatically.
 
 |===
 |Name|Description|Example
 
-|`qsp:request`
+|`http:request`
 |Returns the current `io.vertx.core.http.HttpServerRequest`
-|`{qsp:request.path}`
+|`{http:request.path}`
 
-|`qsp:param`
+|`http:param`
 |Returns the first HTTP request query param value with the specified name
-|`{qsp:param('page')}` or `{qsp:param('name', 'default value')}`
+|`{http:param('page')}` or `{http:param('name', 'default value')}`
 
-|`qsp:header`
+|`http:header`
 |Return the first HTTP request header value with the specified name
-|`{qsp:header('HX-Request')}`
+|`{http:header('HX-Request')}`
 
-|`qsp:headers`
+|`http:headers`
 |Makes it possible to access HTTP header values like properties
-|`{qsp:headers.Accept-Encoding}` or `{qsp:headers.accept-encoding}`
+|`{http:headers.Accept-Encoding}` or `{http:headers.accept-encoding}`
 
 |===
 
 NOTE: HTTP header names are case-insensitive.
 
-TIP: If you need to obtain all values of a specific HTTP header then you can use something similar to `{qsp:request.headers.getAll('My-Header')}`.
+TIP: If you need to obtain all values of a specific HTTP header then you can use something similar to `{http:request.headers.getAll('My-Header')}`.
 
 [[extension-configuration-reference]]
 == Extension Configuration Reference
 
-include::includes/quarkus-qsp.adoc[leveloffset=+1, opts=optional]
+include::includes/quarkus-qute-web.adoc[leveloffset=+1, opts=optional]
