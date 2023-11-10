@@ -1,5 +1,5 @@
-name: QuteServerPages
-description: Automatically serves qute templates via HTTP.
+name: Qute Web
+description: Serves Qute templates directly over HTTP.
 metadata:
   keywords:
     - qsp
