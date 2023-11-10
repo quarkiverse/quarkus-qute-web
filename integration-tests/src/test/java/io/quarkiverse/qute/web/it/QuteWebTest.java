@@ -1,4 +1,4 @@
-package io.quarkiverse.quteserverpages.it;
+package io.quarkiverse.qute.web.it;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.containsString;
@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 import io.quarkus.test.junit.QuarkusTest;
 
 @QuarkusTest
-public class QspTest {
+public class QuteWebTest {
 
     @Test
     public void testTemplates() {

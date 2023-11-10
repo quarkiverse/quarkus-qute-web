@@ -6,7 +6,7 @@ metadata:
     - web
     - qute
     - templates
-  guide: https://quarkiverse.github.io/quarkiverse-docs/quarkus-quteserverpages/dev/index.html
+  guide: https://quarkiverse.github.io/quarkiverse-docs/quarkus-qute-web/dev/index.html
   categories:
     - "web"
   status: "preview"

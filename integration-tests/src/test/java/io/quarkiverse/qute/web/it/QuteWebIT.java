@@ -1,7 +1,7 @@
-package io.quarkiverse.quteserverpages.it;
+package io.quarkiverse.qute.web.it;
 
 import io.quarkus.test.junit.QuarkusIntegrationTest;
 
 @QuarkusIntegrationTest
-public class QspIT extends QspTest {
+public class QuteWebIT extends QuteWebTest {
 }
