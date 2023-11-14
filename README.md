@@ -14,5 +14,3 @@ In a template you can access:
 - [global variables](https://quarkus.io/guides/qute-reference#global_variables)
 - the current `io.vertx.core.http.HttpServerRequest` via the `qsp:` namespace, e.g. `{qsp:request.path}`
 - the query parameters via the qsp: namespace, e.g. `{qsp:param('name')}` and `{qsp:param('name','DefaultName'}`
-
-Read the full [documentation](https://quarkiverse.github.io/quarkiverse-docs/quarkus-quteserverpages/dev/index.html).
