@@ -15,13 +15,13 @@ public class HiddenTemplatesTest {
     static final QuarkusUnitTest config = new QuarkusUnitTest().withApplicationRoot(root -> {
         root.addAsResource(new StringAsset(
                 "Hello {name ?: 'world'}!"),
-                "templates/web/hello.txt")
+                "templates/pub/hello.txt")
                 .addAsResource(new StringAsset(
                         "Bar {name ?: 'world'}!"),
-                        "templates/web/foo/bar.txt")
+                        "templates/pub/foo/bar.txt")
                 .addAsResource(new StringAsset(
                         "Baz {name ?: 'world'}!"),
-                        "templates/web/foo/baz/baz.txt")
+                        "templates/pub/foo/baz/baz.txt")
                 .addAsResource(new StringAsset(
                         "quarkus.qute.web.hidden-templates=hello.*|foo/baz/.*"),
                         "application.properties");

@@ -17,8 +17,8 @@ public class CompressionEnabledTest {
     @RegisterExtension
     static final QuarkusUnitTest config = new QuarkusUnitTest()
             .withApplicationRoot(root -> root
-                    .addAsResource(new StringAsset("{cdi:vertxRequest.getParam('id')}"), "templates/web/file.txt")
-                    .addAsResource(new StringAsset("{cdi:vertxRequest.getParam('id')}"), "templates/web/document.foo"))
+                    .addAsResource(new StringAsset("{cdi:vertxRequest.getParam('id')}"), "templates/pub/file.txt")
+                    .addAsResource(new StringAsset("{cdi:vertxRequest.getParam('id')}"), "templates/pub/document.foo"))
             .overrideConfigKey("quarkus.http.enable-compression", "true")
             .overrideConfigKey("quarkus.qute.suffixes", "txt,foo");
 

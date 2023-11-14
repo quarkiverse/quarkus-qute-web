@@ -53,13 +53,13 @@ public class QuteWebHandler implements Handler<RoutingContext> {
     private final LazyValue<TemplateProducer> templateProducer;
     private final QuteContext quteContext;
 
-    public QuteWebHandler(String rootPath, String webTemplatesPath, Set<String> templatePaths,
+    public QuteWebHandler(String rootPath, String publicDir, Set<String> templatePaths,
             HttpBuildTimeConfig httpBuildTimeConfig) {
         this.rootPath = rootPath;
-        if (webTemplatesPath.equals("/") || webTemplatesPath.isBlank()) {
+        if (publicDir.equals("/") || publicDir.isBlank()) {
             this.webTemplatesPath = "";
         } else {
-            this.webTemplatesPath = webTemplatesPath.startsWith("/") ? webTemplatesPath.substring(1) : webTemplatesPath;
+            this.webTemplatesPath = publicDir.startsWith("/") ? publicDir.substring(1) : publicDir;
         }
         this.templatePaths = templatePaths;
         this.compressMediaTypes = httpBuildTimeConfig.enableCompression

@@ -2,11 +2,11 @@
 
 include::./includes/attributes.adoc[]
 
-The goal of this extension is to expose https://quarkus.io/guides/qute-reference[Qute] templates located in the `src/main/resource/templates/web` directory via HTTP.
+The goal of this extension is to expose https://quarkus.io/guides/qute-reference[Qute] templates located in the `src/main/resource/templates/pub` directory via HTTP.
 Automatically, no controllers needed. 
-For example, the template `src/main/resource/templates/web/foo.html` will be served from the paths `/foo` and `/foo.html` by default.
+For example, the template `src/main/resource/templates/pub/foo.html` will be served from the paths `/foo` and `/foo.html` by default.
 
-NOTE: The `index.html` pages are handled specifically, i.e. they are also served as a "default page" of the containing directory. For example, the template `src/main/resource/templates/web/index.html` will be served from the paths `/index`, `/index.html` and `/` by default.
+NOTE: The `index.html` pages are handled specifically, i.e. they are also served as a "default page" of the containing directory. For example, the template `src/main/resource/templates/pub/index.html` will be served from the paths `/index`, `/index.html` and `/` by default.
 
 == Installation
 
@@ -49,7 +49,7 @@ For example, if there is a template `foo.html` that defines a https://quarkus.io
 == Content Negotiation
 
 This extension attempts to serve the appropriate template and set the HTTP `Content-type` header based on the selected template variant and the value of `Accept` header.
-For example, if there are templates `src/main/resource/templates/web/foo.html` and `src/main/resource/templates/web/foo.txt` and the client sends the `Accept: text/html, text/plain;q=0.9` header then `foo.html` is rendeder and the `Content-type: text/html` header is set.
+For example, if there are templates `src/main/resource/templates/pub/foo.html` and `src/main/resource/templates/pub/foo.txt` and the client sends the `Accept: text/html, text/plain;q=0.9` header then `foo.html` is rendeder and the `Content-type: text/html` header is set.
 
 [[http_namespace]]
 == `http:` Namespace

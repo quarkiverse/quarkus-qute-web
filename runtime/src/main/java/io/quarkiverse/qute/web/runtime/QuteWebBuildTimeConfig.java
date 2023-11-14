@@ -27,15 +27,16 @@ public interface QuteWebBuildTimeConfig {
     String rootPath();
 
     /**
-     * The directory from which the templates are served. The path is relative to the `src/main/resource/templates` directory.
-     * For example, the value `ping` is translated to `src/main/resource/templates/ping`.
+     * The directory from which the templates are served. The path is relative to a template root directroy, i.e. relative to
+     * `src/main/resource/templates` by default. For example, the value `ping` could be translated to
+     * `src/main/resource/templates/ping`.
      *
-     * By default, the templates located in the `src/main/resource/templates/web` directory are served.
+     * By default, the templates located in the `src/main/resource/templates/pub` directory are served.
      *
      * @asciidoclet
      */
-    @WithDefault("web")
-    String webTemplatesDir();
+    @WithDefault("pub")
+    String publicDir();
 
     /**
      * This regular expression is used to hide template files from the web templates path. Hidden templates are not exposed.

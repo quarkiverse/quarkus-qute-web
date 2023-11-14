@@ -15,13 +15,13 @@ public class DefaultRootPathTest {
     static final QuarkusUnitTest config = new QuarkusUnitTest().withApplicationRoot(root -> {
         root.addAsResource(new StringAsset(
                 "Hello {name ?: 'world'}!"),
-                "templates/web/hello.txt")
+                "templates/pub/hello.txt")
                 .addAsResource(new StringAsset(
                         "Index root!"),
-                        "templates/web/index.html")
+                        "templates/pub/index.html")
                 .addAsResource(new StringAsset(
                         "Index foo!"),
-                        "templates/web/foo/index.html");
+                        "templates/pub/foo/index.html");
     });
 
     @Test

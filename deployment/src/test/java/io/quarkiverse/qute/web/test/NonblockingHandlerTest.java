@@ -20,7 +20,7 @@ public class NonblockingHandlerTest {
         root
                 .addAsResource(new StringAsset(
                         "blocking={cdi:bean.isOnWorkerThread}"),
-                        "templates/web/nonblocking.txt")
+                        "templates/pub/nonblocking.txt")
                 .addAsResource(new StringAsset(
                         "quarkus.qute.web.use-blocking-handler=false"),
                         "application.properties");
