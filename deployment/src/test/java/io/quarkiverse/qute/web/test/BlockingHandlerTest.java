@@ -20,7 +20,7 @@ public class BlockingHandlerTest {
         root
                 .addAsResource(new StringAsset(
                         "blocking={cdi:bean.isOnWorkerThread}"),
-                        "templates/web/blocking.txt")
+                        "templates/pub/blocking.txt")
                 .addAsResource(new StringAsset(
                         "quarkus.qute.web.use-blocking-handler=true"),
                         "application.properties");

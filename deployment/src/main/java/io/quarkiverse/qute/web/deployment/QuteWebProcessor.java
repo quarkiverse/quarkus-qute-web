@@ -43,19 +43,19 @@ class QuteWebProcessor {
     @BuildStep
     public void collectTemplatePaths(TemplateFilePathsBuildItem templateFilePaths,
             QuteWebBuildTimeConfig config, BuildProducer<QuteWebTemplatePathBuildItem> paths) {
-        String webTemplatesPathPrefix = "";
-        String webTemplatesDir = config.webTemplatesDir();
-        if (!webTemplatesDir.equals("/") && !webTemplatesDir.isBlank()) {
-            webTemplatesPathPrefix = webTemplatesDir + "/";
+        String publicPathPrefix = "";
+        String publicDir = config.publicDir();
+        if (!publicDir.equals("/") && !publicDir.isBlank()) {
+            publicPathPrefix = publicDir + "/";
         }
         Optional<Pattern> hiddenTemplates = config.hiddenTemplates();
         for (String path : templateFilePaths.getFilePaths()) {
-            if (!path.startsWith(webTemplatesPathPrefix)) {
+            if (!path.startsWith(publicPathPrefix)) {
                 continue;
             }
             if (hiddenTemplates.isPresent()
-                    // Match the path relative to the webTemplatesPath
-                    && hiddenTemplates.get().matcher(path.substring(webTemplatesPathPrefix.length())).matches()) {
+                    // Match the path relative to the publicPath
+                    && hiddenTemplates.get().matcher(path.substring(publicPathPrefix.length())).matches()) {
                 LOG.debugf("Template %s is hidden", path);
                 continue;
             }

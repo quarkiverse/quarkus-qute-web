@@ -13,7 +13,7 @@ public class SimpleTest {
 
     @RegisterExtension
     static final QuarkusUnitTest config = new QuarkusUnitTest().withApplicationRoot(root -> {
-        root.addAsResource(new StringAsset("{#hello /} {name ?: 'world'}!"), "templates/web/hello.txt")
+        root.addAsResource(new StringAsset("{#hello /} {name ?: 'world'}!"), "templates/pub/hello.txt")
                 .addAsResource(new StringAsset("Hello"), "templates/tags/hello.txt");
     });
 

@@ -9,23 +9,23 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 
 import io.quarkus.test.QuarkusUnitTest;
 
-public class CustomWebTemplatesDirectoryTest {
+public class CustomPublicDirectoryTest {
 
     @RegisterExtension
     static final QuarkusUnitTest config = new QuarkusUnitTest().withApplicationRoot(root -> {
         root.addAsResource(new StringAsset(
                 "Hello {name ?: 'world'}!"),
-                "templates/web/hello.txt")
+                "templates/pub/hello.txt")
                 .addAsResource(new StringAsset(
                         "Bar {name ?: 'world'}!"),
                         "templates/ping/pong/bar.txt")
                 .addAsResource(new StringAsset(
-                        "quarkus.qute.web.web-templates-dir=ping/pong"),
+                        "quarkus.qute.web.public-dir=ping/pong"),
                         "application.properties");
     });
 
     @Test
-    public void testCustomWebTemplatesDir() {
+    public void testCustomPublicDir() {
         given()
                 .when().get("/hello")
                 .then()

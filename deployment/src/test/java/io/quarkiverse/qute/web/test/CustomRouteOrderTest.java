@@ -21,13 +21,13 @@ public class CustomRouteOrderTest {
         root
                 .addAsResource(new StringAsset(
                         "BAZ!"),
-                        "templates/web/baz.txt")
+                        "templates/pub/baz.txt")
                 .addAsResource(new StringAsset(
                         "BAR!"),
-                        "templates/web/bar.txt")
+                        "templates/pub/bar.txt")
                 .addAsResource(new StringAsset(
                         "PING!"),
-                        "templates/web/ping.txt")
+                        "templates/pub/ping.txt")
                 .addAsResource(new StringAsset(
                         "STATIC PING!"),
                         "META-INF/resources/ping.txt")

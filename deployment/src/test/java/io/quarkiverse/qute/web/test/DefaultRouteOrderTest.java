@@ -15,7 +15,7 @@ public class DefaultRouteOrderTest {
     static final QuarkusUnitTest config = new QuarkusUnitTest().withApplicationRoot(root -> {
         root.addAsResource(new StringAsset(
                 "BAZ!"),
-                "templates/web/baz.txt")
+                "templates/pub/baz.txt")
                 // Static resource is hidden by the template
                 .addAsResource(new StringAsset(
                         "STATIC BAZ!"),

@@ -33,6 +33,6 @@ public class QuteWebRecorder {
     }
 
     public Handler<RoutingContext> handler(String rootPath, Set<String> templatePaths) {
-        return new QuteWebHandler(rootPath, quteWebConfig.webTemplatesDir(), templatePaths, httpConfig);
+        return new QuteWebHandler(rootPath, quteWebConfig.publicDir(), templatePaths, httpConfig);
     }
 }

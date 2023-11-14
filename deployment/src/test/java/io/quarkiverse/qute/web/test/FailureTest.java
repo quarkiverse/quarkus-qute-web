@@ -19,7 +19,7 @@ public class FailureTest {
         root.addClass(ErrorHandler.class)
                 .addAsResource(new StringAsset(
                         "Hello {name}!"),
-                        "templates/web/hello.txt");
+                        "templates/pub/hello.txt");
     });
 
     @Test

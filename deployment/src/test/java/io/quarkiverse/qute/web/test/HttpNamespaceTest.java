@@ -15,10 +15,10 @@ public class HttpNamespaceTest {
     static final QuarkusUnitTest config = new QuarkusUnitTest().withApplicationRoot(root -> {
         root.addAsResource(new StringAsset(
                 "{http:request.path} Hello {http:param('name','foo')}! {http:param('age')}"),
-                "templates/web/hello.txt")
+                "templates/pub/hello.txt")
                 .addAsResource(new StringAsset(
                         "HX-Request={http:header('HX-Request')}::{http:headers.hx-request}"),
-                        "templates/web/headers.txt");
+                        "templates/pub/headers.txt");
     });
 
     @Test
