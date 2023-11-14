@@ -127,7 +127,9 @@ public class QspHandler implements Handler<RoutingContext> {
             // It is possible to specify the fragment via query param, e.g. /qp/item?frag=detail
             String fragmentId = rc.request().getParam(FRAGMENT_PARAM);
             if (fragmentId != null) {
-                Fragment fragment = template.getFragment(fragmentId);
+                // Note that we have to use the original instance to obtain the fragment
+                // because getFragment() invoked upon the injectable template returns an injectable fragment and never null
+                Fragment fragment = originalInstance.getTemplate().getFragment(fragmentId);
                 if (fragment == null) {
                     LOG.errorf("Fragment [%s] not found: %s", fragmentId, rc.request().path());
                     rc.response().setStatusCode(404).end();

@@ -30,7 +30,7 @@ ifndef::add-copy-button-to-env-var[]
 Environment variable: `+++QUARKUS_QSP_ROOT_PATH+++`
 endif::add-copy-button-to-env-var[]
 --|string 
-|`/qsp`
+|required icon:exclamation-circle[title=Configuration property is required]
 
 
 a|icon:lock[title=Fixed at build time] [[quarkus-qsp_quarkus.qsp.hidden-templates]]`link:#quarkus-qsp_quarkus.qsp.hidden-templates[quarkus.qsp.hidden-templates]`
@@ -55,7 +55,7 @@ Environment variable: `+++QUARKUS_QSP_HIDDEN_TEMPLATES+++`
 endif::add-copy-button-to-env-var[]
 --|link:https://docs.oracle.com/javase/8/docs/api/java/util/regex/Pattern.html[Pattern]
  
-|`tags/.*`
+|required icon:exclamation-circle[title=Configuration property is required]
 
 
 a|icon:lock[title=Fixed at build time] [[quarkus-qsp_quarkus.qsp.route-order]]`link:#quarkus-qsp_quarkus.qsp.route-order[quarkus.qsp.route-order]`
@@ -89,6 +89,6 @@ ifndef::add-copy-button-to-env-var[]
 Environment variable: `+++QUARKUS_QSP_USE_BLOCKING_HANDLER+++`
 endif::add-copy-button-to-env-var[]
 --|boolean 
-|`true`
+|`false`
 
 |===
