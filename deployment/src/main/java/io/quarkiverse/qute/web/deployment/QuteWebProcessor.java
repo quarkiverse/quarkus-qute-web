@@ -69,6 +69,10 @@ class QuteWebProcessor {
     @Consume(SyntheticBeansRuntimeInitBuildItem.class)
     public RouteBuildItem produceTemplatesRoute(QuteWebRecorder recorder, List<QuteWebTemplatePathBuildItem> templatePaths,
             HttpRootPathBuildItem httpRootPath, QuteWebBuildTimeConfig config) {
+        if (templatePaths.isEmpty()) {
+            // There are no templates to serve
+            return null;
+        }
         return httpRootPath.routeBuilder()
                 .routeFunction(httpRootPath.relativePath(config.rootPath() + "/*"), recorder.initializeRoute())
                 .handlerType(config.useBlockingHandler() ? HandlerType.BLOCKING : HandlerType.NORMAL)
