@@ -41,6 +41,14 @@
             </goals>
             <configuration>
               <deployment>${project.groupId}:${project.artifactId}-deployment:${project.version}</deployment>
+              <!-- 
+                 We must declare the conditional dependencies here because otherwise CapabilityAggregationStep#aggregateCapabilities 
+                 produces an error during tests in the deployment module 
+              -->
+              <conditionalDependencies> 
+                <extension>io.quarkus:quarkus-resteasy-qute:${quarkus.version}</extension>
+                <extension>io.quarkus:quarkus-resteasy-reactive-qute:${quarkus.version}</extension> 
+              </conditionalDependencies>
             </configuration>
           </execution>
         </executions>
