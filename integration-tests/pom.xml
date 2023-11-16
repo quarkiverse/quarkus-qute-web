@@ -4,7 +4,7 @@
   <parent>
     <groupId>io.quarkiverse.qute.web</groupId>
     <artifactId>quarkus-qute-web-parent</artifactId>
-    <version>3.0.0.CR2</version>
+    <version>999-SNAPSHOT</version>
   </parent>
   <artifactId>quarkus-qute-web-integration-tests</artifactId>
   <name>Quarkus Qute Web - Integration Tests</name>
