@@ -33,24 +33,25 @@ endif::add-copy-button-to-env-var[]
 |`/`
 
 
-a|icon:lock[title=Fixed at build time] [[quarkus-qute-web_quarkus.qute.web.web-templates-dir]]`link:#quarkus-qute-web_quarkus.qute.web.web-templates-dir[quarkus.qute.web.web-templates-dir]`
+a|icon:lock[title=Fixed at build time] [[quarkus-qute-web_quarkus.qute.web.public-dir]]`link:#quarkus-qute-web_quarkus.qute.web.public-dir[quarkus.qute.web.public-dir]`
 
 
 [.description]
 --
-The directory from which the templates are served. The path is relative to the `src/main/resource/templates` directory.
-For example, the value `ping` is translated to `src/main/resource/templates/ping`.
+The directory from which the templates are served. The path is relative to a template root directroy, i.e. relative to
+`src/main/resource/templates` by default. For example, the value `ping` could be translated to
+`src/main/resource/templates/ping`.
 
-By default, the templates located in the `src/main/resource/templates/web` directory are served.
+By default, the templates located in the `src/main/resource/templates/pub` directory are served.
 
 ifdef::add-copy-button-to-env-var[]
-Environment variable: env_var_with_copy_button:+++QUARKUS_QUTE_WEB_WEB_TEMPLATES_DIR+++[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_QUTE_WEB_PUBLIC_DIR+++[]
 endif::add-copy-button-to-env-var[]
 ifndef::add-copy-button-to-env-var[]
-Environment variable: `+++QUARKUS_QUTE_WEB_WEB_TEMPLATES_DIR+++`
+Environment variable: `+++QUARKUS_QUTE_WEB_PUBLIC_DIR+++`
 endif::add-copy-button-to-env-var[]
 --|string 
-|`web`
+|`pub`
 
 
 a|icon:lock[title=Fixed at build time] [[quarkus-qute-web_quarkus.qute.web.hidden-templates]]`link:#quarkus-qute-web_quarkus.qute.web.hidden-templates[quarkus.qute.web.hidden-templates]`
@@ -64,7 +65,7 @@ All template file paths are matched, including the versions without suffixes. Th
 from the web templates path (for example `templates/web`) and the `/` is used as a path separator. For example, a
 template located in `src/main/resource/templates/web/foo.html` will be matched for `foo.tml` and `foo`.
 
-By default, no templates are are hidden.
+By default, no templates are hidden.
 
 ifdef::add-copy-button-to-env-var[]
 Environment variable: env_var_with_copy_button:+++QUARKUS_QUTE_WEB_HIDDEN_TEMPLATES+++[]
