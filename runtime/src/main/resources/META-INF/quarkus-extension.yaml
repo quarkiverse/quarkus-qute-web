@@ -10,3 +10,10 @@ metadata:
   categories:
     - "web"
   status: "preview"
+  codestart:
+    name: "qute-web"
+    languages:
+      - "java"
+      - "kotlin"
+      - "scala"
+    artifact: "io.quarkiverse.qute.web:quarkus-qute-web:codestarts:jar:${project.version}"
