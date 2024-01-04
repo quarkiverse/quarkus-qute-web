@@ -21,7 +21,13 @@ public class DefaultRootPathTest {
                         "templates/pub/index.html")
                 .addAsResource(new StringAsset(
                         "Index foo!"),
-                        "templates/pub/foo/index.html");
+                        "templates/pub/foo/index.html")
+                .addAsResource(new StringAsset(
+                        "Index bar!"),
+                        "templates/pub/bar/index.qute.html")
+                .addAsResource(new StringAsset(
+                        "Index bar sub!"),
+                        "templates/pub/bar/sub.qute.html");
     });
 
     @Test
@@ -46,5 +52,35 @@ public class DefaultRootPathTest {
                 .then()
                 .statusCode(200)
                 .body(containsString("Index foo!"));
+        given()
+                .when().get("/foo/index.html")
+                .then()
+                .statusCode(200)
+                .body(containsString("Index foo!"));
+        given()
+                .when().get("/bar/")
+                .then()
+                .statusCode(200)
+                .body(containsString("Index bar!"));
+        given()
+                .when().get("/bar/index")
+                .then()
+                .statusCode(200)
+                .body(containsString("Index bar!"));
+        given()
+                .when().get("/bar/index.qute.html")
+                .then()
+                .statusCode(200)
+                .body(containsString("Index bar!"));
+        given()
+                .when().get("/bar/sub")
+                .then()
+                .statusCode(200)
+                .body(containsString("Index bar sub!"));
+        given()
+                .when().get("/bar/sub.qute.html")
+                .then()
+                .statusCode(200)
+                .body(containsString("Index bar sub!"));
     }
 }

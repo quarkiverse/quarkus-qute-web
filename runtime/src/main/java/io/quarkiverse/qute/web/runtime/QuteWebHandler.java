@@ -225,7 +225,7 @@ public class QuteWebHandler implements Handler<RoutingContext> {
      * <li>{@code /nested/item.html?foo=bar} => {@code web/nested/item}</li>
      * </ul>
      *
-     * Note that a path that ends with {@code /} is handled specifically. The {@code index.html} is appended to the path.
+     * Note that a path that ends with {@code /} is handled specifically. The {@code index} is appended to the path.
      *
      * @param path
      * @return the template path without suffix
@@ -233,7 +233,7 @@ public class QuteWebHandler implements Handler<RoutingContext> {
     private String extractTemplatePath(String path) {
         if (path.length() >= rootPath.length()) {
             if (path.endsWith("/")) {
-                path = path + "index.html";
+                path = path + "index";
             }
             path = path.substring(rootPath.length());
             if (path.startsWith("/")) {
