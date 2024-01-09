@@ -24,7 +24,13 @@ public class CustomRootPathTest {
                         "templates/pub/foo/index.html")
                 .addAsResource(new StringAsset(
                         "quarkus.qute.web.root-path=ping"),
-                        "application.properties");
+                        "application.properties")
+                .addAsResource(new StringAsset(
+                        "Index bar!"),
+                        "templates/pub/bar/index.qute.html")
+                .addAsResource(new StringAsset(
+                        "Index bar sub!"),
+                        "templates/pub/bar/sub.qute.html");
     });
 
     @Test
@@ -49,6 +55,35 @@ public class CustomRootPathTest {
                 .then()
                 .statusCode(200)
                 .body(containsString("Index foo!"));
-
+        given()
+                .when().get("/ping/foo/index.html")
+                .then()
+                .statusCode(200)
+                .body(containsString("Index foo!"));
+        given()
+                .when().get("/ping/bar/")
+                .then()
+                .statusCode(200)
+                .body(containsString("Index bar!"));
+        given()
+                .when().get("/ping/bar/index")
+                .then()
+                .statusCode(200)
+                .body(containsString("Index bar!"));
+        given()
+                .when().get("/ping/bar/index.qute.html")
+                .then()
+                .statusCode(200)
+                .body(containsString("Index bar!"));
+        given()
+                .when().get("/ping/bar/sub")
+                .then()
+                .statusCode(200)
+                .body(containsString("Index bar sub!"));
+        given()
+                .when().get("/ping/bar/sub.qute.html")
+                .then()
+                .statusCode(200)
+                .body(containsString("Index bar sub!"));
     }
 }
