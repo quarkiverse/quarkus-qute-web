@@ -15,6 +15,7 @@
     <module>deployment</module>
     <module>runtime</module>
     <module>docs</module>
+    <module>markdown</module>
   </modules>
   <scm>
     <connection>scm:git:git@github.com:quarkiverse/quarkus-qute-web.git</connection>
@@ -28,6 +29,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <quarkus.version>3.6.9</quarkus.version>
+    <commonmark.version>0.22.0</commonmark.version>
   </properties>
   <dependencyManagement>
     <dependencies>

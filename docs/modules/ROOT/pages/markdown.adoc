@@ -1,0 +1,107 @@
+= Quarkus Qute Markdown
+
+include::./includes/attributes.adoc[]
+
+The goal of this extension is to provide a simple way to render Markdown templates using Qute. It adds a new Qute section
+named `markdown` or `md` that can be used to convert the content of the section to HTML using a Markdown processor.
+
+== Installation
+
+To install the extension, add the following dependency to your project:
+
+[source,xml,subs=attributes+]
+----
+<dependency>
+    <groupId>io.quarkiverse.qute-markdown</groupId>
+    <artifactId>quarkus-qute-web-markdown</artifactId>
+    <version>999-SNAPSHOT</version>
+</dependency>
+----
+
+== Usage
+
+This extension can be used to render Markdown templates inside a Qute template or in a web application using the `quarkus-qute-web` extension.
+
+=== Standalone Usage
+
+Create a new Qute template with `foo.txt` name.
+
+[source,html]
+----
+<!-- src/resources/templates/foo.txt -->
+{#md}
+# Hello World
+{/md}
+----
+
+Create a new resource class and inject the template using the `@Inject` annotation. Then, use the `render` method to render the template.
+[source,java]
+----
+package com.foo;
+
+import io.quarkus.qute.Template;
+import jakarta.inject.Inject;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.core.MediaType;
+
+@Path("/hello")
+public class GreetingResource {
+
+    @Inject
+    Template foo;
+
+    @GET
+    @Produces(MediaType.TEXT_PLAIN)
+    public String hello() {
+        return foo.render();
+    }
+}
+----
+
+Finally, start your application and open the following URL in your browser: `http://localhost:8080/hello`.
+
+The output should be the following:
+
+[source,html]
+----
+<h1>Hello World</h1>
+----
+
+=== Integration with Qute Web
+
+This extension can be combined with the `quarkus-qute-web` extension to render Markdown templates in a web application.
+Add the `quarkus-qute-web`  extension to your project, inside the `pom.xml` file:
+
+[source,xml,subs=attributes+]
+----
+<dependency>
+    <groupId>io.quarkiverse.qute.web</groupId>
+    <artifactId>quarkus-qute-web</artifactId>
+    <version>${project.version}</version>
+</dependency>
+----
+
+Then, create a new Qute template with the `.txt` or `.html` extension.
+
+[source,html]
+----
+<!-- src/resources/templates/pub/markdown.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>My Qute Page with Markdown</title>
+</head>
+<body>
+    <h1>Hello World!</h1>
+    {#md}
+        # This is a Markdown section
+        It will be converted to HTML using a Markdown processor.
+    {/md}
+</body>
+</html>
+----
+
+Finally, start your application and open the following URL in your browser: `http://localhost:8080/markdown`.
