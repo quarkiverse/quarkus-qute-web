@@ -1,5 +1,7 @@
 package io.quarkiverse.qute.web.deployment;
 
+import static java.util.function.Predicate.not;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.regex.Pattern;
@@ -42,7 +44,7 @@ class QuteWebProcessor {
 
     @BuildStep
     public void collectTemplatePaths(TemplateFilePathsBuildItem templateFilePaths,
-            QuteWebBuildTimeConfig config, BuildProducer<QuteWebTemplatePathBuildItem> paths) {
+            QuteWebBuildTimeConfig config, BuildProducer<QuteWebTemplateBuildItem> paths) {
         String publicPathPrefix = "";
         String publicDir = config.publicDir();
         if (!publicDir.equals("/") && !publicDir.isBlank()) {
@@ -60,24 +62,28 @@ class QuteWebProcessor {
                 continue;
             }
             LOG.debugf("Web template found: %s", path);
-            paths.produce(new QuteWebTemplatePathBuildItem(path));
+            paths.produce(new QuteWebTemplateBuildItem(path, null));
         }
     }
 
     @BuildStep
     @Record(ExecutionTime.RUNTIME_INIT)
     @Consume(SyntheticBeansRuntimeInitBuildItem.class)
-    public RouteBuildItem produceTemplatesRoute(QuteWebRecorder recorder, List<QuteWebTemplatePathBuildItem> templatePaths,
+    public RouteBuildItem produceTemplatesRoute(QuteWebRecorder recorder, List<QuteWebTemplateBuildItem> templates,
             HttpRootPathBuildItem httpRootPath, QuteWebBuildTimeConfig config) {
-        if (templatePaths.isEmpty()) {
+        if (templates.isEmpty()) {
             // There are no templates to serve
             return null;
         }
+        final var templateLinks = templates.stream().filter(QuteWebTemplateBuildItem::hasLink)
+                .collect(Collectors.toMap(QuteWebTemplateBuildItem::link, QuteWebTemplateBuildItem::templatePath));
+        final var templatePaths = templates.stream().filter(not(QuteWebTemplateBuildItem::hasLink))
+                .map(QuteWebTemplateBuildItem::templatePath)
+                .collect(Collectors.toSet());
         return httpRootPath.routeBuilder()
                 .routeFunction(httpRootPath.relativePath(config.rootPath() + "/*"), recorder.initializeRoute())
                 .handlerType(config.useBlockingHandler() ? HandlerType.BLOCKING : HandlerType.NORMAL)
-                .handler(recorder.handler(httpRootPath.relativePath(config.rootPath()),
-                        templatePaths.stream().map(QuteWebTemplatePathBuildItem::getPath).collect(Collectors.toSet())))
+                .handler(recorder.handler(httpRootPath.relativePath(config.rootPath()), templatePaths, templateLinks))
                 .build();
     }
 }

@@ -1,8 +1,10 @@
 package io.quarkiverse.qute.web.runtime;
 
+import static io.quarkiverse.qute.web.runtime.PathUtils.removeLeadingSlash;
+import static io.quarkiverse.qute.web.runtime.PathUtils.removeTrailingSlash;
+
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
@@ -40,8 +42,8 @@ public class QuteWebHandler implements Handler<RoutingContext> {
     private static final String FRAGMENT_PARAM = "frag";
 
     private final String rootPath;
-    private final String webTemplatesPath;
     private final Set<String> templatePaths;
+    private final String webTemplatesPath;
     private final List<String> compressMediaTypes;
     // request path to template path
     private final Map<String, String> extractedPaths;
@@ -52,16 +54,18 @@ public class QuteWebHandler implements Handler<RoutingContext> {
     private final ManagedContext requestContext;
     private final LazyValue<TemplateProducer> templateProducer;
     private final QuteContext quteContext;
+    private final Map<String, String> templateLinks;
 
-    public QuteWebHandler(String rootPath, String publicDir, Set<String> templatePaths,
+    public QuteWebHandler(String rootPath, String publicDir, Set<String> templatePaths, Map<String, String> templateLinks,
             HttpBuildTimeConfig httpBuildTimeConfig) {
         this.rootPath = rootPath;
+        this.templatePaths = templatePaths;
         if (publicDir.equals("/") || publicDir.isBlank()) {
             this.webTemplatesPath = "";
         } else {
             this.webTemplatesPath = publicDir.startsWith("/") ? publicDir.substring(1) : publicDir;
         }
-        this.templatePaths = templatePaths;
+        this.templateLinks = templateLinks;
         this.compressMediaTypes = httpBuildTimeConfig.enableCompression
                 ? httpBuildTimeConfig.compressMediaTypes.orElse(List.of())
                 : null;
@@ -126,8 +130,7 @@ public class QuteWebHandler implements Handler<RoutingContext> {
 
         // Extract the real template path, e.g. /item.html -> web/item
         String path = extractedPaths.computeIfAbsent(requestPath, this::extractTemplatePath);
-
-        if (path != null && templatePaths.contains(path)) {
+        if (path != null) {
             Template template = templateProducer.get().getInjectableTemplate(path);
             TemplateInstance originalInstance = template.instance();
             TemplateInstance instance = originalInstance;
@@ -224,7 +227,7 @@ public class QuteWebHandler implements Handler<RoutingContext> {
      * <li>{@code /qsp/item?id=1} => {@code web/item}</li>
      * <li>{@code /nested/item.html?foo=bar} => {@code web/nested/item}</li>
      * </ul>
-     *
+     * <p>
      * Note that a path that ends with {@code /} is handled specifically. The {@code index} is appended to the path.
      *
      * @param path
@@ -232,26 +235,36 @@ public class QuteWebHandler implements Handler<RoutingContext> {
      */
     private String extractTemplatePath(String path) {
         if (path.length() >= rootPath.length()) {
-            if (path.endsWith("/")) {
+            path = path.substring(rootPath.length());
+            path = removeLeadingSlash(path);
+
+            // Check if we have a matching linked template
+            final String link = removeTrailingSlash(path);
+            if (templateLinks.containsKey(link)) {
+                return templateLinks.get(link);
+            }
+
+            // Check if we have a matching template path
+            if (path.isEmpty()) {
+                path = "index";
+            } else if (path.endsWith("/")) {
                 path = path + "index";
             }
-            path = path.substring(rootPath.length());
-            if (path.startsWith("/")) {
-                // /item.html => item.html
-                path = path.substring(1);
-            }
+
             if (!webTemplatesPath.isEmpty()) {
                 path = webTemplatesPath + "/" + path;
             }
             if (path.contains(".")) {
-                for (Entry<String, List<String>> e : quteContext.getVariants().entrySet()) {
+                for (Map.Entry<String, List<String>> e : quteContext.getVariants().entrySet()) {
                     if (e.getValue().contains(path)) {
                         path = e.getKey();
                         break;
                     }
                 }
             }
-            return path;
+            if (templatePaths.contains(path)) {
+                return path;
+            }
         }
         return null;
     }

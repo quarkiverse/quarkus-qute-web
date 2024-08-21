@@ -4,7 +4,6 @@ import { columnBodyRenderer } from '@vaadin/grid/lit.js';
 import '@vaadin/grid';
 import '@vaadin/text-field';
 import { paths } from 'build-time-data';
-import { rootPrefix } from 'build-time-data';
 
 
 /**
@@ -33,18 +32,22 @@ export class QwcQspPaths extends LitElement {
     render() {
             return html`
                 <vaadin-grid .items="${paths}" class="paths-table" theme="no-border" all-rows-visible>
-                    <vaadin-grid-column auto-width
-                        header="Path"
-                        ${columnBodyRenderer(this._renderPath, [])}
+                  <vaadin-grid-column auto-width
+                                      path="templateId"
+                                      resizable>
+                  </vaadin-grid-column>  
+                  <vaadin-grid-column auto-width
+                        header="Link"
+                        ${columnBodyRenderer(this._renderLink, [])}
                         resizable>
                     </vaadin-grid-column>
                 </vaadin-grid>
                 `;
     }
      
-    _renderPath(path) {
+    _renderLink(item) {
         return html`
-            <a href="${rootPrefix}${path}" target="_blank" class="path-link">${rootPrefix}${path}</a>
+            <a href="${item.link}" target="_blank" class="path-link">${item.link}</a>
         `;
     }
     
