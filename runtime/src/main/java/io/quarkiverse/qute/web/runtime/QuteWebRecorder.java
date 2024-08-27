@@ -1,5 +1,6 @@
 package io.quarkiverse.qute.web.runtime;
 
+import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
 
@@ -32,7 +33,8 @@ public class QuteWebRecorder {
         };
     }
 
-    public Handler<RoutingContext> handler(String rootPath, Set<String> templatePaths) {
-        return new QuteWebHandler(rootPath, quteWebConfig.publicDir(), templatePaths, httpConfig);
+    public Handler<RoutingContext> handler(String rootPath,
+            Set<String> templatePaths, Map<String, String> templateLinks) {
+        return new QuteWebHandler(rootPath, quteWebConfig.publicDir(), templatePaths, templateLinks, httpConfig);
     }
 }
