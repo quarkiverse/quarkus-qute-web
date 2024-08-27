@@ -9,7 +9,7 @@ metadata:
   guide: https://quarkiverse.github.io/quarkiverse-docs/quarkus-qute-web/dev/index.html
   categories:
     - "web"
-  status: "preview"
+  status: "stable"
   codestart:
     name: "qute-web"
     languages:
