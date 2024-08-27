@@ -8,7 +8,7 @@
         <version>999-SNAPSHOT</version>
     </parent>
     <artifactId>quarkus-qute-web-markdown</artifactId>
-    <name>Quarkus Qute - Markdown - Runtime</name>
+    <name>Quarkus Qute Web - Markdown - Runtime</name>
 
     <dependencies>
         <dependency>
