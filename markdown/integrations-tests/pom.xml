@@ -8,7 +8,12 @@
         <artifactId>quarkus-qute-web-markdown-parent</artifactId>
         <version>999-SNAPSHOT</version>
     </parent>
-    <artifactId>quarkus-qute-web-markdown-spi</artifactId>
-    <name>Quarkus Qute Web - Markdown - Spi</name>
 
+    <artifactId>quarkus-qute-web-markdown-integration-tests</artifactId>
+    <packaging>pom</packaging>
+    <name>Quarkus Qute Web - Markdown - Integration Tests</name>
+
+    <modules>
+        <module>markdown-autolink</module>
+    </modules>
 </project>
