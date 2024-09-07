@@ -1,2 +1,2 @@
 * xref:index.adoc[Quarkus Qute Web]
-* xref:index.adoc[Quarkus Qute Markdown]
+* xref:markdown.adoc[Quarkus Qute Markdown]
