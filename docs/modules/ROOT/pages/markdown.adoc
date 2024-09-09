@@ -14,7 +14,7 @@ To install the extension, add the following dependency to your project:
 <dependency>
     <groupId>io.quarkiverse.qute-markdown</groupId>
     <artifactId>quarkus-qute-web-markdown</artifactId>
-    <version>999-SNAPSHOT</version>
+    <version>{project-version}</version>
 </dependency>
 ----
 
