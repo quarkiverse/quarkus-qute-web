@@ -14,7 +14,7 @@ To install the extension, add the following dependency to your project:
 <dependency>
     <groupId>io.quarkiverse.qute-markdown</groupId>
     <artifactId>quarkus-qute-web-markdown</artifactId>
-    <version>${project.version}</version>
+    <version>${project-version}</version>
 </dependency>
 ----
 
@@ -79,7 +79,7 @@ Add the `quarkus-qute-web`  extension to your project, inside the `pom.xml` file
 <dependency>
     <groupId>io.quarkiverse.qute.web</groupId>
     <artifactId>quarkus-qute-web</artifactId>
-    <version>${project.version}</version>
+    <version>${project-version}</version>
 </dependency>
 ----
 
@@ -123,7 +123,7 @@ To use this extension in your project, add the following dependency to your `pom
 <dependency>
     <groupId>io.quarkiverse.qute.web</groupId>
     <artifactId>quarkus-qute-web-markdown-autolink</artifactId>
-    <version>${project.version}</version>
+    <version>${project-version}</version>
 </dependency>
 ----
 
