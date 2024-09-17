@@ -4,6 +4,6 @@ tags: extension-codestart
 type: code
 metadata:
   title: Qute Web
-  description: Create your web page using Quarkus and Qute
+  description: Qute templates like `some-page.html` served via HTTP automatically by Quarkus from the `src/main/resource/templates/pub` directory. No controllers needed. Once the quarkus app is started visit the generated page at http://localhost:8080/some-page?name=World
   path: /some-page
-  related-guide-section: https://quarkus.io/guides/qute#type-safe-templates
+  related-guide-section: https://docs.quarkiverse.io/quarkus-qute-web/dev/index.html
