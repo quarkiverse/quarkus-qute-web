@@ -15,5 +15,7 @@
     <modules>
         <module>deployment</module>
         <module>runtime</module>
+        <module>autolink</module>
+        <module>integrations-tests</module>
     </modules>
 </project>
