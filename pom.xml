@@ -28,7 +28,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <quarkus.version>3.6.9</quarkus.version>
-    <commonmark.version>0.22.0</commonmark.version>
+    <commonmark.version>0.23.0</commonmark.version>
   </properties>
   <dependencyManagement>
     <dependencies>
