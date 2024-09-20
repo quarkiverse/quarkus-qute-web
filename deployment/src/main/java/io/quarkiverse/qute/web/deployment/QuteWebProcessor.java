@@ -9,11 +9,17 @@ import java.util.stream.Collectors;
 
 import org.jboss.logging.Logger;
 
+import io.quarkiverse.qute.web.DataInitializer;
 import io.quarkiverse.qute.web.runtime.QuteWebBuildTimeConfig;
 import io.quarkiverse.qute.web.runtime.QuteWebExtensions;
 import io.quarkiverse.qute.web.runtime.QuteWebRecorder;
 import io.quarkus.arc.deployment.AdditionalBeanBuildItem;
+import io.quarkus.arc.deployment.SynthesisFinishedBuildItem;
 import io.quarkus.arc.deployment.SyntheticBeansRuntimeInitBuildItem;
+import io.quarkus.arc.deployment.UnremovableBeanBuildItem;
+import io.quarkus.arc.deployment.ValidationPhaseBuildItem.ValidationErrorBuildItem;
+import io.quarkus.arc.processor.BeanInfo;
+import io.quarkus.arc.processor.BuiltinScope;
 import io.quarkus.deployment.annotations.BuildProducer;
 import io.quarkus.deployment.annotations.BuildStep;
 import io.quarkus.deployment.annotations.Consume;
@@ -40,6 +46,22 @@ class QuteWebProcessor {
     AdditionalBeanBuildItem beans() {
         // It is not a bean but we need to make it a part of the bean archive index
         return new AdditionalBeanBuildItem(QuteWebExtensions.class);
+    }
+
+    @BuildStep
+    public UnremovableBeanBuildItem makeDataInitializersUnremovable() {
+        return UnremovableBeanBuildItem.beanTypes(DataInitializer.class);
+    }
+
+    @BuildStep
+    public void validateDataInitializers(SynthesisFinishedBuildItem discovery,
+            BuildProducer<ValidationErrorBuildItem> errors) {
+        for (BeanInfo bean : discovery.beanStream().withBeanType(DataInitializer.class)) {
+            if (!BuiltinScope.SINGLETON.is(bean.getScope()) && !BuiltinScope.APPLICATION.is(bean.getScope())) {
+                errors.produce(new ValidationErrorBuildItem(
+                        new IllegalStateException("DataInitializer has to be @Singleton or @ApplicationScoped: " + bean)));
+            }
+        }
     }
 
     @BuildStep
