@@ -13,9 +13,11 @@ import jakarta.enterprise.event.Event;
 
 import org.jboss.logging.Logger;
 
+import io.quarkiverse.qute.web.DataInitializer;
 import io.quarkus.arc.Arc;
 import io.quarkus.arc.ArcContainer;
 import io.quarkus.arc.InjectableContext.ContextState;
+import io.quarkus.arc.InstanceHandle;
 import io.quarkus.arc.ManagedContext;
 import io.quarkus.arc.impl.LazyValue;
 import io.quarkus.qute.Template;
@@ -55,6 +57,7 @@ public class QuteWebHandler implements Handler<RoutingContext> {
     private final LazyValue<TemplateProducer> templateProducer;
     private final QuteContext quteContext;
     private final Map<String, String> templateLinks;
+    private final List<DataInitializer> dataInitializers;
 
     public QuteWebHandler(String rootPath, String publicDir, Set<String> templatePaths, Map<String, String> templateLinks,
             HttpBuildTimeConfig httpBuildTimeConfig) {
@@ -79,6 +82,7 @@ public class QuteWebHandler implements Handler<RoutingContext> {
         this.templateProducer = new LazyValue<>(
                 () -> Arc.container().instance(TemplateProducer.class).get());
         this.quteContext = Arc.container().instance(QuteContext.class).get();
+        this.dataInitializers = container.listAll(DataInitializer.class).stream().map(InstanceHandle::get).toList();
     }
 
     @Override
@@ -175,6 +179,16 @@ public class QuteWebHandler implements Handler<RoutingContext> {
                         rc.request().path());
                 rc.response().setStatusCode(406).end();
             } else {
+                if (!dataInitializers.isEmpty()) {
+                    DataInitializer.InitContext ctx = new DataInitializer.InitContext(path, instance, rc.request());
+                    for (DataInitializer initializer : dataInitializers) {
+                        try {
+                            initializer.initialize(ctx);
+                        } catch (Exception e) {
+                            LOG.errorf(e, "Error initializing page [%s] with %s", path, initializer.getClass().getName());
+                        }
+                    }
+                }
                 instance.renderAsync().whenComplete((r, t) -> {
                     if (t != null) {
                         Throwable rootCause = rootCause(t);
