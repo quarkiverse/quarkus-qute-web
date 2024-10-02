@@ -22,22 +22,22 @@ public class QuteWebDevUIProcessor {
             QuteWebBuildTimeConfig config, BuildProducer<CardPageBuildItem> cardPages) {
 
         CardPageBuildItem pageBuildItem = new CardPageBuildItem();
-        final String publicDir = config.publicDir();
-        JsonArray paths = new JsonArray();
+        JsonArray pages = new JsonArray();
         for (QuteWebTemplateBuildItem item : templatePaths.stream()
                 .sorted(Comparator.comparing(p -> p.templatePath().toLowerCase())).toList()) {
-            var link = item.link() == null ? PathUtils.removeLeadingSlash(item.templatePath().replace(publicDir, ""))
-                    : item.link();
-            link = PathUtils.join(httpRootPath.relativePath(config.rootPath()), link);
-            paths.add(new JsonObject().put("templateId", item.templatePath()).put("link", link));
+            JsonObject template = new JsonObject();
+            template.put("link",
+                    PathUtils.join(httpRootPath.relativePath(config.rootPath()), item.getPagePath(config)));
+            template.put("path", item.templatePath());
+            pages.add(template);
         }
-        pageBuildItem.addBuildTimeData("paths", paths);
+        pageBuildItem.addBuildTimeData("pages", pages);
 
         pageBuildItem.addPage(Page.webComponentPageBuilder()
                 .title("Pages")
                 .icon("font-awesome-solid:file-code")
                 .componentLink("qwc-qsp-paths.js")
-                .staticLabel(String.valueOf(paths.size())));
+                .staticLabel(String.valueOf(pages.size())));
 
         cardPages.produce(pageBuildItem);
     }

@@ -29,6 +29,7 @@ import io.quarkus.deployment.builditem.FeatureBuildItem;
 import io.quarkus.qute.deployment.TemplateFilePathsBuildItem;
 import io.quarkus.vertx.http.deployment.HttpRootPathBuildItem;
 import io.quarkus.vertx.http.deployment.RouteBuildItem;
+import io.quarkus.vertx.http.deployment.devmode.NotFoundPageDisplayableEndpointBuildItem;
 import io.quarkus.vertx.http.runtime.HandlerType;
 
 class QuteWebProcessor {
@@ -92,14 +93,19 @@ class QuteWebProcessor {
     @Record(ExecutionTime.RUNTIME_INIT)
     @Consume(SyntheticBeansRuntimeInitBuildItem.class)
     public RouteBuildItem produceTemplatesRoute(QuteWebRecorder recorder, List<QuteWebTemplateBuildItem> templates,
-            HttpRootPathBuildItem httpRootPath, QuteWebBuildTimeConfig config) {
+            HttpRootPathBuildItem httpRootPath, QuteWebBuildTimeConfig config,
+            BuildProducer<NotFoundPageDisplayableEndpointBuildItem> endpoints) {
         if (templates.isEmpty()) {
             // There are no templates to serve
             return null;
         }
-        final var templateLinks = templates.stream().filter(QuteWebTemplateBuildItem::hasLink)
+        for (QuteWebTemplateBuildItem template : templates) {
+            endpoints.produce(new NotFoundPageDisplayableEndpointBuildItem(
+                    httpRootPath.relativePath(config.rootPath() + template.getPagePath(config)), "Qute web template", true));
+        }
+        var templateLinks = templates.stream().filter(QuteWebTemplateBuildItem::hasLink)
                 .collect(Collectors.toMap(QuteWebTemplateBuildItem::link, QuteWebTemplateBuildItem::templatePath));
-        final var templatePaths = templates.stream().filter(not(QuteWebTemplateBuildItem::hasLink))
+        var templatePaths = templates.stream().filter(not(QuteWebTemplateBuildItem::hasLink))
                 .map(QuteWebTemplateBuildItem::templatePath)
                 .collect(Collectors.toSet());
         return httpRootPath.routeBuilder()

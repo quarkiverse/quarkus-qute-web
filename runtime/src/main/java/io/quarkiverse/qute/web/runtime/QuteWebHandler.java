@@ -237,9 +237,9 @@ public class QuteWebHandler implements Handler<RoutingContext> {
     /**
      * Extract the real template path, for example:
      * <ul>
-     * <li>{@code /item.html} => {@code web/item}</li>
-     * <li>{@code /qsp/item?id=1} => {@code web/item}</li>
-     * <li>{@code /nested/item.html?foo=bar} => {@code web/nested/item}</li>
+     * <li>{@code /item.html} => {@code pub/item}</li>
+     * <li>{@code /item?id=1} => {@code pub/item}</li>
+     * <li>{@code /nested/item.html?foo=bar} => {@code pub/nested/item}</li>
      * </ul>
      * <p>
      * Note that a path that ends with {@code /} is handled specifically. The {@code index} is appended to the path.
@@ -249,38 +249,46 @@ public class QuteWebHandler implements Handler<RoutingContext> {
      */
     private String extractTemplatePath(String path) {
         if (path.length() >= rootPath.length()) {
+            // /foo.html -> foo.html
             path = path.substring(rootPath.length());
             path = removeLeadingSlash(path);
 
             // Check if we have a matching linked template
-            final String link = removeTrailingSlash(path);
-            if (templateLinks.containsKey(link)) {
-                return templateLinks.get(link);
-            }
-
-            // Check if we have a matching template path
-            if (path.isEmpty()) {
-                path = "index";
-            } else if (path.endsWith("/")) {
-                path = path + "index";
-            }
-
-            if (!webTemplatesPath.isEmpty()) {
-                path = webTemplatesPath + "/" + path;
-            }
-            if (path.contains(".")) {
-                for (Map.Entry<String, List<String>> e : quteContext.getVariants().entrySet()) {
-                    if (e.getValue().contains(path)) {
-                        path = e.getKey();
-                        break;
-                    }
+            final String link = templateLinks.get(removeTrailingSlash(path));
+            if (link != null) {
+                path = link;
+            } else {
+                // Check if we have a matching template path
+                if (path.isEmpty()) {
+                    // Root translates to an index page
+                    path = "index";
+                } else if (path.endsWith("/")) {
+                    // "index" is appended to a path that ends with "/"
+                    path = path + "index";
+                }
+                if (!webTemplatesPath.isEmpty()) {
+                    // Append the public dir if needed
+                    path = webTemplatesPath + "/" + path;
+                }
+                if (!templatePaths.contains(path)) {
+                    // No matching template path exists
+                    return null;
                 }
             }
-            if (templatePaths.contains(path)) {
-                return path;
-            }
+            return pathFromVariant(path);
         }
         return null;
+    }
+
+    private String pathFromVariant(String path) {
+        if (path.contains(".")) {
+            for (Map.Entry<String, List<String>> e : quteContext.getVariants().entrySet()) {
+                if (e.getValue().contains(path)) {
+                    return e.getKey();
+                }
+            }
+        }
+        return path;
     }
 
 }
