@@ -43,6 +43,11 @@ public class LinkedTemplateTest {
                 .statusCode(200)
                 .body(containsString("Hello world!"));
         given()
+                .when().get("/")
+                .then()
+                .statusCode(200)
+                .body(containsString("Hello world!"));
+        given()
                 .when().get("/foo/bar")
                 .then()
                 .statusCode(200)
