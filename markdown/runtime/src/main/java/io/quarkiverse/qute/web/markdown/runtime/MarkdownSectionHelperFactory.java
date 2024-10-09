@@ -37,7 +37,7 @@ public class MarkdownSectionHelperFactory implements SectionHelperFactory<Markdo
         return new MarkdownSectionHelper(List.of());
     }
 
-    static class MarkdownSectionHelper implements SectionHelper {
+    public static class MarkdownSectionHelper implements SectionHelper {
         private final CommonMarkConverter converter;
 
         public MarkdownSectionHelper(List<Extension> extensions) {
