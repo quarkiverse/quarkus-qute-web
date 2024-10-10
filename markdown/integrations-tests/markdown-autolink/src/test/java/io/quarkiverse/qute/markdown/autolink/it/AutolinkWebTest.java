@@ -21,4 +21,12 @@ public class AutolinkWebTest {
                         """));
 
     }
+
+    @Test
+    void shouldUseMarkdownify() {
+        given().when()
+                .get("/home")
+                .then()
+                .body(Matchers.containsString("<h2>Quarkus is amazing!</h2>"));
+    }
 }
