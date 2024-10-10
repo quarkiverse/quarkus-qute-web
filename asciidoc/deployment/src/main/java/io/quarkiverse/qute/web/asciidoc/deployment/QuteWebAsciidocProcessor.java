@@ -1,6 +1,6 @@
 package io.quarkiverse.qute.web.asciidoc.deployment;
 
-import io.quarkiverse.qute.web.asciidoc.runtime.AsciidocExtensions;
+import io.quarkiverse.qute.web.asciidoc.runtime.QuteWebAsciidocExtensions;
 import io.quarkiverse.qute.web.asciidoc.runtime.AsciidocSectionHelperFactory;
 import io.quarkus.arc.deployment.AdditionalBeanBuildItem;
 import io.quarkus.deployment.annotations.BuildProducer;
@@ -19,6 +19,6 @@ class QuteWebAsciidocProcessor {
     @BuildStep
     void process(BuildProducer<AdditionalBeanBuildItem> additionalBeans) {
         additionalBeans.produce(new AdditionalBeanBuildItem(AsciidocSectionHelperFactory.class));
-        additionalBeans.produce(new AdditionalBeanBuildItem(AsciidocExtensions.class));
+        additionalBeans.produce(new AdditionalBeanBuildItem(QuteWebAsciidocExtensions.class));
     }
 }

@@ -6,7 +6,7 @@ import io.quarkus.qute.TemplateExtension;
 
 @Vetoed
 @TemplateExtension
-public class AsciidocExtensions {
+public class QuteWebAsciidocExtensions {
 
     private static final AsciidocConverter CONVERTER = new AsciidocConverter();
 

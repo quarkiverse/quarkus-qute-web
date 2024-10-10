@@ -10,7 +10,7 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import io.quarkus.qute.Template;
 import io.quarkus.test.QuarkusUnitTest;
 
-public class QuteExtensionsTest {
+public class QuteWebAsciidocExtensionsTest {
 
     @RegisterExtension
     static final QuarkusUnitTest quarkusApp = new QuarkusUnitTest()
