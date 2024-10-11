@@ -2,46 +2,61 @@ package io.quarkiverse.qute.web.markdown.runtime;
 
 import java.util.List;
 import java.util.concurrent.CompletionStage;
-import java.util.stream.Collectors;
 
-import jakarta.enterprise.inject.Instance;
 import jakarta.inject.Inject;
 
-import org.commonmark.Extension;
-
-import io.quarkiverse.qute.web.markdown.runtime.commonmark.CommonMarkConverter;
+import io.quarkus.arc.Arc;
+import io.quarkus.arc.impl.LazyValue;
 import io.quarkus.qute.CompletedStage;
 import io.quarkus.qute.EngineConfiguration;
 import io.quarkus.qute.ResultNode;
 import io.quarkus.qute.SectionHelper;
 import io.quarkus.qute.SectionHelperFactory;
 import io.quarkus.qute.SingleResultNode;
+import io.quarkus.qute.TemplateExtension;
 
 @EngineConfiguration
-public class MarkdownSectionHelperFactory implements SectionHelperFactory<MarkdownSectionHelperFactory.MarkdownSectionHelper> {
-    private static final List<String> MARKDOWN_SECTIONS = List.of("markdown", "md");
+public class MarkdownSectionHelperFactory
+        implements SectionHelperFactory<MarkdownSectionHelperFactory.MarkdownSectionHelper> {
+
+    private final MdConverter converter;
+
+    public MarkdownSectionHelperFactory() {
+        // This constructor is only used during build
+        // where the converter is not used at all
+        this.converter = null;
+    }
 
     @Inject
-    Instance<Extension> extensionInstance;
+    public MarkdownSectionHelperFactory(MdConverter mdConverter) {
+        this.converter = mdConverter;
+    }
 
     @Override
     public List<String> getDefaultAliases() {
-        return MARKDOWN_SECTIONS;
+        return List.of("markdown", "md");
     }
 
     @Override
     public MarkdownSectionHelper initialize(SectionInitContext context) {
-        if (this.extensionInstance != null) {
-            return new MarkdownSectionHelper(this.extensionInstance.stream().collect(Collectors.toList()));
-        }
-        return new MarkdownSectionHelper(List.of());
+        return new MarkdownSectionHelper(converter);
+    }
+
+    // Lazily initialized converter used for the convertToMarkdown() template extention method
+    private static final LazyValue<MdConverter> CONVERTER = new LazyValue<>(
+            () -> Arc.container().instance(MdConverter.class).get());
+
+    @TemplateExtension(matchNames = { "markdownify", "mdToHtml" })
+    static String convertToMarkdown(String text, String ignoredName) {
+        return CONVERTER.get().html(text);
     }
 
     public static class MarkdownSectionHelper implements SectionHelper {
-        private final CommonMarkConverter converter;
 
-        public MarkdownSectionHelper(List<Extension> extensions) {
-            this.converter = new CommonMarkConverter(extensions);
+        private final MdConverter converter;
+
+        public MarkdownSectionHelper(MdConverter converter) {
+            this.converter = converter;
         }
 
         @Override
@@ -49,7 +64,7 @@ public class MarkdownSectionHelperFactory implements SectionHelperFactory<Markdo
             return context.execute().thenCompose(rn -> {
                 StringBuilder sb = new StringBuilder();
                 rn.process(sb::append);
-                return CompletedStage.of(new SingleResultNode(converter.apply(sb.toString())));
+                return CompletedStage.of(new SingleResultNode(converter.html(sb.toString())));
             });
         }
     }
