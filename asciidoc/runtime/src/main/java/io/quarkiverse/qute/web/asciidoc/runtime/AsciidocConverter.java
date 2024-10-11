@@ -9,13 +9,15 @@ import io.yupiik.asciidoc.renderer.html.AsciidoctorLikeHtmlRenderer;
 public class AsciidocConverter {
 
     private final Parser parser = new Parser();
-    private final AsciidoctorLikeHtmlRenderer renderer = new AsciidoctorLikeHtmlRenderer(
-            new AsciidoctorLikeHtmlRenderer.Configuration()
-                    .setAttributes(Map.of("noheader", "true")));
+    private final AsciidoctorLikeHtmlRenderer.Configuration config = new AsciidoctorLikeHtmlRenderer.Configuration()
+            .setAttributes(Map.of("noheader", "true"));
 
     public String apply(String asciidoc) {
         Body body = parser.parseBody(asciidoc, new Parser.ParserContext(null));
+        // Renderer is not thread-safe and must not be shared
+        AsciidoctorLikeHtmlRenderer renderer = new AsciidoctorLikeHtmlRenderer(config);
         renderer.visitBody(body);
         return renderer.result();
     }
+
 }

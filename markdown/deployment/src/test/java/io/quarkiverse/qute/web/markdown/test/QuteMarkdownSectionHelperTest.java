@@ -23,7 +23,7 @@ public class QuteMarkdownSectionHelperTest {
     Template foo;
 
     @Test
-    void testJsonObjectValueResolver() {
+    void shouldConvertToHtmlCorrectly() {
         String result = foo.render();
 
         System.out.println(result);
