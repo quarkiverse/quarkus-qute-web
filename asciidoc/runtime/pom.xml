@@ -20,6 +20,11 @@
             <artifactId>asciidoc-java</artifactId>
             <version>${asciidoc.java.version}</version>
         </dependency>
+        <dependency>
+            <groupId>io.yupiik.maven</groupId>
+            <artifactId>ascii2svg</artifactId>
+            <version>${asciidoc.java.version}</version>
+        </dependency>
     </dependencies>
 
     <build>
