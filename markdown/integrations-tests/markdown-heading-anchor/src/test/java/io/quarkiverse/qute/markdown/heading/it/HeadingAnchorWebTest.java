@@ -13,14 +13,12 @@ public class HeadingAnchorWebTest {
     @Test
     void shouldGenerateAnchorElementCorrectly() {
 
-        String string = given().when()
+        given().when()
                 .get("/md")
                 .then()
                 .body(Matchers.containsString("""
-                        <h3 id="
-                        """)).toString();
-
-        System.out.println(string);
+                        <h3 id="this-is-a-level-3">This is a level 3</h3>
+                        """));
 
     }
 }

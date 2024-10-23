@@ -13,16 +13,18 @@ import io.quarkiverse.qute.web.markdown.runtime.MdConverter;
 public class CommonMarkConverter implements MdConverter {
 
     private final Parser parser;
-    private final HtmlRenderer htmlRenderer = HtmlRenderer.builder().build();
+    private final HtmlRenderer htmlRenderer;
 
     public CommonMarkConverter() {
         this.parser = Parser.builder().build();
+        this.htmlRenderer = HtmlRenderer.builder().build();
     }
 
     public CommonMarkConverter(List<Extension> extensions) {
         if (extensions == null) {
             extensions = new ArrayList<>();
         }
+        this.htmlRenderer = HtmlRenderer.builder().extensions(extensions).build();
         this.parser = Parser.builder().extensions(extensions).build();
     }
 
