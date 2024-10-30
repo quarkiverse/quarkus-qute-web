@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Hello</title> 
+</head>
+<body>
+    <p>Hello {name ?: "world"}!</p>
+  {#asciidoc}
+  The goal of this extension is to expose https://quarkus.io/guides/qute-reference[Qute] templates located in the `src/main/resource/templates/pub` directory via HTTP.
+  Automatically, no controllers needed.
+  For example, the template `src/main/resource/templates/pub/foo.html` will be served from the paths `/foo` and `/foo.html` by default.
+
+  NOTE: The `index.html` and `index.qute.html` pages are handled specifically, i.e. they are also served as a "default page" of the containing directory. For example, the template `src/main/resource/templates/pub/index.html` will be served from the paths `/index`, `/index.html` and `/` by default.
+
+  == Installation
+
+  If you want to use this extension, you need to add the `io.quarkiverse.qute.web:quarkus-qute-web` extension first to your build file.
+
+  For instance, with Maven, add the following dependency to your POM file:
+
+  {#for name in cdi:foo.names}
+  * {name}
+  {/}
+
+  [source,xml,subs=attributes+]
+  ----
+  <dependency>
+      <groupId>io.quarkiverse.qute.web</groupId>
+      <artifactId>quarkus-qute-web</artifactId>
+      <version>\{project-version}</version>
+  </dependency>
+  ----
+  {/}
+</body>
+</html>
