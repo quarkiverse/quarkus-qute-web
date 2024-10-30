@@ -5,7 +5,7 @@
     <parent>
         <groupId>io.quarkiverse.qute.web</groupId>
         <artifactId>quarkus-qute-web-markdown-autolink-parent</artifactId>
-        <version>3.2.2</version>
+        <version>999-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>quarkus-qute-web-markdown-autolink</artifactId>
