@@ -9,7 +9,6 @@ import io.quarkus.deployment.annotations.BuildProducer;
 import io.quarkus.deployment.annotations.BuildStep;
 import io.quarkus.deployment.builditem.CombinedIndexBuildItem;
 import io.quarkus.deployment.builditem.FeatureBuildItem;
-import io.quarkus.deployment.builditem.IndexDependencyBuildItem;
 import io.quarkus.deployment.builditem.nativeimage.ReflectiveClassBuildItem;
 
 class QuteWebAsciidocProcessor {
@@ -19,12 +18,6 @@ class QuteWebAsciidocProcessor {
     @BuildStep
     FeatureBuildItem feature() {
         return new FeatureBuildItem(FEATURE);
-    }
-
-    @BuildStep
-    void indexTransitiveDependencies(BuildProducer<IndexDependencyBuildItem> index) {
-        index.produce(new IndexDependencyBuildItem("io.yupiik.maven", "asciidoc-java"));
-        index.produce(new IndexDependencyBuildItem("io.yupiik.maven", "ascii2svg"));
     }
 
     @BuildStep

@@ -18,7 +18,7 @@ public class QuteWebAsciiDocTest {
                 .when().get("/hello")
                 .then()
                 .statusCode(200)
-                .log().all()
+                .log().ifValidationFails()
                 .body("html.body.p[0]", equalTo("Hello world!"))
                 .body("html.body.div.div.div.ul.li[0].p", equalToCompressingWhiteSpace("Joe"))
                 .body("html.body.div.h2", equalTo("Installation"))
