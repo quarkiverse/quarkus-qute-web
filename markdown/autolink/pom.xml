@@ -8,6 +8,7 @@
     </parent>
 
     <artifactId>quarkus-qute-web-markdown-autolink-parent</artifactId>
+    <name>Quarkus Qute Web - Markdown - Autolink - Parent</name>
     <packaging>pom</packaging>
     <modules>
         <module>deployment</module>
