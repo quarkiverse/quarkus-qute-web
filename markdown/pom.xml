@@ -17,6 +17,19 @@
         <module>runtime</module>
         <module>autolink</module>
         <module>heading-anchor</module>
-        <module>integrations-tests</module>
     </modules>
+    <profiles>
+        <profile>
+            <id>it</id>
+            <activation>
+                <property>
+                    <name>performRelease</name>
+                    <value>!true</value>
+                </property>
+            </activation>
+            <modules>
+                <module>integration-tests</module>
+            </modules>
+        </profile>
+    </profiles>
 </project>
