@@ -1,9 +1,11 @@
 package io.quarkiverse.qute.web.asciidoc.runtime;
 
+import java.nio.file.Path;
 import java.util.Map;
 
 import io.yupiik.asciidoc.model.Body;
 import io.yupiik.asciidoc.parser.Parser;
+import io.yupiik.asciidoc.parser.resolver.ContentResolver;
 import io.yupiik.asciidoc.renderer.html.AsciidoctorLikeHtmlRenderer;
 
 public class AsciidocConverter {
@@ -17,7 +19,7 @@ public class AsciidocConverter {
         // AsciiDoc content is not supposed to be indented globally
         // In Qute context it might often be indented
         final String content = trimIndent(asciidoc);
-        Body body = parser.parseBody(content, new Parser.ParserContext(null));
+        Body body = parser.parseBody(content, new Parser.ParserContext(ContentResolver.of(Path.of("."))));
         // Renderer is not thread-safe and must not be shared
         AsciidoctorLikeHtmlRenderer renderer = new AsciidoctorLikeHtmlRenderer(config);
         renderer.visitBody(body);
