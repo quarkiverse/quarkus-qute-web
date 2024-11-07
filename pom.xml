@@ -12,8 +12,8 @@
   <packaging>pom</packaging>
   <name>Quarkus Qute Web - Parent</name>
   <modules>
-    <module>deployment</module>
-    <module>runtime</module>
+    <module>core/deployment</module>
+    <module>core/runtime</module>
     <module>markdown</module>
     <module>asciidoc</module>
   </modules>
@@ -86,7 +86,7 @@
         </property>
       </activation>
       <modules>
-        <module>integration-tests</module>
+        <module>core/integration-tests</module>
       </modules>
     </profile>
   </profiles>
