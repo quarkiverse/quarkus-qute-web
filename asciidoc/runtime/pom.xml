@@ -16,6 +16,10 @@
             <artifactId>quarkus-qute</artifactId>
         </dependency>
         <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-rest-client-jackson</artifactId>
+        </dependency>
+        <dependency>
             <groupId>io.yupiik.maven</groupId>
             <artifactId>asciidoc-java</artifactId>
             <version>${asciidoc.java.version}</version>

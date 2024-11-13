@@ -1,18 +1,25 @@
 package io.quarkiverse.qute.web.asciidoc.runtime;
 
 import java.nio.file.Path;
-import java.util.Map;
 
+import jakarta.enterprise.context.ApplicationScoped;
+
+import io.quarkus.arc.Unremovable;
 import io.yupiik.asciidoc.model.Body;
 import io.yupiik.asciidoc.parser.Parser;
 import io.yupiik.asciidoc.parser.resolver.ContentResolver;
 import io.yupiik.asciidoc.renderer.html.AsciidoctorLikeHtmlRenderer;
 
+@ApplicationScoped
+@Unremovable
 public class AsciidocConverter {
 
     private final Parser parser = new Parser();
-    private final AsciidoctorLikeHtmlRenderer.Configuration config = new AsciidoctorLikeHtmlRenderer.Configuration()
-            .setAttributes(Map.of("noheader", "true"));
+    private final AsciidocRendererFactory rendererFactory;
+
+    public AsciidocConverter(AsciidocRendererFactory rendererFactory) {
+        this.rendererFactory = rendererFactory;
+    }
 
     public String apply(String asciidoc) {
         // Cleaning the content from global indentation is necessary because
@@ -21,7 +28,7 @@ public class AsciidocConverter {
         final String content = trimIndent(asciidoc);
         Body body = parser.parseBody(content, new Parser.ParserContext(ContentResolver.of(Path.of("."))));
         // Renderer is not thread-safe and must not be shared
-        AsciidoctorLikeHtmlRenderer renderer = new AsciidoctorLikeHtmlRenderer(config);
+        AsciidoctorLikeHtmlRenderer renderer = rendererFactory.getRenderer();
         renderer.visitBody(body);
         return renderer.result();
     }
