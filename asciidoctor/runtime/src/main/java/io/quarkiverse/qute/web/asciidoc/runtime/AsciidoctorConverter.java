@@ -1,29 +1,40 @@
 package io.quarkiverse.qute.web.asciidoc.runtime;
 
-import java.nio.file.Path;
-import java.util.Map;
+import jakarta.enterprise.context.ApplicationScoped;
 
-import io.yupiik.asciidoc.model.Body;
-import io.yupiik.asciidoc.parser.Parser;
-import io.yupiik.asciidoc.parser.resolver.ContentResolver;
-import io.yupiik.asciidoc.renderer.html.AsciidoctorLikeHtmlRenderer;
+import org.asciidoctor.Asciidoctor;
+import org.asciidoctor.Attributes;
+import org.asciidoctor.Options;
 
-public class AsciidocConverter {
+import io.quarkus.arc.Unremovable;
 
-    private final Parser parser = new Parser();
-    private final AsciidoctorLikeHtmlRenderer.Configuration config = new AsciidoctorLikeHtmlRenderer.Configuration()
-            .setAttributes(Map.of("noheader", "true"));
+@ApplicationScoped
+@Unremovable
+public class AsciidoctorConverter {
+
+    private final Asciidoctor asciidoctor;
+    private final Options converterOptions;
+
+    public AsciidoctorConverter(AsciidoctorConfig asciidoctorConfig) {
+        asciidoctor = Asciidoctor.Factory.create();
+        asciidoctor.requireLibrary("asciidoctor-diagram");
+        converterOptions = Options.builder()
+                .backend("html5")
+                .attributes(Attributes.builder()
+                        .imagesDir(asciidoctorConfig.imageDir())
+                        .showTitle(true)
+                        .attribute("imagesoutdir", asciidoctorConfig.outputImageDir())
+                        .attribute(Attributes.SOURCE_HIGHLIGHTER, "highlight.js")
+                        .build())
+                .build();
+    }
 
     public String apply(String asciidoc) {
         // Cleaning the content from global indentation is necessary because
         // AsciiDoc content is not supposed to be indented globally
         // In Qute context it might often be indented
         final String content = trimIndent(asciidoc);
-        Body body = parser.parseBody(content, new Parser.ParserContext(ContentResolver.of(Path.of("."))));
-        // Renderer is not thread-safe and must not be shared
-        AsciidoctorLikeHtmlRenderer renderer = new AsciidoctorLikeHtmlRenderer(config);
-        renderer.visitBody(body);
-        return renderer.result();
+        return asciidoctor.convert(content, converterOptions);
     }
 
     public static String trimIndent(String content) {

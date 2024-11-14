@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 import io.quarkus.test.junit.QuarkusTest;
 
 @QuarkusTest
-public class QuteWebAsciiDocTest {
+public class QuteWebAsciiDoctorTest {
 
     @Test
     public void testTemplates() {
@@ -22,7 +22,7 @@ public class QuteWebAsciiDocTest {
                 .body("html.body.p[0]", equalTo("Hello world!"))
                 .body("html.body.div.div.div.ul.li[0].p", equalToCompressingWhiteSpace("Joe"))
                 .body("html.body.div.h2", equalTo("Installation"))
-                .body("html.body.div.div.div.div.pre.code[0].@class", equalTo("language-xml hljs"))
+                .body("html.body.div.div.div.div.pre.code.@class", equalTo("language-xml hljs"))
                 .body(containsString(" &lt;groupId&gt;io.quarkiverse.qute.web&lt;/groupId&gt;"));
 
     }

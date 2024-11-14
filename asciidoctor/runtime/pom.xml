@@ -4,11 +4,11 @@
 
     <parent>
         <groupId>io.quarkiverse.qute.web</groupId>
-        <artifactId>quarkus-qute-web-asciidoc-parent</artifactId>
+        <artifactId>quarkus-qute-web-asciidoctor-parent</artifactId>
         <version>999-SNAPSHOT</version>
     </parent>
-    <artifactId>quarkus-qute-web-asciidoc</artifactId>
-    <name>Quarkus Qute Web - Asciidoc - Runtime</name>
+    <artifactId>quarkus-qute-web-asciidoctor</artifactId>
+    <name>Quarkus Qute Web - asciidoctor - Runtime</name>
 
     <dependencies>
         <dependency>
@@ -16,18 +16,14 @@
             <artifactId>quarkus-qute</artifactId>
         </dependency>
         <dependency>
-            <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-rest-client-jackson</artifactId>
+            <groupId>org.asciidoctor</groupId>
+            <artifactId>asciidoctorj</artifactId>
+            <version>${asciidoctorj.version}</version>
         </dependency>
         <dependency>
-            <groupId>io.yupiik.maven</groupId>
-            <artifactId>asciidoc-java</artifactId>
-            <version>${asciidoc.java.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.yupiik.maven</groupId>
-            <artifactId>ascii2svg</artifactId>
-            <version>${asciidoc.java.version}</version>
+            <groupId>org.asciidoctor</groupId>
+            <artifactId>asciidoctorj-diagram</artifactId>
+            <version>${asciidoctorj-diagram.version}</version>
         </dependency>
     </dependencies>
 
