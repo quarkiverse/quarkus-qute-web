@@ -1,0 +1,14 @@
+name: Qute Web Asciidoctor
+description: A Qute Web extension designed to provide full Asciidoctor integration by leveraging AsciidoctorJ
+metadata:
+  keywords:
+    - qute-web-asciidoctor
+    - roq
+    - qute
+    - website
+    - templates
+    - asciidoc
+  guide: https://quarkiverse.github.io/quarkiverse-docs/quarkus-qute-web/dev/index.html
+  categories:
+    - "miscellaneous"
+  status: "preview"
