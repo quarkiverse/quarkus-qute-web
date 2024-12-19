@@ -12,22 +12,8 @@
     <name>Quarkus Qute Web - Asciidoc - Parent</name>
 
     <modules>
-        <module>deployment</module>
-        <module>runtime</module>
+        <module>asciidoc-light</module>
+        <module>asciidoctorj</module>
     </modules>
-    <profiles>
-        <profile>
-            <id>it</id>
-            <activation>
-                <property>
-                    <name>performRelease</name>
-                    <value>!true</value>
-                </property>
-            </activation>
-            <modules>
-                <module>integration-tests</module>
-            </modules>
-        </profile>
-    </profiles>
 
 </project>

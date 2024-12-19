@@ -1,0 +1,15 @@
+name: Qute Web AsciidoctorJ
+description: A Qute Web extension designed to provide full Asciidoctor integration by leveraging AsciidoctorJ. Since it is using JRuby, it is not made for native compilation (use qute-web-asciidoc-light instead).
+metadata:
+  keywords:
+    - qute-web-asciidoc
+    - asciidoctorj
+    - roq
+    - qute
+    - website
+    - templates
+    - asciidoc
+  guide: https://quarkiverse.github.io/quarkiverse-docs/quarkus-qute-web/dev/index.html
+  categories:
+    - "miscellaneous"
+  status: "preview"

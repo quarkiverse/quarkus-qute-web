@@ -1,0 +1,14 @@
+name: Qute Web Asciidoc Light
+description: A Qute Web extension designed to simplify the conversion of AsciiDoc to HTML by providing a set of AsciiDoc tags using a light pure Java converter. It's faster but it is not feature complete.
+metadata:
+  keywords:
+    - qute-web-asciidoc
+    - roq
+    - qute
+    - website
+    - templates
+    - asciidoc
+  guide: https://quarkiverse.github.io/quarkiverse-docs/quarkus-qute-web/dev/index.html
+  categories:
+    - "miscellaneous"
+  status: "preview"
