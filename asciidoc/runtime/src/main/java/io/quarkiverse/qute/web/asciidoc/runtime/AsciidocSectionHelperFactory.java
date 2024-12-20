@@ -5,6 +5,7 @@ import java.util.concurrent.CompletionStage;
 
 import io.quarkus.qute.CompletedStage;
 import io.quarkus.qute.EngineConfiguration;
+import io.quarkus.qute.RawString;
 import io.quarkus.qute.ResultNode;
 import io.quarkus.qute.SectionHelper;
 import io.quarkus.qute.SectionHelperFactory;
@@ -29,8 +30,8 @@ public class AsciidocSectionHelperFactory
     }
 
     @TemplateExtension(matchNames = { "asciidocify", "asciidocToHtml" })
-    static String convertToAsciidoc(String text, String ignoredName) {
-        return CONVERTER.apply(text);
+    static RawString convertToAsciidoc(String text, String ignoredName) {
+        return new RawString(CONVERTER.apply(text));
     }
 
     public static class AsciidocSectionHelper implements SectionHelper {
