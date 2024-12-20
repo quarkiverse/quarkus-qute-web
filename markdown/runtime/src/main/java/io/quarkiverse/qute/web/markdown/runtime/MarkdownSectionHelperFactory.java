@@ -3,17 +3,11 @@ package io.quarkiverse.qute.web.markdown.runtime;
 import java.util.List;
 import java.util.concurrent.CompletionStage;
 
+import io.quarkus.qute.*;
 import jakarta.inject.Inject;
 
 import io.quarkus.arc.Arc;
 import io.quarkus.arc.impl.LazyValue;
-import io.quarkus.qute.CompletedStage;
-import io.quarkus.qute.EngineConfiguration;
-import io.quarkus.qute.ResultNode;
-import io.quarkus.qute.SectionHelper;
-import io.quarkus.qute.SectionHelperFactory;
-import io.quarkus.qute.SingleResultNode;
-import io.quarkus.qute.TemplateExtension;
 
 @EngineConfiguration
 public class MarkdownSectionHelperFactory
@@ -47,8 +41,8 @@ public class MarkdownSectionHelperFactory
             () -> Arc.container().instance(MdConverter.class).get());
 
     @TemplateExtension(matchNames = { "markdownify", "mdToHtml" })
-    static String convertToMarkdown(String text, String ignoredName) {
-        return CONVERTER.get().html(text);
+    static RawString convertToMarkdown(String text, String ignoredName) {
+        return new RawString(CONVERTER.get().html(text));
     }
 
     public static class MarkdownSectionHelper implements SectionHelper {
