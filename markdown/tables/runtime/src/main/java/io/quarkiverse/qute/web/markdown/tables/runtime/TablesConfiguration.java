@@ -13,7 +13,7 @@ public class TablesConfiguration {
 
     @Produces
     @DefaultBean
-    public Extension autolink() {
+    public Extension tables() {
         return TablesExtension.create();
     }
 }
