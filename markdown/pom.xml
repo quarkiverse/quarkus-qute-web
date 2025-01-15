@@ -17,6 +17,7 @@
         <module>runtime</module>
         <module>autolink</module>
         <module>heading-anchor</module>
+        <module>tables</module>
     </modules>
     <profiles>
         <profile>

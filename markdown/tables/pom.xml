@@ -7,13 +7,11 @@
         <version>999-SNAPSHOT</version>
     </parent>
 
-    <artifactId>quarkus-qute-web-markdown-integration-tests</artifactId>
+    <artifactId>quarkus-qute-web-markdown-tables-parent</artifactId>
+    <name>Quarkus Qute Web - Markdown - Tables - Parent</name>
     <packaging>pom</packaging>
-    <name>Quarkus Qute Web - Markdown - Integration Tests</name>
-
     <modules>
-        <module>markdown-autolink</module>
-        <module>markdown-heading-anchor</module>
-        <module>markdown-tables</module>
+        <module>deployment</module>
+        <module>runtime</module>
     </modules>
 </project>
