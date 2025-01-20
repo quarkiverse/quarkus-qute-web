@@ -1,5 +1,5 @@
 name: Qute Web Markdown
-#description: Do something useful.
+description: Render Markdown templates using Qute
 metadata:
   keywords:
     - qute-web-markdown
@@ -9,7 +9,7 @@ metadata:
     - templates
     - markdown
     - md
-  guide: https://quarkiverse.github.io/quarkiverse-docs/quarkus-qute-web/dev/index.html # To create and publish this guide, see https://github.com/quarkiverse/quarkiverse/wiki#documenting-your-extension
+  guide: https://docs.quarkiverse.io/quarkus-qute-web/dev/markdown.html
   categories:
     - "miscellaneous"
   status: "preview"
