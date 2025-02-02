@@ -40,7 +40,7 @@ public class QuteMarkdownSectionWithInnerSectionTest {
 
         Assertions.assertEquals("""
                 <h1>Quarkus and Qute</h1>
-                <h1>Qute and Roq</h1>
+                <h1 id="qute-and-roq">Qute and Roq</h1>
                 <p>Here is a list:</p>
                 <ul>
                 <li>an apple as a list item</li>

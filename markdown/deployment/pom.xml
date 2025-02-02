@@ -25,6 +25,21 @@
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-qute-deployment</artifactId>
         </dependency>
+                <dependency>
+            <groupId>io.quarkiverse.qute.web</groupId>
+            <artifactId>quarkus-qute-web-markdown-heading-anchor-deployment</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.quarkiverse.qute.web</groupId>
+            <artifactId>quarkus-qute-web-markdown-autolink-deployment</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+                <dependency>
+            <groupId>io.quarkiverse.qute.web</groupId>
+            <artifactId>quarkus-qute-web-markdown-tables-deployment</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
 
     <build>

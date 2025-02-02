@@ -28,6 +28,6 @@ public class QuteMarkdownSectionHelperTest {
 
         System.out.println(result);
 
-        Assertions.assertEquals("<h1>Qute and Roq</h1>\n", result);
+        Assertions.assertEquals("<h1 id=\"qute-and-roq\">Qute and Roq</h1>\n", result);
     }
 }
