@@ -1,4 +1,4 @@
-package io.quarkiverse.qute.web.markdown.heading.runtime;
+package io.quarkiverse.qute.web.markdown.runtime;
 
 import jakarta.enterprise.context.Dependent;
 import jakarta.enterprise.inject.Produces;
