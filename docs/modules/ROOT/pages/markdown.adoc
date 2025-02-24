@@ -24,7 +24,7 @@ This extension can be used to render Markdown templates inside a Qute template o
 
 === Standalone Usage
 
-Create a new Qute template with `foo.txt` name.
+Create a new Qute template named `foo.txt`:
 
 [source,html]
 ----
@@ -34,7 +34,8 @@ Create a new Qute template with `foo.txt` name.
 {/md}
 ----
 
-Create a new resource class and inject the template using the `@Inject` annotation. Then, use the `render` method to render the template.
+Create a new resource class and inject the template using the `@Inject` annotation. Then, use the `render` method to display the template.
+
 [source,java]
 ----
 package com.foo;
@@ -60,9 +61,9 @@ public class GreetingResource {
 }
 ----
 
-Finally, start your application and open the following URL in your browser: `http://localhost:8080/hello`.
+Start your application and open the following URL in your browser: `http://localhost:8080/hello`.
 
-The output should be the following:
+The output should be:
 
 [source,html]
 ----
@@ -72,7 +73,7 @@ The output should be the following:
 === Integration with Qute Web
 
 This extension can be combined with the `quarkus-qute-web` extension to render Markdown templates in a web application.
-Add the `quarkus-qute-web`  extension to your project, inside the `pom.xml` file:
+Add the `quarkus-qute-web` extension to your project inside the `pom.xml` file:
 
 [source,xml,subs=attributes+]
 ----
@@ -83,7 +84,7 @@ Add the `quarkus-qute-web`  extension to your project, inside the `pom.xml` file
 </dependency>
 ----
 
-Then, create a new Qute template with the `.txt` or `.html` extension.
+Then, create a new Qute template with the `.txt` or `.html` extension:
 
 [source,html]
 ----
@@ -104,7 +105,7 @@ Then, create a new Qute template with the `.txt` or `.html` extension.
 </html>
 ----
 
-Finally, start your application and open the following URL in your browser: `http://localhost:8080/markdown`.
+Start your application and open the following URL in your browser: `http://localhost:8080/markdown`.
 
 == CommonMark Extensions
 
@@ -112,32 +113,9 @@ The `io.quarkiverse.qute-markdown:quarkus-qute-web-markdown` module in Quarkus u
 
 You can extend the parsing and rendering behavior of Markdown using additional libraries.
 
-=== Autolink Extension
+By default, this extension enables the `heading-anchor`, `autolink`, and `tables` Markdown extensions. If you want to disable any of them, you can do so using configuration properties.
 
-The Autolink extension automatically converts plain links, such as URLs and email addresses, into clickable links. This functionality is provided by the autolink-java project.
+[[extension-configuration-reference]]
+== Extension Configuration Reference
 
-To use this extension in your project, add the following dependency to your `pom.xml` file:
-
-[source,xml,subs=attributes+]
-----
-<dependency>
-    <groupId>io.quarkiverse.qute.web</groupId>
-    <artifactId>quarkus-qute-web-markdown-autolink</artifactId>
-    <version>{project-version}</version>
-</dependency>
-----
-
-After adding this dependency, if you include a URL like `https://quarkus.io` in your Markdown content:
-
-[source,markdown]
-.content.md
-----
-https://quarkus.io
-----
-
-The generated HTML output will be:
-
-[source,html]
-----
-<a href="https://quarkus.io">https://quarkus.io</a>
-----
+include::includes/quarkus-qute-web-markdown.adoc[leveloffset=+1, opts=optional]

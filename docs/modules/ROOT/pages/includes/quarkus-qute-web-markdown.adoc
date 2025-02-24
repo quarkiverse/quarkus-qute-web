@@ -1,0 +1,65 @@
+:summaryTableId: quarkus-qute-web-markdown_quarkus-qute
+[.configuration-legend]
+icon:lock[title=Fixed at build time] Configuration property fixed at build time - All other configuration properties are overridable at runtime
+[.configuration-reference.searchable, cols="80,.^10,.^10"]
+|===
+
+h|[.header-title]##Configuration property##
+h|Type
+h|Default
+
+a|icon:lock[title=Fixed at build time] [[quarkus-qute-web-markdown_quarkus-qute-web-markdown-plugin-tables-enabled]] [.property-path]##link:#quarkus-qute-web-markdown_quarkus-qute-web-markdown-plugin-tables-enabled[`quarkus.qute.web.markdown.plugin.tables.enabled`]##
+
+[.description]
+--
+Whether the plugin is enabled or not.
+
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_QUTE_WEB_MARKDOWN_PLUGIN_TABLES_ENABLED+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_QUTE_WEB_MARKDOWN_PLUGIN_TABLES_ENABLED+++`
+endif::add-copy-button-to-env-var[]
+--
+|boolean
+|`true`
+
+a|icon:lock[title=Fixed at build time] [[quarkus-qute-web-markdown_quarkus-qute-web-markdown-plugin-autolink-enabled]] [.property-path]##link:#quarkus-qute-web-markdown_quarkus-qute-web-markdown-plugin-autolink-enabled[`quarkus.qute.web.markdown.plugin.autolink.enabled`]##
+
+[.description]
+--
+Whether the plugin is enabled or not.
+
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_QUTE_WEB_MARKDOWN_PLUGIN_AUTOLINK_ENABLED+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_QUTE_WEB_MARKDOWN_PLUGIN_AUTOLINK_ENABLED+++`
+endif::add-copy-button-to-env-var[]
+--
+|boolean
+|`true`
+
+a|icon:lock[title=Fixed at build time] [[quarkus-qute-web-markdown_quarkus-qute-web-markdown-plugin-heading-anchor-enabled]] [.property-path]##link:#quarkus-qute-web-markdown_quarkus-qute-web-markdown-plugin-heading-anchor-enabled[`quarkus.qute.web.markdown.plugin.heading-anchor.enabled`]##
+
+[.description]
+--
+Whether the plugin is enabled or not.
+
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_QUTE_WEB_MARKDOWN_PLUGIN_HEADING_ANCHOR_ENABLED+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_QUTE_WEB_MARKDOWN_PLUGIN_HEADING_ANCHOR_ENABLED+++`
+endif::add-copy-button-to-env-var[]
+--
+|boolean
+|`true`
+
+|===
+
+
+:!summaryTableId:
