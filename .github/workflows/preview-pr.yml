@@ -1,0 +1,57 @@
+name: Surge.sh Preview
+
+on:
+  workflow_run:
+    workflows: [ "Build PR Preview" ]
+    types:
+      - completed
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  preview:
+    runs-on: ubuntu-latest
+    if: github.event.workflow_run.event == 'pull_request' && github.event.workflow_run.conclusion == 'success'
+    permissions:
+      pull-requests: write # Required to update PR status comment
+    steps:
+      - name: Download docs artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: docs
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: ${{ github.event.workflow_run.id }}
+
+      - name: Store PR id as variable
+        id: pr
+        run: |
+          echo "id=$(<pr-id.txt)" >> $GITHUB_OUTPUT
+          rm -f pr-id.txt
+
+      - name: Publishing docs to Surge.sh
+        id: deploy
+        run: npx surge ./ --domain https://quarkiverse-qute-web-docs-${{ steps.pr.outputs.id }}-preview.surge.sh --token ${{ secrets.SURGE_TOKEN }}
+
+      - name: Update PR status comment on success
+        uses: quarkusio/action-helpers@main
+        with:
+          action: maintain-one-comment
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          pr-number: ${{ steps.pr.outputs.id }}
+          body: |
+            🚀 PR Preview for **docs** ${{ github.sha }} has been successfully built!
+            * https://quarkiverse-qute-web-docs-${{ steps.pr.outputs.id }}-preview.surge.sh
+          body-marker: <!-- Preview status comment marker -->
+
+      - name: Update PR status comment on failure
+        uses: quarkusio/action-helpers@main
+        if: ${{ failure() }}
+        with:
+          action: maintain-one-comment
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          pr-number: ${{ steps.pr.outputs.id }}
+          body: |
+            😭 Deploy PR Preview failed.
+          body-marker: <!-- Preview status comment marker -->
