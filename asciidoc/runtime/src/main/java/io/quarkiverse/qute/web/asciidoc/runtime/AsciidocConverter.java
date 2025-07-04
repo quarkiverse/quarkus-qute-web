@@ -1,7 +1,9 @@
 package io.quarkiverse.qute.web.asciidoc.runtime;
 
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Map;
+import java.util.Optional;
 
 import io.yupiik.asciidoc.model.Body;
 import io.yupiik.asciidoc.parser.Parser;
@@ -14,12 +16,18 @@ public class AsciidocConverter {
     private final AsciidoctorLikeHtmlRenderer.Configuration config = new AsciidoctorLikeHtmlRenderer.Configuration()
             .setAttributes(Map.of("noheader", "true"));
 
-    public String apply(String asciidoc) {
+    public String apply(Path templatePath, String asciidoc) {
         // Cleaning the content from global indentation is necessary because
         // AsciiDoc content is not supposed to be indented globally
         // In Qute context it might often be indented
         final String content = trimIndent(asciidoc);
-        Body body = parser.parseBody(content, new Parser.ParserContext(ContentResolver.of(Path.of("."))));
+        final ContentResolver contentResolver;
+        if (templatePath != null && Files.isDirectory(templatePath.getParent())) {
+            contentResolver = ContentResolver.of(templatePath.getParent());
+        } else {
+            contentResolver = (ref, encoding) -> Optional.empty();
+        }
+        Body body = parser.parseBody(content, new Parser.ParserContext(contentResolver));
         // Renderer is not thread-safe and must not be shared
         AsciidoctorLikeHtmlRenderer renderer = new AsciidoctorLikeHtmlRenderer(config);
         renderer.visitBody(body);

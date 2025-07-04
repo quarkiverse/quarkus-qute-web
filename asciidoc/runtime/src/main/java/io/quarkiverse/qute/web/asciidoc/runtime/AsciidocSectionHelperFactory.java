@@ -1,5 +1,6 @@
 package io.quarkiverse.qute.web.asciidoc.runtime;
 
+import java.nio.file.Path;
 import java.util.List;
 import java.util.concurrent.CompletionStage;
 
@@ -30,8 +31,9 @@ public class AsciidocSectionHelperFactory
     }
 
     @TemplateExtension(matchNames = { "asciidocify", "asciidocToHtml" })
-    static RawString convertToAsciidoc(String text, String ignoredName) {
-        return new RawString(CONVERTER.apply(text));
+    static RawString convertToAsciidoc(String text, String ignoredName,
+            @TemplateExtension.TemplateAttribute("templatePath") Object templatePath) {
+        return new RawString(CONVERTER.apply((Path) templatePath, text));
     }
 
     public static class AsciidocSectionHelper implements SectionHelper {
@@ -41,7 +43,8 @@ public class AsciidocSectionHelperFactory
             return context.execute().thenCompose(rn -> {
                 StringBuilder sb = new StringBuilder();
                 rn.process(sb::append);
-                return CompletedStage.of(new SingleResultNode(CONVERTER.apply(sb.toString())));
+                return CompletedStage.of(new SingleResultNode(
+                        CONVERTER.apply((Path) context.resolutionContext().getAttribute("templatePath"), sb.toString())));
             });
         }
     }
