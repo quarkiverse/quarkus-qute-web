@@ -3,19 +3,30 @@ package io.quarkiverse.qute.web.asciidoc.test;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
+import java.util.Map;
 
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Test;
 
+import io.quarkiverse.qute.web.asciidoc.runtime.AsciidocConfig;
+import io.quarkiverse.qute.web.asciidoc.runtime.AsciidocConverter;
 import io.quarkiverse.qute.web.asciidoc.runtime.AsciidocSectionHelperFactory;
 import io.quarkus.qute.Engine;
 
 public class QuarkusAsciidocTest {
 
+    public static final AsciidocSectionHelperFactory FACTORY = new AsciidocSectionHelperFactory(
+            new AsciidocConverter(new AsciidocConfig() {
+                @Override
+                public Map<String, String> attributes() {
+                    return Map.of();
+                }
+            }));
+
     @Test
     public void shouldConvertUsingAsciiTag() {
         Engine engine = Engine.builder().addDefaults()
-                .addSectionHelper(new AsciidocSectionHelperFactory()).build();
+                .addSectionHelper(FACTORY).build();
 
         String result = engine.parse("{#ascii}...{/ascii}").render();
 
@@ -29,7 +40,7 @@ public class QuarkusAsciidocTest {
     @Test
     public void shouldConvertUsingAsciidocTag() {
         Engine engine = Engine.builder().addDefaults()
-                .addSectionHelper(new AsciidocSectionHelperFactory()).build();
+                .addSectionHelper(FACTORY).build();
 
         String result = engine.parse("{#asciidoc}...{/asciidoc}").render();
 
@@ -43,7 +54,7 @@ public class QuarkusAsciidocTest {
     @Test
     public void testH1() {
         Engine engine = Engine.builder().addDefaults()
-                .addSectionHelper(new AsciidocSectionHelperFactory()).build();
+                .addSectionHelper(FACTORY).build();
 
         String result = engine.parse("{#ascii}= Quarkus and Roq{/ascii}").render();
 
@@ -54,7 +65,7 @@ public class QuarkusAsciidocTest {
     void shouldConvertWithForTagInsideAsciiTag() {
 
         Engine engine = Engine.builder().addDefaults()
-                .addSectionHelper(new AsciidocSectionHelperFactory()).build();
+                .addSectionHelper(FACTORY).build();
 
         String result = engine.parse("""
                 <h1>Quarkus and Qute</h1>
