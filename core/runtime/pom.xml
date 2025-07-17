@@ -68,10 +68,7 @@
               -->
               <conditionalDependencies> 
                 <extension>io.quarkus:quarkus-resteasy-qute:${quarkus.version}</extension>
-                <extension>io.quarkus:quarkus-resteasy-reactive-qute:${quarkus.version}</extension>
-                <!-- We need a special entry in order to make this compatible with Quarkus 3.9+ -->
-                <!-- See https://quarkus.io/blog/quarkus-3-9-1-released/#the-big-reactive-rename -->
-                <extension>io.quarkus:quarkus-rest-qute:3.9.5</extension> 
+                <extension>io.quarkus:quarkus-rest-qute:${quarkus.version}</extension>
               </conditionalDependencies>
             </configuration>
           </execution>

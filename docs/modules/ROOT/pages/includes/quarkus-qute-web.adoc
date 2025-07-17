@@ -1,4 +1,3 @@
-:summaryTableId: quarkus-qute-web_quarkus-qute
 [.configuration-legend]
 icon:lock[title=Fixed at build time] Configuration property fixed at build time - All other configuration properties are overridable at runtime
 [.configuration-reference.searchable, cols="80,.^10,.^10"]
@@ -9,6 +8,10 @@ h|Type
 h|Default
 
 a|icon:lock[title=Fixed at build time] [[quarkus-qute-web_quarkus-qute-web-root-path]] [.property-path]##link:#quarkus-qute-web_quarkus-qute-web-root-path[`quarkus.qute.web.root-path`]##
+ifdef::add-copy-button-to-config-props[]
+config_property_copy_button:+++quarkus.qute.web.root-path+++[]
+endif::add-copy-button-to-config-props[]
+
 
 [.description]
 --
@@ -32,6 +35,10 @@ endif::add-copy-button-to-env-var[]
 |`/`
 
 a|icon:lock[title=Fixed at build time] [[quarkus-qute-web_quarkus-qute-web-public-dir]] [.property-path]##link:#quarkus-qute-web_quarkus-qute-web-public-dir[`quarkus.qute.web.public-dir`]##
+ifdef::add-copy-button-to-config-props[]
+config_property_copy_button:+++quarkus.qute.web.public-dir+++[]
+endif::add-copy-button-to-config-props[]
+
 
 [.description]
 --
@@ -53,6 +60,10 @@ endif::add-copy-button-to-env-var[]
 |`pub`
 
 a|icon:lock[title=Fixed at build time] [[quarkus-qute-web_quarkus-qute-web-hidden-templates]] [.property-path]##link:#quarkus-qute-web_quarkus-qute-web-hidden-templates[`quarkus.qute.web.hidden-templates`]##
+ifdef::add-copy-button-to-config-props[]
+config_property_copy_button:+++quarkus.qute.web.hidden-templates+++[]
+endif::add-copy-button-to-config-props[]
+
 
 [.description]
 --
@@ -76,6 +87,10 @@ endif::add-copy-button-to-env-var[]
 |
 
 a|icon:lock[title=Fixed at build time] [[quarkus-qute-web_quarkus-qute-web-route-order]] [.property-path]##link:#quarkus-qute-web_quarkus-qute-web-route-order[`quarkus.qute.web.route-order`]##
+ifdef::add-copy-button-to-config-props[]
+config_property_copy_button:+++quarkus.qute.web.route-order+++[]
+endif::add-copy-button-to-config-props[]
+
 
 [.description]
 --
@@ -95,6 +110,10 @@ endif::add-copy-button-to-env-var[]
 |`1000`
 
 a|icon:lock[title=Fixed at build time] [[quarkus-qute-web_quarkus-qute-web-use-blocking-handler]] [.property-path]##link:#quarkus-qute-web_quarkus-qute-web-use-blocking-handler[`quarkus.qute.web.use-blocking-handler`]##
+ifdef::add-copy-button-to-config-props[]
+config_property_copy_button:+++quarkus.qute.web.use-blocking-handler+++[]
+endif::add-copy-button-to-config-props[]
+
 
 [.description]
 --
@@ -113,5 +132,3 @@ endif::add-copy-button-to-env-var[]
 
 |===
 
-
-:!summaryTableId:
