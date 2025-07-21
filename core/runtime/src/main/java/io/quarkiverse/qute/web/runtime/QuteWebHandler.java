@@ -29,7 +29,7 @@ import io.quarkus.qute.runtime.TemplateProducer;
 import io.quarkus.security.identity.CurrentIdentityAssociation;
 import io.quarkus.security.identity.SecurityIdentity;
 import io.quarkus.vertx.http.runtime.CurrentVertxRequest;
-import io.quarkus.vertx.http.runtime.HttpBuildTimeConfig;
+import io.quarkus.vertx.http.runtime.VertxHttpBuildTimeConfig;
 import io.quarkus.vertx.http.runtime.security.QuarkusHttpUser;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
@@ -60,7 +60,7 @@ public class QuteWebHandler implements Handler<RoutingContext> {
     private final List<DataInitializer> dataInitializers;
 
     public QuteWebHandler(String rootPath, String publicDir, Set<String> templatePaths, Map<String, String> templateLinks,
-            HttpBuildTimeConfig httpBuildTimeConfig) {
+            VertxHttpBuildTimeConfig httpBuildTimeConfig) {
         this.rootPath = rootPath;
         this.templatePaths = templatePaths;
         if (publicDir.equals("/") || publicDir.isBlank()) {
@@ -69,8 +69,8 @@ public class QuteWebHandler implements Handler<RoutingContext> {
             this.webTemplatesPath = publicDir.startsWith("/") ? publicDir.substring(1) : publicDir;
         }
         this.templateLinks = templateLinks;
-        this.compressMediaTypes = httpBuildTimeConfig.enableCompression
-                ? httpBuildTimeConfig.compressMediaTypes.orElse(List.of())
+        this.compressMediaTypes = httpBuildTimeConfig.enableCompression()
+                ? httpBuildTimeConfig.compressMediaTypes().orElse(List.of())
                 : null;
         this.extractedPaths = new ConcurrentHashMap<>();
         ArcContainer container = Arc.container();
