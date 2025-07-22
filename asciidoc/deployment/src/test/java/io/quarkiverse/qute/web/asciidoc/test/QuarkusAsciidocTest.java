@@ -70,6 +70,8 @@ public class QuarkusAsciidocTest {
         String result = engine.parse("""
                 <h1>Quarkus and Qute</h1>
                 {#ascii}
+                = Foo
+
                 == Qute and Roq
                 Here is a list:
                 {#for item in items}
@@ -81,6 +83,7 @@ public class QuarkusAsciidocTest {
 
         SoftAssertions.assertSoftly(softly -> {
             softly.assertThat(result).contains("<h1>Quarkus and Qute</h1>");
+            softly.assertThat(result).contains("<h1>Foo</h1>");
             softly.assertThat(result).contains("<h2>Qute and Roq</h2>");
             softly.assertThat(result).contains("<ul>");
             softly.assertThat(result).contains("<li>");

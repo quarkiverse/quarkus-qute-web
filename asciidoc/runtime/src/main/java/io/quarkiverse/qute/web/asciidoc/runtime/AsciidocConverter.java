@@ -7,16 +7,16 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 
-import io.yupiik.asciidoc.model.Body;
+import io.yupiik.asciidoc.model.Document;
 import io.yupiik.asciidoc.parser.Parser;
 import io.yupiik.asciidoc.parser.resolver.ContentResolver;
+import io.yupiik.asciidoc.parser.resolver.RelativeContentResolver;
 import io.yupiik.asciidoc.renderer.html.AsciidoctorLikeHtmlRenderer;
 import io.yupiik.asciidoc.renderer.html.AsciidoctorLikeHtmlRenderer.Configuration;
 
@@ -34,6 +34,7 @@ public class AsciidocConverter {
 
     private Configuration createConfiguration(TemplateAttributes templateAttributes) {
         final Map<String, String> attributes = new HashMap<>();
+        attributes.put("showtitle", "true");
         attributes.put("sitegen", "roq");
         attributes.put("relfileprefix", "../");
         attributes.put("relfilesuffix", "/");
@@ -65,11 +66,11 @@ public class AsciidocConverter {
             Path templateDir = Paths.get(templateAttributes.sourcePath()).getParent();
             contentResolver = new DiskAndClasspathResolver(templateDir.toString());
         }
-        Body body = parser.parseBody(content, new Parser.ParserContext(contentResolver));
+        Document document = parser.parse(content, new Parser.ParserContext(contentResolver));
         // Renderer is not thread-safe and must not be shared
         final Configuration configuration = createConfiguration(templateAttributes);
         AsciidoctorLikeHtmlRenderer renderer = new AsciidoctorLikeHtmlRenderer(configuration);
-        renderer.visitBody(body);
+        renderer.visit(document);
         return renderer.result();
     }
 
@@ -114,7 +115,7 @@ public class AsciidocConverter {
 
     }
 
-    public static class DiskAndClasspathResolver implements ContentResolver {
+    public static class DiskAndClasspathResolver implements RelativeContentResolver {
 
         private final String baseDir;
 
@@ -123,26 +124,38 @@ public class AsciidocConverter {
         }
 
         @Override
-        public Optional<List<String>> resolve(String ref, Charset encoding) {
-            final var baseDirPath = Path.of(baseDir);
+        public Optional<Resolved> resolve(Path parent, String ref, Charset encoding) {
+
             final var rel = Path.of(ref);
-            final var resolved = rel.isAbsolute() ? rel : baseDirPath.resolve(rel).normalize();
+            if (rel.isAbsolute()) {
+                return doRead(rel, encoding);
+            }
+
+            if (parent != null && parent.getParent() != null) {
+                return doRead(parent.getParent().resolve(rel).normalize(), encoding);
+            }
+
+            final var baseDirPath = Path.of(baseDir);
+            return doRead(baseDirPath.resolve(rel).normalize(), encoding);
+        }
+
+        private static Optional<Resolved> doRead(Path resolved, Charset encoding) {
             try (InputStream resource = Thread.currentThread().getContextClassLoader()
                     .getResourceAsStream(resolved.toString())) {
                 if (resource != null) {
-                    return Optional.of(new String(resource.readAllBytes(), encoding).lines().toList());
+                    return Optional.of(new Resolved(resolved, new String(resource.readAllBytes(), encoding).lines().toList()));
                 }
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                throw new IllegalStateException("Can't read '" + resolved + "'");
             }
 
             if (!Files.isRegularFile(resolved)) {
                 return Optional.empty();
             }
             try {
-                return Optional.of(Files.readAllLines(resolved, encoding));
+                return Optional.of(new Resolved(resolved, Files.readAllLines(resolved, encoding)));
             } catch (IOException e) {
-                return Optional.empty();
+                throw new IllegalStateException("Can't read '" + resolved + "'");
             }
         }
     }
