@@ -27,12 +27,6 @@ public class QuteAsciidocSectionHelperTest {
     void shouldConvertUsingAsciiTag() {
         String result = foo.render();
 
-        assertThat(result).contains("""
-                <div class="sect0" id="_qute_and_roq">
-                  <h1>Qute and Roq</h1>
-                 <div class="sectionbody">
-                 </div>
-                 </div>
-                """, result);
+        assertThat(result).isEqualToIgnoringWhitespace("<h1>Qute and Roq</h1>");
     }
 }
