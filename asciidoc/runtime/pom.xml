@@ -5,7 +5,7 @@
     <parent>
         <groupId>io.quarkiverse.qute.web</groupId>
         <artifactId>quarkus-qute-web-asciidoc-parent</artifactId>
-        <version>3.4.3</version>
+        <version>999-SNAPSHOT</version>
     </parent>
     <artifactId>quarkus-qute-web-asciidoc</artifactId>
     <name>Quarkus Qute - Asciidoc - Runtime</name>
