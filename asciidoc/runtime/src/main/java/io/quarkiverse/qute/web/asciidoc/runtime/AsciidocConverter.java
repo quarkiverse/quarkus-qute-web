@@ -32,7 +32,7 @@ public class AsciidocConverter {
         this.config = config;
     }
 
-    private Configuration createConfiguration(TemplateAttributes templateAttributes) {
+    private Configuration createConfiguration(Map<String, String> asciidocAttributes, TemplateAttributes templateAttributes) {
         final Map<String, String> attributes = new HashMap<>();
         attributes.put("showtitle", "true");
         attributes.put("sitegen", "roq");
@@ -52,11 +52,12 @@ public class AsciidocConverter {
             attributes.put("site-path", templateAttributes.sitePath());
         }
         attributes.putAll(config.attributes());
+        attributes.putAll(asciidocAttributes);
         return new Configuration()
                 .setAttributes(attributes);
     }
 
-    public String apply(String asciidoc, TemplateAttributes templateAttributes) {
+    public String apply(String asciidoc, Map<String, String> asciidocAttributes, TemplateAttributes templateAttributes) {
         // Cleaning the content from global indentation is necessary because
         // AsciiDoc content is not supposed to be indented globally
         // In Qute context it might often be indented
@@ -68,7 +69,7 @@ public class AsciidocConverter {
         }
         Document document = parser.parse(content, new Parser.ParserContext(contentResolver));
         // Renderer is not thread-safe and must not be shared
-        final Configuration configuration = createConfiguration(templateAttributes);
+        final Configuration configuration = createConfiguration(asciidocAttributes, templateAttributes);
         AsciidoctorLikeHtmlRenderer renderer = new AsciidoctorLikeHtmlRenderer(configuration);
         renderer.visit(document);
         return renderer.result();

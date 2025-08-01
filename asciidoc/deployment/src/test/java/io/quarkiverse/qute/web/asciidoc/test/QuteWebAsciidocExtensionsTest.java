@@ -1,5 +1,7 @@
 package io.quarkiverse.qute.web.asciidoc.test;
 
+import java.util.Map;
+
 import jakarta.inject.Inject;
 
 import org.assertj.core.api.Assertions;
@@ -17,6 +19,7 @@ public class QuteWebAsciidocExtensionsTest {
             .withApplicationRoot(
                     app -> app
                             .addAsResource(new StringAsset("{data.asciidocify}"), "templates/foo.txt")
+                            .addAsResource(new StringAsset("{data.asciidocify(attributes)}"), "templates/baz.txt")
                             .addAsResource(new StringAsset("{data.asciidocToHtml}"), "templates/bar.txt"));
 
     @Inject
@@ -27,5 +30,19 @@ public class QuteWebAsciidocExtensionsTest {
         String asciidoc = "=Qute and Roq";
         Assertions.assertThat(engine.getTemplate("foo").data("data", asciidoc).render()).contains("<h1>Qute and Roq</h1>");
         Assertions.assertThat(engine.getTemplate("bar").data("data", asciidoc).render()).contains("<h1>Qute and Roq</h1>");
+    }
+
+    @Test
+    void shouldUseAsciidocifyWithAttributes() {
+        String asciidoc = """
+                = Qute and Roq
+
+                {baz}
+                """;
+        Assertions.assertThat(engine.getTemplate("baz")
+                .data("data", asciidoc)
+                .data("attributes", Map.of("notitle", true, "baz", "== Qute and Asciidoc"))
+                .render()).containsIgnoringWhitespaces("<h2>Qute and Asciidoc</h2>")
+                .doesNotContain("<h1>Qute and Asciidoc</h1>");
     }
 }
