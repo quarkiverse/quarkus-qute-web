@@ -4,7 +4,7 @@
     <parent>
         <groupId>io.quarkiverse.qute.web</groupId>
         <artifactId>quarkus-qute-web-markdown-integration-tests</artifactId>
-        <version>999-SNAPSHOT</version>
+        <version>3.4.4</version>
     </parent>
 
     <artifactId>quarkus-qute-web-markdown-integration-tests-autolink</artifactId>
