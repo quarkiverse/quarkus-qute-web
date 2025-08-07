@@ -31,7 +31,7 @@
     <quarkus.version>3.20.1</quarkus.version>
     <commonmark.version>0.25.1</commonmark.version>
     <asciidoc.java.version>1.2.12</asciidoc.java.version>
-    <assertj.version>3.27.3</assertj.version>
+    <assertj.version>3.27.4</assertj.version>
   </properties>
   <dependencyManagement>
     <dependencies>
