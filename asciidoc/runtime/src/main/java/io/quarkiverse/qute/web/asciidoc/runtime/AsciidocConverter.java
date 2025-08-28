@@ -17,7 +17,6 @@ import io.yupiik.asciidoc.model.Document;
 import io.yupiik.asciidoc.parser.Parser;
 import io.yupiik.asciidoc.parser.resolver.ContentResolver;
 import io.yupiik.asciidoc.parser.resolver.RelativeContentResolver;
-import io.yupiik.asciidoc.renderer.html.AsciidoctorLikeHtmlRenderer;
 import io.yupiik.asciidoc.renderer.html.AsciidoctorLikeHtmlRenderer.Configuration;
 
 @Singleton
@@ -70,7 +69,7 @@ public class AsciidocConverter {
         Document document = parser.parse(content, new Parser.ParserContext(contentResolver));
         // Renderer is not thread-safe and must not be shared
         final Configuration configuration = createConfiguration(asciidocAttributes, templateAttributes);
-        AsciidoctorLikeHtmlRenderer renderer = new AsciidoctorLikeHtmlRenderer(configuration);
+        final AsciidocQuteRenderer renderer = new AsciidocQuteRenderer(configuration);
         renderer.visit(document);
         return renderer.result();
     }
