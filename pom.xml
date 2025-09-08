@@ -14,6 +14,7 @@
   <modules>
     <module>core/deployment</module>
     <module>core/runtime</module>
+    <module>core/integration-tests</module>
     <module>markdown</module>
     <module>asciidoc</module>
   </modules>
@@ -80,18 +81,6 @@
       </activation>
       <modules>
         <module>docs</module>
-      </modules>
-    </profile>
-    <profile>
-      <id>it</id>
-      <activation>
-        <property>
-          <name>performRelease</name>
-          <value>!true</value>
-        </property>
-      </activation>
-      <modules>
-        <module>core/integration-tests</module>
       </modules>
     </profile>
   </profiles>
