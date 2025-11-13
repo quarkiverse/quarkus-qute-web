@@ -1,2 +1,3 @@
 * xref:index.adoc[Quarkus Qute Web]
 * xref:markdown.adoc[Quarkus Qute Markdown]
+* xref:image.adoc[Quarkus Qute Image]
