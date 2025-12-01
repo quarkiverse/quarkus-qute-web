@@ -15,6 +15,9 @@ import java.util.stream.Collectors;
 import io.quarkiverse.qute.web.image.deployment.items.QuteImageTargetDirBuildItem;
 import io.quarkiverse.qute.web.image.deployment.items.QuteImageTemplateToScanBuildItem;
 import io.quarkiverse.qute.web.image.deployment.items.QuteImageTemplateToScanBuildItem.ImageTagSection;
+import io.quarkiverse.qute.web.image.runtime.DefaultPresetConfig;
+import io.quarkiverse.qute.web.image.runtime.ImageConfig;
+import io.quarkiverse.qute.web.image.runtime.PresetConfig;
 import io.quarkiverse.qute.web.image.spi.items.ImageSourceDirBuildItem;
 import io.quarkiverse.qute.web.image.spi.items.WhitelistDirBuildItem;
 import io.quarkus.bootstrap.workspace.WorkspaceModule;
@@ -77,6 +80,7 @@ public class QuteImageScanProcessor {
 
     @BuildStep
     void scanRuntimeQuteTemplates(
+            ImageConfig config,
             EffectiveTemplatePathsBuildItem effectiveTemplatePaths,
             BuildProducer<QuteImageTemplateToScanBuildItem> quteRuntimeTemplateBuildItemBuildProducer,
             TemplatesAnalysisBuildItem templatesAnalysisBuildItem) {
@@ -95,35 +99,40 @@ public class QuteImageScanProcessor {
             quteRuntimeTemplateBuildItemBuildProducer
                     .produce(new QuteImageTemplateToScanBuildItem(location,
                             analysis.findNodes(QuteImageScanProcessor::isImageSection).stream()
-                                    .map(QuteImageScanProcessor::toImageTagSection).toList(),
+                                    .map(imageTagSectionMapper(config)).toList(),
                             analysis.path));
         }
     }
 
-    private static ImageTagSection toImageTagSection(TemplateNode sectionNode) {
-
-        final List<SectionBlock> blocks = sectionNode.asSection().getBlocks();
-        if (blocks.size() != 1) {
-            throw new IllegalStateException("Expected exactly one section block for image but got " + blocks.size());
-        }
-        final Map<String, Expression> parameters = blocks.iterator().next().expressions;
-        if (parameters.containsKey("src")) {
-            Expression expr = parameters.get("src");
-            if (expr.isLiteral()) {
-                Object literal = expr.getLiteral();
-                if (literal instanceof String file) {
-                    return new ImageTagSection((SectionNode) sectionNode, file);
+    private static Function<TemplateNode, ImageTagSection> imageTagSectionMapper(ImageConfig config) {
+        return sectionNode -> {
+            final List<SectionBlock> blocks = sectionNode.asSection().getBlocks();
+            if (blocks.size() != 1) {
+                throw new IllegalStateException("Expected exactly one section block for image but got " + blocks.size());
+            }
+            final Map<String, Expression> parameters = blocks.iterator().next().expressions;
+            if (parameters.containsKey("src")) {
+                Expression expr = parameters.get("src");
+                Expression presetExpr = parameters.get("preset");
+                if (expr.isLiteral()) {
+                    PresetConfig presetConfig = PresetConfig.DEFAULT;
+                    if (presetExpr.isLiteral() && expr.getLiteral() instanceof String preset) {
+                        presetConfig = config.presets().get(preset);
+                    }
+                    Object literal = expr.getLiteral();
+                    if (literal instanceof String file) {
+                        return new ImageTagSection((SectionNode) sectionNode, file, presetConfig);
+                    } else {
+                        throw new RuntimeException("Invalid image literal: " + literal + " (must be a string literal)");
+                    }
                 } else {
-                    throw new RuntimeException("Invalid image literal: " + literal + " (must be a string literal)");
+                    throw new RuntimeException("Invalid image parameter 'src': " + expr + " (must be a string literal)");
                 }
             } else {
-                throw new RuntimeException("Invalid image parameter 'src': " + expr + " (must be a string literal)");
+                throw new RuntimeException(
+                        "Invalid image parameter list: " + parameters + " ('src' is required)");
             }
-        } else {
-            throw new RuntimeException(
-                    "Invalid image parameter list: " + parameters + " ('src' is required)");
-        }
-
+        };
     }
 
     static String toUnixPath(Path path) {

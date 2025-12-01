@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 
+import io.quarkiverse.qute.web.image.runtime.PresetConfig;
 import io.quarkus.builder.item.MultiBuildItem;
 import io.quarkus.qute.SectionNode;
 
@@ -27,7 +28,7 @@ public final class QuteImageTemplateToScanBuildItem extends MultiBuildItem {
         this.id = id;
     }
 
-    public record ImageTagSection(SectionNode section, String fileParam) {
+    public record ImageTagSection(SectionNode section, String fileParam, PresetConfig presetConfig) {
         public boolean isAbsolute() {
             return fileParam.startsWith("/");
         }

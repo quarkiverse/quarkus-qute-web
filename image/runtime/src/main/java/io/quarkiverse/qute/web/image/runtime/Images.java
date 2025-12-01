@@ -36,7 +36,7 @@ public class Images {
     /**
      * This represents an image tag, pointing to a processed image
      */
-    public record ImageTag(String templateId, String declaredPath, String publicPath, Image image) {
+    public record ImageTag(String templateId, String declaredPath, String publicPath, PresetConfig config, Image image) {
         // Eventually, this will list the variants in use
 
     }

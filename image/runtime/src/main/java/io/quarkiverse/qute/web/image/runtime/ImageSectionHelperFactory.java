@@ -38,7 +38,10 @@ public class ImageSectionHelperFactory implements SectionHelperFactory<SectionHe
 
     @Override
     public ParametersInfo getParameters() {
-        return ParametersInfo.builder().addParameter("src").build();
+        return ParametersInfo.builder()
+                .addParameter("src")
+                .addParameter("preset", "default")
+                .build();
     }
 
     @Override
@@ -58,15 +61,16 @@ public class ImageSectionHelperFactory implements SectionHelperFactory<SectionHe
 
     @Override
     public SectionHelper initialize(SectionInitContext context) {
-        Expression fileExpression = context.getExpression("src");
+        Map<String, Expression> expressions = Map.of(
+                "src", context.getExpression("src"));
         TemplateNode.Origin origin = context.getOrigin();
         return new SectionHelper() {
             @Override
             public CompletionStage<ResultNode> resolve(SectionResolutionContext context) {
-                return context.evaluate(fileExpression)
-                        .thenApply(fileObject -> {
+                return context.evaluate(expressions)
+                        .thenApply(resolved -> {
                             Images.ImageTag imageTag = images.get(
-                                    context.resolutionContext().getTemplate().getId(), (String) fileObject);
+                                    context.resolutionContext().getTemplate().getId(), (String) resolved.get("src"));
                             return new TextNode(
                                     "<img src=\"" + imageTag.publicPath() + "\" srcset=\""
                                             + imageTag.image().srcset()

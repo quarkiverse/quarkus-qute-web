@@ -17,6 +17,7 @@ import io.quarkiverse.qute.web.image.runtime.Images.Image;
 import io.quarkiverse.qute.web.image.runtime.Images.ImageId;
 import io.quarkiverse.qute.web.image.runtime.Images.ImageTag;
 import io.quarkiverse.qute.web.image.runtime.Images.Variant;
+import io.quarkiverse.qute.web.image.runtime.PresetConfig;
 import io.quarkus.builder.item.SimpleBuildItem;
 
 public final class ImagesBuildItem extends SimpleBuildItem {
@@ -108,9 +109,12 @@ public final class ImagesBuildItem extends SimpleBuildItem {
         return ret;
     }
 
-    public void registerImageTag(String templateId, String declaredPath, String publicPath, Image image) {
+    public ImageTag registerImageTag(String templateId, String declaredPath, String publicPath, PresetConfig config,
+            Image image) {
+        final ImageTag tag = new ImageTag(templateId, declaredPath, publicPath, config, image);
         tags.put(imageTagKey(templateId, declaredPath),
-                new ImageTag(templateId, declaredPath, publicPath, image));
+                tag);
+        return tag;
     }
 
     public static void addScaledImage(Image image, int width, Consumer<Variant> consumer) {
