@@ -1,0 +1,72 @@
+= Quarkus Qute Image
+
+include::./includes/attributes.adoc[]
+
+Add Image Processing support to Qute `{#image 'foo.jpg' /}`. Turn your images into responsive images by automatically generating smaller variants of
+your images at build-time.
+
+== Installation
+
+To install the extension, add the following dependency to your project:
+
+[source,xml,subs=attributes+]
+----
+<dependency>
+    <groupId>io.quarkiverse.qute.web</groupId>
+    <artifactId>quarkus-qute-web-image</artifactId>
+    <version>{project-version}</version>
+</dependency>
+----
+
+== Usage
+
+For example, you can use the following Qute image tag:
+
+[source,html]
+----
+{#image 'foo.png'/}
+{#image src='/images/bar.png'/}
+----
+
+Which will be expanded to the following `<img>` tag:
+
+[source,html]
+----
+<img src='/static/processed-images/1b139664/foo_original.png' srcset='/static/processed-images/1b139664/foo_640.png 640w,
+                           /static/processed-images/1b139664/foo_1024.png 1024w'/>
+<img src='/images/bar.png' srcset='/static/processed-images/a288338f/bar_640.png 640w,
+                           /static/processed-images/a288338f//bar_1024.png 1024w'/>
+----
+
+=== Image paths
+
+Relative image paths will be resolved relative to the template that includes the image, the original file will also be served.
+
+Absolute image paths will be resolved from the resource folders of your applications, such as `src/main/resources/web/`
+or `/public` (in the case of https://iamroq.com[Roq]).
+
+=== Image variants
+
+At the moment, smaller image variants will be produced for the following sizes: 640, 1024, 1920, 2560, though
+this will be configurable in the future. Naturally, we only produce variants for sizes that are smaller than the
+original image.
+
+The original image, as you can see from the above example, is preserved in the resulting application.
+
+The generated variants are placed in files according to this pattern:
+
+[source]
+----
+/static/processed-images/{id}/{basename}_{size}.{ext}
+----
+
+id:: A short hash of the image content
+basename:: The file name of the image, without its extension
+size:: The width of the generated image
+ext:: The generated image extension (which at the moment will be the same as the source image extension)
+
+
+[[extension-configuration-reference]]
+== Extension Configuration Reference
+
+include::includes/quarkus-qute-web-image.adoc[leveloffset=+1, opts=optional]

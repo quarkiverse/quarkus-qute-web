@@ -32,7 +32,7 @@ Environment variable: `+++QUARKUS_QUTE_WEB_ROOT_PATH+++`
 endif::add-copy-button-to-env-var[]
 --
 |string
-|`/`
+|`+++/+++`
 
 a|icon:lock[title=Fixed at build time] [[quarkus-qute-web_quarkus-qute-web-public-dir]] [.property-path]##link:#quarkus-qute-web_quarkus-qute-web-public-dir[`quarkus.qute.web.public-dir`]##
 ifdef::add-copy-button-to-config-props[]
@@ -57,7 +57,7 @@ Environment variable: `+++QUARKUS_QUTE_WEB_PUBLIC_DIR+++`
 endif::add-copy-button-to-env-var[]
 --
 |string
-|`pub`
+|`+++pub+++`
 
 a|icon:lock[title=Fixed at build time] [[quarkus-qute-web_quarkus-qute-web-hidden-templates]] [.property-path]##link:#quarkus-qute-web_quarkus-qute-web-hidden-templates[`quarkus.qute.web.hidden-templates`]##
 ifdef::add-copy-button-to-config-props[]
@@ -107,7 +107,7 @@ Environment variable: `+++QUARKUS_QUTE_WEB_ROUTE_ORDER+++`
 endif::add-copy-button-to-env-var[]
 --
 |int
-|`1000`
+|`+++1000+++`
 
 a|icon:lock[title=Fixed at build time] [[quarkus-qute-web_quarkus-qute-web-use-blocking-handler]] [.property-path]##link:#quarkus-qute-web_quarkus-qute-web-use-blocking-handler[`quarkus.qute.web.use-blocking-handler`]##
 ifdef::add-copy-button-to-config-props[]
@@ -128,7 +128,7 @@ Environment variable: `+++QUARKUS_QUTE_WEB_USE_BLOCKING_HANDLER+++`
 endif::add-copy-button-to-env-var[]
 --
 |boolean
-|`true`
+|`+++true+++`
 
 |===
 
