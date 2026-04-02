@@ -11,9 +11,10 @@
     <packaging>pom</packaging>
     <name>Quarkus Qute Web - Markdown - Integration Tests</name>
 
-    <modules>
-        <module>markdown-autolink</module>
-        <module>markdown-heading-anchor</module>
-        <module>markdown-tables</module>
-    </modules>
+  <modules>
+    <module>markdown-alerts</module>
+    <module>markdown-autolink</module>
+    <module>markdown-heading-anchor</module>
+    <module>markdown-tables</module>
+  </modules>
 </project>
