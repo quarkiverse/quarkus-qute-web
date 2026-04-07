@@ -31,7 +31,7 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <quarkus.version>3.20.1</quarkus.version>
     <commonmark.version>0.28.0</commonmark.version>
-    <asciidoc.java.version>1.2.12</asciidoc.java.version>
+    <asciidoc.java.version>1.2.13</asciidoc.java.version>
     <assertj.version>3.27.7</assertj.version>
   </properties>
   <dependencyManagement>
