@@ -1,5 +1,6 @@
 package io.quarkiverse.qute.web.markdown.deployment;
 
+import io.quarkiverse.qute.web.markdown.runtime.AlertsConfiguration;
 import io.quarkiverse.qute.web.markdown.runtime.AutolinkConfiguration;
 import io.quarkiverse.qute.web.markdown.runtime.HeadingAnchorConfiguration;
 import io.quarkiverse.qute.web.markdown.runtime.MarkdownSectionHelperFactory;
@@ -39,6 +40,10 @@ class QuteWebMarkdownProcessor {
 
         if (config.tables().enabled()) {
             additionalBeans.produce(AdditionalBeanBuildItem.unremovableOf(TablesConfiguration.class));
+        }
+
+        if (config.alerts().enabled()) {
+            additionalBeans.produce(AdditionalBeanBuildItem.unremovableOf(AlertsConfiguration.class));
         }
     }
 }

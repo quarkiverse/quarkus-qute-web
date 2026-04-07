@@ -27,6 +27,12 @@ public interface MarkdownConfig {
     @WithName("plugin.heading-anchor")
     PluginConfig headingAnchor();
 
+    /**
+     * Configures alerts plugin.
+     */
+    @WithName("plugin.alerts")
+    PluginConfig alerts();
+
     interface PluginConfig {
 
         /**
