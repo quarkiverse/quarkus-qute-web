@@ -16,5 +16,5 @@ jobs:
     uses: quarkiverse/.github/.github/workflows/quarkus-ecosystem-ci.yml@main
     secrets: inherit
     with:
-      ecosystem_ci_repo_path: quarkiverse-qutepages
+      ecosystem_ci_repo_path: quarkiverse-qute-web
       java_version: 17
