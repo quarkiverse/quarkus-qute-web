@@ -1,0 +1,25 @@
+name: Surge.sh Teardown
+
+on:
+  pull_request_target:
+    # when using teardown: 'true', add default event types + closed event type
+    types: [closed]
+
+jobs:
+  preview:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write # Required to update PR status comment
+    steps:
+      - name: Teardown Surge.sh preview (docs)
+        id: teardown-docs
+        run: npx surge teardown https://quarkiverse-qute-web-docs-${{ github.event.number }}-preview.surge.sh --token ${{ secrets.SURGE_TOKEN }} || true
+      - name: Update PR status comment
+        uses: quarkusio/action-helpers@main
+        with:
+          action: maintain-one-comment
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          pr-number: ${{ github.event.number }}
+          body: |
+            🙈 The PR is closed and the preview is expired.
+          body-marker: <!-- Preview status comment marker -->
