@@ -17,6 +17,7 @@
         <maven.compiler.release>21</maven.compiler.release>
         <quarkus-web-bundler.version>2.3.2</quarkus-web-bundler.version>
         <quarkus-project-scanner.version>2.3.2</quarkus-project-scanner.version>
+        <skipVipsTests>true</skipVipsTests>
     </properties>
     <modules>
         <module>spi</module>
@@ -26,5 +27,14 @@
         <module>vips</module>
         <module>dynamic</module>
     </modules>
+
+    <profiles>
+        <profile>
+            <id>vips-tests</id>
+            <properties>
+                <skipVipsTests>false</skipVipsTests>
+            </properties>
+        </profile>
+    </profiles>
 
 </project>

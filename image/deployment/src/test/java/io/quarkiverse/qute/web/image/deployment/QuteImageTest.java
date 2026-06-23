@@ -1,4 +1,4 @@
-package io.quarkiverse.qute.web.image.deployment.deployment;
+package io.quarkiverse.qute.web.image.deployment;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;

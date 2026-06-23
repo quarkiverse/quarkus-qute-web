@@ -3,7 +3,10 @@ package io.quarkiverse.qute.web.image.deployment;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.net.URI;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -60,11 +63,7 @@ public class QuteImageScanProcessor {
             if (templatePath == null) {
                 continue;
             }
-            if (templatePath.getSource() == null && templatePath.getFullPath() != null) {
-                location = templatePath.getFullPath().toUri();
-            } else {
-                location = templatePath.getSource();
-            }
+            location = resolveTemplateLocation(templatePath);
             quteRuntimeTemplateBuildItemBuildProducer
                     .produce(new QuteImageTemplateToScanBuildItem(location,
                             analysis.findNodes(QuteImageScanProcessor::isImageSection).stream()
@@ -101,7 +100,7 @@ public class QuteImageScanProcessor {
                         PresetConfig resolved = config.presets().get(pName);
                         if (resolved == null) {
                             throw new RuntimeException(
-                                    "Unknown preset '%s' in {#image} tag. Available presets: %s"
+                                    "Unknown preset '%s' in {#qimg} tag. Available presets: %s"
                                             .formatted(pName, config.presets().keySet()));
                         }
                         presetConfig = resolved;
@@ -115,8 +114,41 @@ public class QuteImageScanProcessor {
         };
     }
 
+    private static URI resolveTemplateLocation(TemplatePathBuildItem templatePath) {
+        if (templatePath.getSource() != null) {
+            return isLocalFile(templatePath.getSource()) ? templatePath.getSource() : null;
+        }
+        if (templatePath.getFullPath() != null && isLocalPath(templatePath.getFullPath())) {
+            return templatePath.getFullPath().toUri();
+        }
+        return null;
+    }
+
+    static boolean isLocalFile(URI uri) {
+        return toLocalPath(uri) != null;
+    }
+
+    static Path toLocalPath(URI uri) {
+        if (uri == null) {
+            return null;
+        }
+        Path path;
+        if ("file".equalsIgnoreCase(uri.getScheme())) {
+            path = Paths.get(uri);
+        } else if (uri.getScheme() == null) {
+            path = Path.of(uri.getPath());
+        } else {
+            return null;
+        }
+        return Files.exists(path) ? path : null;
+    }
+
+    private static boolean isLocalPath(Path path) {
+        return path.getFileSystem() == FileSystems.getDefault() && Files.exists(path);
+    }
+
     private static boolean isImageSection(TemplateNode templateNode) {
-        return templateNode.isSection() && "image".equals(templateNode.asSection().getName());
+        return templateNode.isSection() && "qimg".equals(templateNode.asSection().getName());
     }
 
 }

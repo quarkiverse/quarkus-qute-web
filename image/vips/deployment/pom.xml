@@ -74,6 +74,7 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
                     <argLine>--enable-native-access=ALL-UNNAMED</argLine>
+                    <skip>${skipVipsTests}</skip>
                 </configuration>
             </plugin>
             <plugin>

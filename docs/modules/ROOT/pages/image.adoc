@@ -2,7 +2,7 @@
 
 include::./includes/attributes.adoc[]
 
-Add Image Processing support to Qute `{#image 'foo.jpg' /}`. Turn your images into responsive images by automatically generating smaller variants of
+Add Image Processing support to Qute `{#qimg 'foo.jpg' /}`. Turn your images into responsive images by automatically generating smaller variants of
 your images at build-time.
 
 == Installation
@@ -20,12 +20,12 @@ To install the extension, add the following dependency to your project:
 
 == Usage
 
-Use the `{#image}` tag in your Qute templates:
+Use the `{#qimg}` tag in your Qute templates:
 
 [source,html]
 ----
-{#image src='foo.png'/}
-{#image src='/images/bar.png'/}
+{#qimg src='foo.png'/}
+{#qimg src='/images/bar.png'/}
 ----
 
 This generates responsive `<img>` tags with `srcset` for the configured widths:
@@ -76,7 +76,7 @@ Then use them in your templates:
 
 [source,html]
 ----
-{#image src='photo.jpg' preset='thumbnail'/}
+{#qimg src='photo.jpg' preset='thumbnail'/}
 ----
 
 === Image variants

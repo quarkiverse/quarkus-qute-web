@@ -1,10 +1,8 @@
 package io.quarkiverse.qute.web.image.deployment;
 
 import java.io.IOException;
-import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,8 +11,6 @@ import java.util.Optional;
 import jakarta.inject.Singleton;
 
 import org.jboss.logging.Logger;
-
-import io.quarkiverse.tools.stringpaths.StringPaths;
 
 import io.quarkiverse.qute.web.image.converter.ImageConverter;
 import io.quarkiverse.qute.web.image.converter.ImageIOConverter;
@@ -45,6 +41,7 @@ import io.quarkiverse.tools.projectscanner.ProjectFile;
 import io.quarkiverse.tools.projectscanner.ProjectScannerBuildItem;
 import io.quarkiverse.tools.projectscanner.ScanDeclarationBuildItem;
 import io.quarkiverse.tools.projectscanner.ScanLocalDirBuildItem;
+import io.quarkiverse.tools.stringpaths.StringPaths;
 import io.quarkus.arc.deployment.AdditionalBeanBuildItem;
 import io.quarkus.arc.deployment.SyntheticBeanBuildItem;
 import io.quarkus.deployment.annotations.BuildProducer;
@@ -277,13 +274,7 @@ public class QuteImageProcessor {
         if (template == null || template.location == null) {
             return null;
         }
-        if (template.location.getScheme() == null) {
-            URI baseUri = Paths.get("").toAbsolutePath().toUri();
-            return Paths.get(baseUri.resolve(template.location));
-        }
-        if ("file".equalsIgnoreCase(template.location.getScheme()))
-            return Paths.get(template.location);
-        return null;
+        return QuteImageScanProcessor.toLocalPath(template.location);
     }
 
     private static ResolvedSourceImage resolveFromIndex(ImagesBuildItem images,
@@ -298,20 +289,21 @@ public class QuteImageProcessor {
     }
 
     private static Path findRelativeImage(Path parentDir, String relativePath) {
-        Path resolved = parentDir.resolve(relativePath).normalize();
-        if (!resolved.startsWith(parentDir)) {
+        Path resolved = ImageUtils.resolveContained(parentDir, relativePath);
+        if (resolved == null) {
             return null;
         }
         if (Files.isRegularFile(resolved)) {
             return resolved;
         }
-        Path inImagesDir = parentDir.resolve(ImageUtils.IMAGES_DIR).resolve(relativePath).normalize();
-        if (inImagesDir.startsWith(parentDir) && Files.isRegularFile(inImagesDir)) {
+        Path imagesBase = parentDir.resolve(ImageUtils.IMAGES_DIR);
+        Path inImagesDir = ImageUtils.resolveContained(imagesBase, relativePath);
+        if (inImagesDir != null && Files.isRegularFile(inImagesDir)) {
             return inImagesDir;
         }
         String fileName = Path.of(relativePath).getFileName().toString();
-        Path prefixed = parentDir.resolve("_" + fileName).normalize();
-        if (prefixed.startsWith(parentDir) && Files.isRegularFile(prefixed)) {
+        Path prefixed = ImageUtils.resolveContained(parentDir, "_" + fileName);
+        if (prefixed != null && Files.isRegularFile(prefixed)) {
             return prefixed;
         }
         return null;

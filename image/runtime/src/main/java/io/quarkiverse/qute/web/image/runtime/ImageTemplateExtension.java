@@ -2,6 +2,7 @@ package io.quarkiverse.qute.web.image.runtime;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
@@ -65,7 +66,7 @@ public class ImageTemplateExtension {
             String originalFormat,
             List<Integer> presetWidths) {
         var widthSet = presetWidths != null && !presetWidths.isEmpty()
-                ? new java.util.HashSet<>(presetWidths)
+                ? new HashSet<>(presetWidths)
                 : null;
         List<GeneratedImage> candidates = img.generated().stream()
                 .filter(gi -> matchesFormat(gi, fmt, originalFormat))
@@ -95,7 +96,7 @@ public class ImageTemplateExtension {
     private static String selectBest(Image img, String desiredFmt, String originalFormat, List<Integer> presetWidths,
             String declaredPath) {
         var widthSet = presetWidths != null && !presetWidths.isEmpty()
-                ? new java.util.HashSet<>(presetWidths)
+                ? new HashSet<>(presetWidths)
                 : null;
         return img.generated().stream()
                 .filter(gi -> matchesFormat(gi, desiredFmt, originalFormat))

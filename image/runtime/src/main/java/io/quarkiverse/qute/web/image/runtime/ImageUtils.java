@@ -155,4 +155,14 @@ public interface ImageUtils {
         return extensionFromFormat(format);
     }
 
+    /**
+     * Resolve a relative path against a base directory and verify it stays contained within it.
+     *
+     * @return the normalized resolved path, or null if it escapes the base directory
+     */
+    static Path resolveContained(Path base, String relative) {
+        Path resolved = base.resolve(relative).normalize();
+        return resolved.startsWith(base) ? resolved : null;
+    }
+
 }

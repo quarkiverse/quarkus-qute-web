@@ -121,7 +121,12 @@ public class DynamicImageResolverImpl implements DynamicImageResolver {
         String stripped = src.startsWith("/") ? src.substring(1) : src;
         for (ImageDir dir : config.imageDirs()) {
             if (dir.localPath() != null) {
-                Path file = Path.of(dir.localPath()).resolve(stripped);
+                Path base = Path.of(dir.localPath());
+                Path file = ImageUtils.resolveContained(base, stripped);
+                if (file == null) {
+                    LOG.warnf("Rejected image path outside allowed directory: %s", src);
+                    continue;
+                }
                 if (Files.isRegularFile(file)) {
                     try {
                         return Files.readAllBytes(file);

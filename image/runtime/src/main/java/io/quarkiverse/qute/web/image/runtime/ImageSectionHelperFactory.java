@@ -45,7 +45,7 @@ public class ImageSectionHelperFactory implements SectionHelperFactory<SectionHe
 
     @Override
     public List<String> getDefaultAliases() {
-        return List.of("image");
+        return List.of("qimg");
     }
 
     @Override
