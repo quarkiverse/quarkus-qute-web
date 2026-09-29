@@ -1,0 +1,91 @@
+= Quarkus Qute AsciiDoc
+
+include::./includes/attributes.adoc[]
+
+This extension renders AsciiDoc content inside Qute templates. It adds a Qute section named `asciidoc` or `ascii` that converts the content of the section to HTML with the `asciidoc-java` parser and renderer, in plain Java, so it works in native mode.
+
+== Installation
+
+To install the extension, add the following dependency to your project:
+
+[source,xml,subs=attributes+]
+----
+<dependency>
+    <groupId>io.quarkiverse.qute.web</groupId>
+    <artifactId>quarkus-qute-web-asciidoc</artifactId>
+    <version>{project-version}</version>
+</dependency>
+----
+
+== Usage
+
+Create a Qute template with an `asciidoc` section:
+
+[source,html]
+----
+<!-- src/resources/templates/foo.txt -->
+{#asciidoc}
+= Hello World
+
+A paragraph with *AsciiDoc* markup.
+{/asciidoc}
+----
+
+Attributes can be passed to the section, for example `{#asciidoc attributes=myAttributes}`, and set for every document with `quarkus.asciidoc.attributes.<name>=<value>`.
+
+== Customization
+
+Two CDI beans customize the conversion, the AsciiDoc counterparts of a tree processor and of a custom converter.
+
+=== Rewrite the document before rendering
+
+Implement `AsciidocDocumentProcessor` to change the parsed `Document` before it is rendered, for example to translate paragraphs or to add a section.
+Every bean is applied, highest `@Priority` first, each one receiving the document the previous one returned.
+The model is immutable, so return a new document, or the same one to change nothing.
+
+[source,java]
+----
+@Singleton
+@Priority(10)
+public class NoticeProcessor implements AsciidocDocumentProcessor {
+    @Override
+    public Document process(Document document, AsciidocRenderingContext context) {
+        var children = new ArrayList<>(document.body().children());
+        children.add(new Paragraph(List.of(new Text(List.of(), "Rendered by " + context.attributes().get("sitegen"), Map.of())), Map.of()));
+        return new Document(document.header(), new Body(children));
+    }
+}
+----
+
+=== Supply the renderer
+
+Implement `AsciidocRendererFactory`, at most one bean, to create the renderer of each document, for example a subclass of `AsciidoctorLikeHtmlRenderer` rendering the macros of your site.
+Without one, the extension uses `new AsciidoctorLikeHtmlRenderer(configuration)`.
+A renderer is not thread-safe, so return a new instance on each call.
+
+[source,java]
+----
+@Singleton
+public class SiteRendererFactory implements AsciidocRendererFactory {
+    @Override
+    public Visitor<String> createRenderer(AsciidoctorLikeHtmlRenderer.Configuration configuration, AsciidocRenderingContext context) {
+        return new AsciidoctorLikeHtmlRenderer(configuration) {
+            @Override
+            protected void onMissingMacro(Macro element) {
+                if ("tooltip".equals(element.name())) { // tooltip:term[definition]
+                    builder.append("<span title=\"").append(element.options().get("")).append("\">").append(element.label()).append("</span>");
+                    return;
+                }
+                super.onMissingMacro(element);
+            }
+        };
+    }
+}
+----
+
+`AsciidocRenderingContext` gives both beans the attributes the renderer is configured with and the template attributes of the content, such as its source path.
+
+[[extension-configuration-reference]]
+== Extension Configuration Reference
+
+include::includes/quarkus-qute-web-asciidoc.adoc[leveloffset=+1, opts=optional]
