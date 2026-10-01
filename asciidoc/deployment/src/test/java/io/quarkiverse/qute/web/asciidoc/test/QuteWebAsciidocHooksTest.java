@@ -76,8 +76,9 @@ public class QuteWebAsciidocHooksTest {
     @Singleton
     public static class SiteRendererFactory implements AsciidocRendererFactory {
         @Override
-        public Visitor<String> createRenderer(final AsciidoctorLikeHtmlRenderer.Configuration configuration,
-                final AsciidocRenderingContext context) {
+        public Visitor<String> createRenderer(final AsciidocRenderingContext context) {
+            final AsciidoctorLikeHtmlRenderer.Configuration configuration = new AsciidoctorLikeHtmlRenderer.Configuration()
+                    .setAttributes(context.attributes());
             return new AsciidoctorLikeHtmlRenderer(configuration) {
                 @Override
                 protected void onMissingMacro(final Macro element) {

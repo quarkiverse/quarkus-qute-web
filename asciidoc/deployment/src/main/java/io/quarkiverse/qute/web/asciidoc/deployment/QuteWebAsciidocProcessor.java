@@ -4,11 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.quarkiverse.qute.web.asciidoc.runtime.AsciidocConverter;
-import io.quarkiverse.qute.web.asciidoc.runtime.AsciidocDocumentProcessor;
-import io.quarkiverse.qute.web.asciidoc.runtime.AsciidocRendererFactory;
 import io.quarkiverse.qute.web.asciidoc.runtime.AsciidocSectionHelperFactory;
 import io.quarkus.arc.deployment.AdditionalBeanBuildItem;
-import io.quarkus.arc.deployment.UnremovableBeanBuildItem;
 import io.quarkus.deployment.annotations.BuildProducer;
 import io.quarkus.deployment.annotations.BuildStep;
 import io.quarkus.deployment.builditem.CombinedIndexBuildItem;
@@ -25,12 +22,8 @@ class QuteWebAsciidocProcessor {
     }
 
     @BuildStep
-    void process(BuildProducer<AdditionalBeanBuildItem> additionalBeans,
-            BuildProducer<UnremovableBeanBuildItem> unremovableBeans) {
+    void process(BuildProducer<AdditionalBeanBuildItem> additionalBeans) {
         additionalBeans.produce(new AdditionalBeanBuildItem(AsciidocSectionHelperFactory.class, AsciidocConverter.class));
-        // application beans implementing the hooks are only looked up through Instance, keep them
-        unremovableBeans.produce(UnremovableBeanBuildItem.beanTypes(AsciidocDocumentProcessor.class,
-                AsciidocRendererFactory.class));
     }
 
     @BuildStep

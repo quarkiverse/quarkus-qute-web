@@ -6,17 +6,18 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Comparator;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
+import jakarta.enterprise.inject.Instance;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 
-import io.quarkus.arc.InjectableInstance;
-import io.quarkus.arc.InstanceHandle;
+import io.quarkus.arc.All;
 import io.yupiik.asciidoc.model.Document;
 import io.yupiik.asciidoc.parser.Parser;
 import io.yupiik.asciidoc.parser.resolver.ContentResolver;
@@ -30,36 +31,33 @@ public class AsciidocConverter {
 
     private final Parser parser = new Parser();
     private static final ContentResolver EMPTY_CONTENT_RESOLVER = (ref, encoding) -> Optional.empty();
+    // the renderer used when the application has no AsciidocRendererFactory bean
+    private static final AsciidocRendererFactory DEFAULT_RENDERER_FACTORY = context -> new AsciidoctorLikeHtmlRenderer(
+            new Configuration().setAttributes(context.attributes()));
     private final AsciidocConfig config;
     private final List<AsciidocDocumentProcessor> processors;
     private final AsciidocRendererFactory rendererFactory;
 
     @Inject
-    public AsciidocConverter(AsciidocConfig config,
-            InjectableInstance<AsciidocDocumentProcessor> processors,
-            InjectableInstance<AsciidocRendererFactory> rendererFactory) {
-        this(config,
-                processors.handlesStream()
-                        .sorted(Comparator
-                                .comparingInt((InstanceHandle<AsciidocDocumentProcessor> h) -> h.getBean().getPriority())
-                                .reversed())
-                        .map(InstanceHandle::get)
-                        .toList(),
-                rendererFactory.isUnsatisfied() ? null : rendererFactory.get());
+    public AsciidocConverter(AsciidocConfig config, @All List<AsciidocDocumentProcessor> processors,
+            Instance<AsciidocRendererFactory> rendererFactory) {
+        // an @All list is sorted by priority, highest first
+        this(config, processors, rendererFactory.isUnsatisfied() ? DEFAULT_RENDERER_FACTORY : rendererFactory.get());
     }
 
     public AsciidocConverter(AsciidocConfig config) {
-        this(config, List.of(), null);
+        this(config, List.of(), DEFAULT_RENDERER_FACTORY);
     }
 
     public AsciidocConverter(AsciidocConfig config, List<AsciidocDocumentProcessor> processors,
             AsciidocRendererFactory rendererFactory) {
         this.config = config;
         this.processors = List.copyOf(processors);
-        this.rendererFactory = rendererFactory;
+        this.rendererFactory = Objects.requireNonNullElse(rendererFactory, DEFAULT_RENDERER_FACTORY);
     }
 
-    private Configuration createConfiguration(Map<String, String> asciidocAttributes, TemplateAttributes templateAttributes) {
+    private Map<String, String> createAttributes(Map<String, String> asciidocAttributes,
+            TemplateAttributes templateAttributes) {
         final Map<String, String> attributes = new HashMap<>();
         attributes.put("showtitle", "true");
         attributes.put("sitegen", "roq");
@@ -80,8 +78,7 @@ public class AsciidocConverter {
         }
         attributes.putAll(config.attributes());
         attributes.putAll(asciidocAttributes);
-        return new Configuration()
-                .setAttributes(attributes);
+        return Collections.unmodifiableMap(attributes);
     }
 
     public String apply(String asciidoc, Map<String, String> asciidocAttributes, TemplateAttributes templateAttributes) {
@@ -95,16 +92,13 @@ public class AsciidocConverter {
             contentResolver = new DiskAndClasspathResolver(templateDir.toString());
         }
         Document document = parser.parse(content, new Parser.ParserContext(contentResolver));
-        final Configuration configuration = createConfiguration(asciidocAttributes, templateAttributes);
-        final AsciidocRenderingContext context = new RenderingContext(Map.copyOf(configuration.getAttributes()),
-                templateAttributes);
+        final AsciidocRenderingContext context = new AsciidocRenderingContext(
+                createAttributes(asciidocAttributes, templateAttributes), templateAttributes);
         for (AsciidocDocumentProcessor processor : processors) {
             document = processor.process(document, context);
         }
         // Renderer is not thread-safe and must not be shared
-        final Visitor<String> renderer = rendererFactory == null
-                ? new AsciidoctorLikeHtmlRenderer(configuration)
-                : rendererFactory.createRenderer(configuration, context);
+        final Visitor<String> renderer = rendererFactory.createRenderer(context);
         renderer.visit(document);
         return renderer.result();
     }
@@ -140,11 +134,6 @@ public class AsciidocConverter {
         }
 
         return result.toString();
-    }
-
-    private record RenderingContext(Map<String, String> attributes, TemplateAttributes templateAttributes)
-            implements
-                AsciidocRenderingContext {
     }
 
     public record TemplateAttributes(String sourcePath,
