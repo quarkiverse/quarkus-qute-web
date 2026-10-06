@@ -17,6 +17,7 @@
     <module>core/integration-tests</module>
     <module>markdown</module>
     <module>asciidoc</module>
+    <module>image</module>
   </modules>
   <scm>
     <connection>scm:git:git@github.com:quarkiverse/quarkus-qute-web.git</connection>
@@ -29,7 +30,7 @@
     <maven.compiler.release>17</maven.compiler.release>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <quarkus.version>3.20.1</quarkus.version>
+    <quarkus.version>3.30.6</quarkus.version>
     <commonmark.version>0.28.0</commonmark.version>
     <asciidoc.java.version>1.2.14</asciidoc.java.version>
     <assertj.version>3.27.7</assertj.version>
