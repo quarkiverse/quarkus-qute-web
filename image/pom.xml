@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>io.quarkiverse.qute.web</groupId>
+        <artifactId>quarkus-qute-web-parent</artifactId>
+        <version>999-SNAPSHOT</version>
+    </parent>
+    <artifactId>quarkus-qute-web-image-parent</artifactId>
+    <name>Quarkus Qute - Image - Parent</name>
+    <packaging>pom</packaging>
+    <properties>
+        <jsoup.version>1.22.1</jsoup.version>
+        <vips-ffm.version>1.9.8</vips-ffm.version>
+        <thumbnailator.version>0.4.21</thumbnailator.version>
+        <maven.compiler.release>21</maven.compiler.release>
+        <quarkus-web-bundler.version>2.3.2</quarkus-web-bundler.version>
+        <quarkus-project-scanner.version>2.3.2</quarkus-project-scanner.version>
+        <skipVipsTests>true</skipVipsTests>
+    </properties>
+    <modules>
+        <module>spi</module>
+        <module>converter</module>
+        <module>runtime</module>
+        <module>deployment</module>
+        <module>vips</module>
+        <module>dynamic</module>
+    </modules>
+
+    <profiles>
+        <profile>
+            <id>vips-tests</id>
+            <properties>
+                <skipVipsTests>false</skipVipsTests>
+            </properties>
+        </profile>
+    </profiles>
+
+</project>

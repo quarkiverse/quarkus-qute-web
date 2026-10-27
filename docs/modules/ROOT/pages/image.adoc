@@ -1,0 +1,174 @@
+= Quarkus Qute Image
+
+include::./includes/attributes.adoc[]
+
+Add Image Processing support to Qute `{#qimg 'foo.jpg' /}`. Turn your images into responsive images by automatically generating smaller variants of
+your images at build-time.
+
+== Installation
+
+To install the extension, add the following dependency to your project:
+
+[source,xml,subs=attributes+]
+----
+<dependency>
+    <groupId>io.quarkiverse.qute.web</groupId>
+    <artifactId>quarkus-qute-web-image</artifactId>
+    <version>{project-version}</version>
+</dependency>
+----
+
+== Usage
+
+Use the `{#qimg}` tag in your Qute templates:
+
+[source,html]
+----
+{#qimg src='foo.png'/}
+{#qimg src='/images/bar.png'/}
+----
+
+This generates responsive `<img>` tags with `srcset` for the configured widths:
+
+[source,html]
+----
+<img src="/static/images/generated/1b13/foo-640-a1b2.jpg" srcset="/static/images/generated/1b13/foo-640-a1b2.jpg 640w, ..." loading="lazy" sizes="auto" width="..." height="...">
+----
+
+When multiple output formats are configured (requires the <<vips,vips extension>>), a `<picture>` element is generated instead:
+
+[source,html]
+----
+<picture>
+  <source srcset="/static/images/generated/1b13/foo-640-a1b2.webp 640w, ..." type="image/webp">
+  <img src="/static/images/generated/1b13/foo-640-a1b2.jpg" srcset="..." loading="lazy" sizes="auto" width="..." height="...">
+</picture>
+----
+
+=== Image paths
+
+Relative image paths will be resolved relative to the template that includes the image, the original file will also be served.
+
+Absolute image paths (starting with `/`) will be resolved from the image directories of your application (e.g., `src/main/resources/web/`
+or `/public` in the case of https://iamroq.com[Roq]).
+
+=== Presets
+
+Presets control the output formats, widths, quality, and cropping. The `default` preset is used when no preset is specified:
+
+* **formats**: `webp, jpg` (output formats in preference order; WebP requires the <<vips,vips extension>>)
+* **fallback-format**: `jpg` (format for the `<img>` `src`)
+* **widths**: `640, 1024, 1920, 2560` (responsive breakpoints in pixels)
+* **quality**: `100`
+
+You can define custom presets in `application.properties`:
+
+[source,properties]
+----
+quarkus.qute.image.presets.thumbnail.widths=320,640
+quarkus.qute.image.presets.thumbnail.formats=webp
+quarkus.qute.image.presets.thumbnail.quality=80
+quarkus.qute.image.presets.thumbnail.crop.ratio=1:1
+quarkus.qute.image.presets.thumbnail.crop.keep=center
+----
+
+Then use them in your templates:
+
+[source,html]
+----
+{#qimg src='photo.jpg' preset='thumbnail'/}
+----
+
+=== Image variants
+
+Smaller image variants are produced at build-time for the configured widths. Variants for sizes larger than the
+original image are skipped.
+
+The generated variants are placed in files according to this pattern:
+
+[source]
+----
+/static/images/generated/{digest}/{basename}-{width}-{hash}.{ext}
+----
+
+digest:: A short hash of the image content
+basename:: The file name of the image, without its extension
+width:: The width of the generated image (or `original`)
+hash:: A short hash of the generation settings
+ext:: The output format extension (e.g., `webp`, `jpg`)
+
+=== Bulk image generation
+
+You can pre-process images matching a glob pattern at build time, even if they are not directly referenced in a template:
+
+[source,properties]
+----
+quarkus.qute.image.generate[0].glob=content/posts/**
+quarkus.qute.image.generate[0].presets=default
+----
+
+
+[[vips]]
+== WebP/AVIF support (vips)
+
+The base image extension uses Java ImageIO for processing, which only supports JPEG and PNG output.
+For modern formats like WebP and AVIF, add the vips extension:
+
+[source,xml,subs=attributes+]
+----
+<dependency>
+    <groupId>io.quarkiverse.qute.web</groupId>
+    <artifactId>quarkus-qute-web-image-vips</artifactId>
+    <version>{project-version}</version>
+</dependency>
+----
+
+=== Requirements
+
+* **Java 23+** (uses the Foreign Function & Memory API)
+* **libvips 8.x** installed on your system (8.18+ recommended)
+
+The extension auto-detects libvips via `pkg-config` at build time. You can also set the library paths manually with system properties:
+`-Dvipsffm.libpath.vips.override=/path/to/libvips.so`
+
+=== Installing libvips
+
+**macOS:**
+[source,bash]
+----
+brew install vips
+----
+
+**Fedora/RHEL:**
+[source,bash]
+----
+sudo dnf install vips-devel
+----
+
+**Ubuntu/Debian:**
+[source,bash]
+----
+sudo apt install libvips-dev
+----
+
+**Windows:**
+
+Download pre-built binaries from https://www.libvips.org/install.html[libvips.org] and add the `bin/` directory to your `PATH`.
+
+=== Supported formats
+
+With vips, the following output formats are available:
+
+* **WebP** (`webp`), **AVIF** (`avif`), **JPEG XL** (`jxl`): modern formats with better compression
+* **JPEG** (`jpg`), **PNG** (`png`), **GIF** (`gif`), **TIFF** (`tif`): standard formats
+* **HEIC** (`heic`): Apple's high-efficiency format
+
+Without vips (ImageIO only), output is limited to **JPEG** and **PNG**.
+
+The default preset (`formats: webp, jpg`) produces both WebP and JPEG variants when vips is available, generating a `<picture>` element with multiple sources.
+Unsupported formats are skipped with a warning.
+
+[[extension-configuration-reference]]
+== Extension Configuration Reference
+
+include::includes/quarkus-qute-web-image.adoc[leveloffset=+1, opts=optional]

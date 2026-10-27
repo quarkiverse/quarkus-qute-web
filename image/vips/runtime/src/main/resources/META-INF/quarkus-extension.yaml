@@ -1,0 +1,15 @@
+name: Web Bundler - Qute Image Vips
+description: Add Image Vips support to Qute Image
+metadata:
+  keywords:
+    - qute
+    - image
+    - processing
+    - imageio
+    - webp
+    - heic
+    - responsive
+  guide: https://docs.quarkiverse.io/quarkus-qute-web/dev/image.html
+  categories:
+    - "web"
+  status: "experimental"
