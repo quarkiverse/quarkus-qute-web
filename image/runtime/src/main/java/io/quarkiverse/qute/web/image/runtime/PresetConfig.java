@@ -72,8 +72,8 @@ public interface PresetConfig {
         ENTROPY,
         CENTER,
         ATTENTION,
-        LOW,
-        HIGH,
+        TOP,
+        BOTTOM,
     }
 
     interface PixelRatio {

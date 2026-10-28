@@ -30,12 +30,23 @@ public class ImageIOConverter implements ImageConverter {
 
     @Override
     public ImageInfo readInfo(byte[] sourceImage) {
-        try {
-            ReadResult result = readImage(sourceImage);
-            return new ImageInfo(result.format(), result.image().getWidth(), result.image().getHeight());
+        try (ImageInputStream imageInputStream = ImageIO
+                .createImageInputStream(new ByteArrayInputStream(sourceImage))) {
+            Iterator<ImageReader> imageReaders = ImageIO.getImageReaders(imageInputStream);
+            while (imageReaders.hasNext()) {
+                ImageReader imageReader = imageReaders.next();
+                try {
+                    imageReader.setInput(imageInputStream);
+                    return new ImageInfo(imageReader.getFormatName(),
+                            imageReader.getWidth(0), imageReader.getHeight(0));
+                } finally {
+                    imageReader.dispose();
+                }
+            }
         } catch (IOException e) {
             throw new RuntimeException("Failed to read image info", e);
         }
+        throw new RuntimeException("Could not read image info: unsupported format");
     }
 
     @Override

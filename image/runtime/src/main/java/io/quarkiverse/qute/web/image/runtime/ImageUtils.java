@@ -155,6 +155,18 @@ public interface ImageUtils {
         return extensionFromFormat(format);
     }
 
+    static String normalizeUnicode(String input) {
+        return Normalizer.normalize(input, Normalizer.Form.NFC);
+    }
+
+    static String indexKey(String urlPrefix, String path) {
+        String stripped = path.startsWith("/") ? path.substring(1) : path;
+        String key = urlPrefix != null && !urlPrefix.isEmpty()
+                ? urlPrefix + "/" + stripped
+                : stripped;
+        return normalizeUnicode(key);
+    }
+
     /**
      * Resolve a relative path against a base directory and verify it stays contained within it.
      *

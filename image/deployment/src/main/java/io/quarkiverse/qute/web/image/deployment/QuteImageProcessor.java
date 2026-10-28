@@ -176,10 +176,7 @@ public class QuteImageProcessor {
             String scope = scannerScope(dir);
             try {
                 for (ProjectFile file : scanner.query().scopeDir(scope).list()) {
-                    String key = dir.urlPrefix() != null && !dir.urlPrefix().isEmpty()
-                            ? dir.urlPrefix() + "/" + file.scopedPath()
-                            : file.scopedPath();
-                    result.putIfAbsent(key, file);
+                    result.putIfAbsent(ImageUtils.indexKey(dir.urlPrefix(), file.scopedPath()), file);
                 }
             } catch (IOException e) {
                 throw new RuntimeException("Failed to scan image directory: " + dir, e);
@@ -264,8 +261,8 @@ public class QuteImageProcessor {
 
     private static ImageOptions.CropPosition toCropPosition(PresetConfig.Keep keep) {
         return switch (keep) {
-            case LOW -> ImageOptions.CropPosition.BOTTOM;
-            case HIGH -> ImageOptions.CropPosition.TOP;
+            case BOTTOM -> ImageOptions.CropPosition.BOTTOM;
+            case TOP -> ImageOptions.CropPosition.TOP;
             default -> ImageOptions.CropPosition.CENTER;
         };
     }
@@ -279,11 +276,10 @@ public class QuteImageProcessor {
 
     private static ResolvedSourceImage resolveFromIndex(ImagesBuildItem images,
             Map<String, ProjectFile> indexedFiles, String path) {
-        String stripped = path.startsWith("/") ? path.substring(1) : path;
-        ProjectFile file = indexedFiles.get(stripped);
+        ProjectFile file = indexedFiles.get(ImageUtils.indexKey(null, path));
         if (file == null) {
             throw new RuntimeException(
-                    "Image does not exist or is not a file: " + stripped + " (looked up in indexed image directories)");
+                    "Image does not exist or is not a file: " + path + " (looked up in indexed image directories)");
         }
         return toResolvedImage(images, file, path);
     }

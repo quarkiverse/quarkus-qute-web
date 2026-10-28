@@ -69,6 +69,8 @@ public class QuteVipsImageTest {
             context.produce(ImagesDirBuildItem.of("web"));
             context.produce(
                     ImagesDirBuildItem.of("roq-public", java.nio.file.Path.of("target/test-classes/roq-public")));
+            context.produce(
+                    ImagesDirBuildItem.of("", java.nio.file.Path.of("target/test-classes/roq-root")));
         }
     }
 

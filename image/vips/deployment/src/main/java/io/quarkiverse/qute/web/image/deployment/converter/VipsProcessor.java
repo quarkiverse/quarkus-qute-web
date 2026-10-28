@@ -8,7 +8,6 @@ import java.util.Optional;
 import org.jboss.logging.Logger;
 
 import io.quarkiverse.qute.web.image.deployment.items.ImageConverterBuildItem;
-import io.quarkiverse.qute.web.image.deployment.items.QuteImageTemplateToScanBuildItem;
 import io.quarkus.deployment.annotations.BuildStep;
 
 public class VipsProcessor {
@@ -21,12 +20,11 @@ public class VipsProcessor {
             new LibOverride("gobject-2.0", "vipsffm.libpath.gobject.override"));
 
     @BuildStep
-    ImageConverterBuildItem initImageConverter(List<QuteImageTemplateToScanBuildItem> templateToScan) {
-        if (templateToScan.isEmpty()) {
-            return null;
-        }
-        autoDetectLibVips();
-        return new ImageConverterBuildItem(new io.quarkiverse.qute.web.image.converter.vips.VipsConverter());
+    ImageConverterBuildItem initImageConverter() {
+        return new ImageConverterBuildItem(() -> {
+            autoDetectLibVips();
+            return new io.quarkiverse.qute.web.image.converter.vips.VipsConverter();
+        });
     }
 
     static void autoDetectLibVips() {

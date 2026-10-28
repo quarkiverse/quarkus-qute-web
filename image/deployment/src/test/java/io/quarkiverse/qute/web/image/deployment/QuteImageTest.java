@@ -99,19 +99,16 @@ public class QuteImageTest {
     }
 
     @Test
-    public void testPictureElementWithSrcset() {
+    public void testNoPictureWhenSingleFormatGenerated() {
         Document doc = fetchAndParse("/images.html");
         Elements pictures = doc.select("picture");
-        assertThat("default preset (webp+jpg) should produce picture elements", pictures.size(), greaterThan(0));
+        assertThat("no picture elements when only one format is generated (webp skipped by ImageIO)",
+                pictures.size(), is(0));
 
-        Element picture = pictures.get(0);
-        Element img = picture.select("img").first();
-        assertThat(img.attr("src"), containsString("/static/images/generated/"));
-        assertThat("img fallback src should use jpg format", img.attr("src"), containsString(".jpg"));
-
-        Elements sources = picture.select("source");
-        assertThat("picture should have source elements", sources.size(), greaterThan(0));
-        String srcset = sources.get(0).attr("srcset");
+        Element defaultImg = doc.select("img").get(1);
+        assertThat(defaultImg.attr("src"), containsString("/static/images/generated/"));
+        assertThat("fallback src should use jpg", defaultImg.attr("src"), containsString(".jpg"));
+        String srcset = defaultImg.attr("srcset");
         assertThat(srcset, containsString("640w"));
         assertThat(srcset, containsString("1024w"));
         assertThat(srcset, containsString("1920w"));

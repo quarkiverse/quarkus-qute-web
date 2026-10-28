@@ -86,7 +86,9 @@ public class DynamicImageResolverImpl implements DynamicImageResolver {
                 if (info.width() < width) {
                     continue;
                 }
-                int height = ImageSizing.computeTargetHeight(width, info.width(), info.height(), null);
+                ResolvedPresetConfig.CropConfig crop = presetConfig.crop().orElse(null);
+                int height = ImageSizing.computeTargetHeight(width, info.width(), info.height(),
+                        crop != null ? crop.ratio() : null);
                 String settingsHash = ImageUtils.digest(
                         "%s-%s-%s".formatted(id.toString(), width, normalizedFormat));
                 String outputPath = ImageUtils.computeOutputPath(id, width, settingsHash, ext,
@@ -94,7 +96,11 @@ public class DynamicImageResolverImpl implements DynamicImageResolver {
 
                 Path targetFile = config.cacheDir().resolve(outputPath.substring(1));
                 if (!Files.exists(targetFile)) {
-                    ImageOptions options = new ImageOptions(width, height, ext, null, 100);
+                    ImageOptions options = new ImageOptions(width, height, ext,
+                            crop != null
+                                    ? new ImageOptions.CropOptions(crop.ratio(), toCropPosition(crop.keep()))
+                                    : null,
+                            presetConfig.quality());
                     converter.process(sourceBytes, options, targetFile);
                     if (handler != null) {
                         handler.onImageConverted(outputPath, targetFile);
@@ -158,5 +164,13 @@ public class DynamicImageResolverImpl implements DynamicImageResolver {
     private static String extractExtension(String path) {
         int dot = path.lastIndexOf('.');
         return dot > 0 ? path.substring(dot + 1).toLowerCase() : "";
+    }
+
+    private static ImageOptions.CropPosition toCropPosition(PresetConfig.Keep keep) {
+        return switch (keep) {
+            case BOTTOM -> ImageOptions.CropPosition.BOTTOM;
+            case TOP -> ImageOptions.CropPosition.TOP;
+            default -> ImageOptions.CropPosition.CENTER;
+        };
     }
 }

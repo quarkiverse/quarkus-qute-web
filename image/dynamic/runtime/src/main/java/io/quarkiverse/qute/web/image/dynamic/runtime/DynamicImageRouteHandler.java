@@ -21,8 +21,8 @@ public class DynamicImageRouteHandler implements Handler<RoutingContext> {
             return;
         }
         String path = ctx.normalizedPath();
-        Path file = dir.resolve(path.substring(1));
-        if (Files.isRegularFile(file)) {
+        Path file = ImageUtils.resolveContained(dir, path.substring(1));
+        if (file != null && Files.isRegularFile(file)) {
             String contentType = MimeMapping.getMimeTypeForFilename(path);
             if (contentType == null) {
                 int dot = path.lastIndexOf('.');

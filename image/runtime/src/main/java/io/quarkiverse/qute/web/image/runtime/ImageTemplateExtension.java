@@ -20,7 +20,7 @@ public class ImageTemplateExtension {
     }
 
     public static boolean isPicture(ImageTag it) {
-        return it.config().formats() != null && it.config().formats().size() > 1;
+        return sources(it).size() > 1;
     }
 
     public static String imgSrc(ImageTag it) {
@@ -132,10 +132,10 @@ public class ImageTemplateExtension {
     }
 
     private static String singleFormat(ImageTag it) {
-        List<String> formats = it.config().normalizedFormats();
-        if (formats == null || formats.size() != 1)
+        List<Source> srcs = sources(it);
+        if (srcs.size() != 1)
             return null;
-        return formats.get(0);
+        return srcs.get(0).type;
     }
 
     public static String format(String fmt, String originalFormat) {
