@@ -1,0 +1,13 @@
+name: Web Bundler - Qute Image
+description: Add Image Processing support to Qute {#image 'foo.jpg' /}
+metadata:
+  keywords:
+    - qute
+    - image
+    - processing
+    - imageio
+    - responsive
+  guide: https://docs.quarkiverse.io/quarkus-qute-web/dev/image.html
+  categories:
+    - "web"
+  status: "experimental"
