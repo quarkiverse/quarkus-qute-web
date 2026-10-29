@@ -108,7 +108,8 @@ public class AsciidocConverter {
         boolean foundNonEmptyLine = false;
 
         // Calculate minimum indentation in a single pass
-        final String[] lines = content.split("\\v");
+        // the lines as the parser reads them, so CRLF is one line break
+        final List<String> lines = content.lines().toList();
         for (String line : lines) {
             if (!line.trim().isEmpty()) {
                 int leadingSpaces = line.indexOf(line.trim());
