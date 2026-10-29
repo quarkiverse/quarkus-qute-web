@@ -7,8 +7,6 @@ import jakarta.inject.Inject;
 import org.commonmark.Extension;
 import org.commonmark.ext.gfm.alerts.AlertsExtension;
 
-import io.quarkus.arc.DefaultBean;
-
 @Dependent
 public class AlertsConfiguration {
 
@@ -16,7 +14,6 @@ public class AlertsConfiguration {
     AlertsConfig config;
 
     @Produces
-    @DefaultBean
     public Extension alerts() {
         var builder = AlertsExtension.builder();
         config.customTypes().forEach(builder::addCustomType);
