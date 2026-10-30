@@ -8,6 +8,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -19,7 +20,9 @@ import jakarta.inject.Singleton;
 
 import io.quarkus.arc.All;
 import io.yupiik.asciidoc.model.Document;
+import io.yupiik.asciidoc.model.Element;
 import io.yupiik.asciidoc.parser.Parser;
+import io.yupiik.asciidoc.parser.SourceSpan;
 import io.yupiik.asciidoc.parser.resolver.ContentResolver;
 import io.yupiik.asciidoc.parser.resolver.RelativeContentResolver;
 import io.yupiik.asciidoc.renderer.Visitor;
@@ -37,6 +40,8 @@ public class AsciidocConverter {
     private final AsciidocConfig config;
     private final List<AsciidocDocumentProcessor> processors;
     private final AsciidocRendererFactory rendererFactory;
+    // only the hooks read the sources, so the default rendering does not record them
+    private final boolean recordSources;
 
     @Inject
     public AsciidocConverter(AsciidocConfig config, @All List<AsciidocDocumentProcessor> processors,
@@ -54,6 +59,7 @@ public class AsciidocConverter {
         this.config = config;
         this.processors = List.copyOf(processors);
         this.rendererFactory = Objects.requireNonNullElse(rendererFactory, DEFAULT_RENDERER_FACTORY);
+        this.recordSources = !this.processors.isEmpty() || this.rendererFactory != DEFAULT_RENDERER_FACTORY;
     }
 
     private Map<String, String> createAttributes(Map<String, String> asciidocAttributes,
@@ -91,9 +97,12 @@ public class AsciidocConverter {
             Path templateDir = Paths.get(templateAttributes.sourcePath()).getParent();
             contentResolver = new DiskAndClasspathResolver(templateDir.toString());
         }
-        Document document = parser.parse(content, new Parser.ParserContext(contentResolver));
+        final Map<Element, SourceSpan> sources = recordSources ? new IdentityHashMap<>() : null;
+        Document document = parser.parse(content,
+                new Parser.ParserContext(contentResolver, sources == null ? null : sources::put));
         final AsciidocRenderingContext context = new AsciidocRenderingContext(
-                createAttributes(asciidocAttributes, templateAttributes), templateAttributes);
+                createAttributes(asciidocAttributes, templateAttributes), templateAttributes,
+                sources == null ? Map.of() : Collections.unmodifiableMap(sources));
         for (AsciidocDocumentProcessor processor : processors) {
             document = processor.process(document, context);
         }
