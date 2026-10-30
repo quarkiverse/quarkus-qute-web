@@ -28,8 +28,10 @@ public class QuteWebAsciidocExtensionsTest {
     @Test
     void shouldUseAsciidocify() {
         String asciidoc = "=Qute and Roq";
-        Assertions.assertThat(engine.getTemplate("foo").data("data", asciidoc).render()).contains("<h1>Qute and Roq</h1>");
-        Assertions.assertThat(engine.getTemplate("bar").data("data", asciidoc).render()).contains("<h1>Qute and Roq</h1>");
+        Assertions.assertThat(engine.getTemplate("foo").data("data", asciidoc).render())
+                .contains("<h1 id=\"_qute_and_roq\">Qute and Roq</h1>");
+        Assertions.assertThat(engine.getTemplate("bar").data("data", asciidoc).render())
+                .contains("<h1 id=\"_qute_and_roq\">Qute and Roq</h1>");
     }
 
     @Test
@@ -42,7 +44,7 @@ public class QuteWebAsciidocExtensionsTest {
         Assertions.assertThat(engine.getTemplate("baz")
                 .data("data", asciidoc)
                 .data("attributes", Map.of("notitle", true, "baz", "== Qute and Asciidoc"))
-                .render()).containsIgnoringWhitespaces("<h2>Qute and Asciidoc</h2>")
-                .doesNotContain("<h1>Qute and Asciidoc</h1>");
+                .render()).containsIgnoringWhitespaces("<h2 id=\"_qute_and_asciidoc\">Qute and Asciidoc</h2>")
+                .doesNotContain("Qute and Asciidoc</h1>");
     }
 }
