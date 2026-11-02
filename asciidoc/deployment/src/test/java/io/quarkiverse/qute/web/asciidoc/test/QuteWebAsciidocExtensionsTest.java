@@ -27,11 +27,17 @@ public class QuteWebAsciidocExtensionsTest {
 
     @Test
     void shouldUseAsciidocify() {
-        String asciidoc = "=Qute and Roq";
+        String asciidoc = """
+                = Qute and Roq
+
+                == Templates
+                """;
         Assertions.assertThat(engine.getTemplate("foo").data("data", asciidoc).render())
-                .contains("<h1 id=\"_qute_and_roq\">Qute and Roq</h1>");
+                .contains("<h1>Qute and Roq</h1>")
+                .contains("<h2 id=\"_templates\">Templates</h2>");
         Assertions.assertThat(engine.getTemplate("bar").data("data", asciidoc).render())
-                .contains("<h1 id=\"_qute_and_roq\">Qute and Roq</h1>");
+                .contains("<h1>Qute and Roq</h1>")
+                .contains("<h2 id=\"_templates\">Templates</h2>");
     }
 
     @Test
@@ -43,8 +49,8 @@ public class QuteWebAsciidocExtensionsTest {
                 """;
         Assertions.assertThat(engine.getTemplate("baz")
                 .data("data", asciidoc)
-                .data("attributes", Map.of("notitle", true, "baz", "== Qute and Asciidoc"))
-                .render()).containsIgnoringWhitespaces("<h2 id=\"_qute_and_asciidoc\">Qute and Asciidoc</h2>")
-                .doesNotContain("Qute and Asciidoc</h1>");
+                .data("attributes", Map.of("notitle", true, "baz", "Qute and Asciidoc"))
+                .render()).containsIgnoringWhitespaces("<p>Qute and Asciidoc</p>")
+                .doesNotContain("<h1");
     }
 }
