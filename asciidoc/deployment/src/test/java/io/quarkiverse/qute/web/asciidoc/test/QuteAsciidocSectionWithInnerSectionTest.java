@@ -41,8 +41,8 @@ public class QuteAsciidocSectionWithInnerSectionTest {
 
         assertThat(result).contains("""
                 <h1>Quarkus and Qute</h1>
-                 <div class="sect1" id="_qute_and_roq">
-                  <h2>Qute and Roq</h2>
+                 <div class="sect1">
+                  <h2 id="_qute_and_roq">Qute and Roq</h2>
                  <div class="sectionbody">
                  <div class="paragraph">
                 Here is a list: <div class="ulist">
