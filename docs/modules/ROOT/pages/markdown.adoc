@@ -113,7 +113,49 @@ The `io.quarkiverse.qute-markdown:quarkus-qute-web-markdown` module in Quarkus u
 
 You can extend the parsing and rendering behavior of Markdown using additional libraries.
 
-By default, this extension enables the `heading-anchor`, `autolink`, and `tables` Markdown extensions. If you want to disable any of them, you can do so using configuration properties.
+By default, this extension enables the `heading-anchor`, `autolink`, `tables`, and `alerts` Markdown extensions. If you want to disable any of them, you can do so using configuration properties.
+
+== Customization
+
+Two CDI beans customize the conversion: a CommonMark `Extension` bean is added to the parser and the renderer, and an `MdConverter` bean replaces the converter.
+
+=== Add a CommonMark extension
+
+Declare a bean implementing `org.commonmark.Extension` to add it to the built-in extensions.
+Implement `HtmlRenderer.HtmlRendererExtension` to customize the HTML rendering, for example with an `AttributeProvider` adding attributes to the elements of a node type, or with a `NodeRenderer` rendering a node type differently, and `Parser.ParserExtension` to customize the parsing.
+See https://github.com/commonmark/commonmark-java#customize-html-rendering[Customize HTML rendering] in the commonmark-java documentation.
+The order of the extensions is undefined, so an extension that changes what a built-in extension does, such as the `id` of the headings, needs that built-in extension disabled with its configuration property.
+
+[source,java]
+----
+@Singleton
+public class LeadParagraphExtension implements Extension, HtmlRenderer.HtmlRendererExtension {
+    @Override
+    public void extend(HtmlRenderer.Builder rendererBuilder) {
+        rendererBuilder.attributeProviderFactory(context -> (node, tagName, attributes) -> {
+            if (node instanceof Paragraph) {
+                attributes.put("class", "lead");
+            }
+        });
+    }
+}
+----
+
+=== Replace the converter
+
+Declare a bean implementing `MdConverter`, which receives the Markdown text and returns the HTML, to replace the CommonMark converter.
+The section and the `markdownify` and `mdToHtml` template extension methods then use your bean, and the CommonMark extensions and their configuration properties no longer apply.
+
+[source,java]
+----
+@Singleton
+public class SiteConverter implements MdConverter {
+    @Override
+    public String html(String text) {
+        return mySiteRenderer.render(text);
+    }
+}
+----
 
 [[extension-configuration-reference]]
 == Extension Configuration Reference
