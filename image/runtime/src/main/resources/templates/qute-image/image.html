@@ -1,0 +1,16 @@
+{@io.quarkiverse.qute.web.image.runtime.model.ImageTag image}
+{@java.util.Map imgAttrs}
+{@java.util.Map pictureAttrs}
+{#if image.isDirectUrl}
+{image.directUrl}
+{#else if image.isPicture}
+<picture {#for attr in pictureAttrs.entrySet()}{attr.key}="{attr.value}" {/for}>
+  {#for s in image.sources}
+  <source srcset="{s.srcset}" type="{s.type}">
+  {/for}
+  <img src="{image.imgSrc}" {#for attr in imgAttrs.entrySet()}{attr.key}="{attr.value}" {/for}>
+</picture>
+{#else}
+<img src="{image.imgSrc}"
+  {#if image.hasImgSrcset}srcset="{image.imgSrcset}"{/if} {#for attr in imgAttrs.entrySet()}{attr.key}="{attr.value}" {/for}>
+{/if}
