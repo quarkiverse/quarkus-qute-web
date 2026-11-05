@@ -85,6 +85,13 @@ public class SiteRendererFactory implements AsciidocRendererFactory {
 ----
 
 `AsciidocRenderingContext` is a record giving both beans the attributes of the document, which the renderer is configured with, and the template attributes of the content, such as its source path.
+Its `sources()` map gives the source of each block-level element of the document body: the file, the first and last line, and the lines the element was read from, for example to look up the translation of a paragraph.
+These are the lines of the content as Qute rendered it, with its common indentation removed, so expressions are already replaced; the file is `null`, except for the elements of an included file that yields several blocks, which carry that file and its line numbers.
+Line numbers count from the start of that content; inside a list item or a table cell, they count from the start of the item or the cell.
+A block title or an attribute line above an element is not part of its span.
+The map is keyed by identity, so look elements up with the instances the parser created.
+Elements the parser rebuilds or creates after reporting have no entry: the document title, the text of a list item, the content of an admonition, the terms and descriptions of a description list, header cells, callout texts, and an element a processor creates; the span of a list or an admonition covers its content.
+Processors run highest priority first, so give a processor that reads `sources()` a higher priority than any processor that rebuilds elements.
 
 [[extension-configuration-reference]]
 == Extension Configuration Reference
