@@ -24,6 +24,11 @@ public class ImageIOConverter implements ImageConverter {
             .collect(Collectors.toSet());
 
     @Override
+    public String id() {
+        return "imageio";
+    }
+
+    @Override
     public boolean supportsFormat(String outputFormat) {
         return SUPPORTED_WRITE_FORMATS.contains(outputFormat.toLowerCase());
     }
@@ -46,7 +51,7 @@ public class ImageIOConverter implements ImageConverter {
         } catch (IOException e) {
             throw new RuntimeException("Failed to read image info", e);
         }
-        throw new RuntimeException("Could not read image info: unsupported format");
+        throw new UnsupportedFormatException("No ImageIO reader accepts this image");
     }
 
     @Override

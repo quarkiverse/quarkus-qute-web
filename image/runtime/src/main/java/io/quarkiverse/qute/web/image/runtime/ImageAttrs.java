@@ -30,14 +30,17 @@ public record ImageAttrs(Map<String, String> imgMap, Map<String, String> picture
 
         if (imageTag != null && !imageTag.config().directUrl()) {
             imgAttrs.put("loading", "lazy");
-            imgAttrs.put("sizes", "auto");
 
-            GeneratedImage fallback = imageTag.image().generated().stream()
-                    .max(Comparator.comparingInt(GeneratedImage::width))
-                    .orElse(null);
-            if (fallback != null) {
-                imgAttrs.put("width", String.valueOf(fallback.width()));
-                imgAttrs.put("height", String.valueOf(fallback.height()));
+            // a pass-through image renders as is: no srcset so no sizes, and no dimensions since nothing was read
+            if (!imageTag.image().passThrough()) {
+                imgAttrs.put("sizes", "auto");
+                GeneratedImage fallback = imageTag.image().generated().stream()
+                        .max(Comparator.comparingInt(GeneratedImage::width))
+                        .orElse(null);
+                if (fallback != null) {
+                    imgAttrs.put("width", String.valueOf(fallback.width()));
+                    imgAttrs.put("height", String.valueOf(fallback.height()));
+                }
             }
         }
 

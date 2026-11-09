@@ -23,4 +23,10 @@ public interface ImageConverter {
         return true;
     }
 
+    /**
+     * A short stable id of this converter. It is hashed into the generated file names (never visible as is),
+     * so two converters never share a cached variant since their output differs for the same settings.
+     */
+    String id();
+
 }

@@ -24,9 +24,9 @@
             <artifactId>quarkus-vertx-http-deployment-spi</artifactId>
         </dependency>
         <dependency>
-            <groupId>io.quarkiverse.qute.web</groupId>
-            <artifactId>quarkus-qute-web-image-converter</artifactId>
-            <version>${project.version}</version>
+            <groupId>net.coobird</groupId>
+            <artifactId>thumbnailator</artifactId>
+            <version>${thumbnailator.version}</version>
         </dependency>
         <dependency>
             <groupId>io.quarkus.qute</groupId>

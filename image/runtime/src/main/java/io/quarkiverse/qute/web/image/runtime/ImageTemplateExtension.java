@@ -24,6 +24,9 @@ public class ImageTemplateExtension {
     }
 
     public static String imgSrc(ImageTag it) {
+        if (it.image().passThrough()) {
+            return it.declaredPath();
+        }
         return selectBest(it.image(), it.config().fallbackFormat(), it.image().info().format(), it.config().widths(),
                 it.declaredPath());
     }
@@ -46,7 +49,7 @@ public class ImageTemplateExtension {
 
     public static List<Source> sources(ImageTag it) {
         List<String> formats = it.config().normalizedFormats();
-        if (formats == null)
+        if (formats == null || it.image().passThrough())
             return List.of();
 
         String originalFormat = it.image().info().format();

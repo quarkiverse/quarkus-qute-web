@@ -13,7 +13,6 @@
         <maven.compiler.release>23</maven.compiler.release>
     </properties>
     <modules>
-        <module>converter</module>
         <module>runtime</module>
         <module>deployment</module>
     </modules>

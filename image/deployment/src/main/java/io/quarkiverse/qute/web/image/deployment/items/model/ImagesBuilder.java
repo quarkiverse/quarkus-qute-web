@@ -3,6 +3,7 @@ package io.quarkiverse.qute.web.image.deployment.items.model;
 import static io.quarkiverse.qute.web.image.runtime.ImageUtils.digest;
 import static io.quarkiverse.qute.web.image.runtime.ImageUtils.imageTagKey;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -22,6 +23,14 @@ public class ImagesBuilder {
 
     public Map<String, ScannedImageTag> scannedImageTags() {
         return scannedImageTags;
+    }
+
+    /**
+     * @return the image ids by the path they were registered with: the absolute path of a local file, the index
+     *         path of a classpath file, or {@code bytes:<declaredPath>} for in-memory sources
+     */
+    public Map<String, ImageId> imageIdsByPath() {
+        return Collections.unmodifiableMap(imageIdsByPath);
     }
 
     public Map<String, ImageTag> computeImageTags() {

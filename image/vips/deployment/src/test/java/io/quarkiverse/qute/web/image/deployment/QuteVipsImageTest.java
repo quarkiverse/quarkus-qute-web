@@ -144,6 +144,20 @@ public class QuteVipsImageTest {
         }
     }
 
+    /**
+     * vips can read SVG, but vectors pass through by design with every converter.
+     */
+    @Test
+    public void testVectorSourcePassesThrough() {
+        Document doc = fetchAndParse("/vector.html");
+        Element img = doc.select("img").first();
+        assertThat(img.attr("src"), is("/static/images/logo.svg"));
+        assertThat(img.attr("srcset"), is(""));
+        assertThat(img.attr("width"), is(""));
+        assertThat(doc.select("picture").size(), is(0));
+        assertThat(doc.getElementById("p").text(), is("/static/images/logo.svg"));
+    }
+
     @Test
     public void testRoqTemplateRenders() {
         RestAssured.given()

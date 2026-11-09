@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CompletionStage;
 
-import jakarta.enterprise.inject.Instance;
 import jakarta.inject.Inject;
 
 import io.quarkiverse.qute.web.image.runtime.model.ImageTag;
@@ -21,6 +20,7 @@ import io.quarkus.qute.SectionHelper;
 import io.quarkus.qute.SectionHelperFactory;
 import io.quarkus.qute.SectionNode;
 import io.quarkus.qute.Template;
+import io.quarkus.qute.TemplateException;
 
 @EngineConfiguration
 public class ImageSectionHelperFactory implements SectionHelperFactory<SectionHelper> {
@@ -33,7 +33,7 @@ public class ImageSectionHelperFactory implements SectionHelperFactory<SectionHe
     Images images;
 
     @Inject
-    Instance<DynamicImageResolver> dynamicResolver;
+    ImageConfig config;
 
     public ImageSectionHelperFactory() {
         images = null;
@@ -41,6 +41,20 @@ public class ImageSectionHelperFactory implements SectionHelperFactory<SectionHe
 
     public ImageSectionHelperFactory(Images images) {
         this.images = images;
+    }
+
+    /**
+     * Decide what to do when no image tag was registered for a source.
+     *
+     * @throws TemplateException in strict mode for a non-remote source
+     */
+    static void checkMiss(ImageConfig config, String src, String preset, String templateId) {
+        if (ImageUtils.isRemote(src) || config == null || !config.strict()) {
+            return;
+        }
+        throw new TemplateException(("Image not found for src '%s' with preset '%s' in template '%s'"
+                + " (quarkus.qute.image.strict=true). Add the image to a scanned directory or produce it at"
+                + " build time.").formatted(src, preset, templateId));
     }
 
     @Override
@@ -95,10 +109,14 @@ public class ImageSectionHelperFactory implements SectionHelperFactory<SectionHe
                             String preset = resolved.get("preset") != null
                                     ? resolved.get("preset").toString()
                                     : "default";
-                            ImageTag imageTag = images.get(
-                                    context.resolutionContext().getTemplate().getId(), src, preset);
-                            if (imageTag == null && dynamicResolver != null && dynamicResolver.isResolvable()) {
-                                imageTag = dynamicResolver.get().resolve(src, preset);
+                            if (src == null || src.isBlank()) {
+                                // nothing to show, and nothing to look up
+                                return ResultNode.NOOP;
+                            }
+                            String templateId = context.resolutionContext().getTemplate().getId();
+                            ImageTag imageTag = images.get(templateId, src, preset);
+                            if (imageTag == null) {
+                                checkMiss(config, src, preset, templateId);
                             }
                             Map<String, String> attrs = new HashMap<>();
                             for (Map.Entry<String, Object> entry : resolved.entrySet()) {

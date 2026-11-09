@@ -14,6 +14,7 @@ import io.quarkiverse.qute.web.image.runtime.model.OriginalInfo;
 public class ImageBuilder {
     private final ImageId id;
     private OriginalInfo info;
+    private boolean passThrough;
     private final Map<String, GeneratedImage> generatedMap = new HashMap<>();
 
     public ImageBuilder(ImageId id) {
@@ -24,13 +25,14 @@ public class ImageBuilder {
         return generatedMap;
     }
 
-    public ImageBuilder addGeneratedImage(GeneratedImageOptions options, boolean slugifyOutput,
+    public ImageBuilder addGeneratedImage(String outputPrefix, GeneratedImageOptions options, boolean slugifyOutput,
             Consumer<GeneratedImage> consumer) {
         String hash = ImageUtils.digest("%s-%s".formatted(id.toString(), options.settings()));
         final String outputExt = ImageUtils.getOutputExt(id, options.format());
         final String generatedKey = options.width() + "-" + hash + "-" + outputExt;
         generatedMap.computeIfAbsent(generatedKey, key -> {
-            final String outputPath = ImageUtils.computeOutputPath(id, options.width(), hash, outputExt, slugifyOutput);
+            final String outputPath = ImageUtils.computeOutputPath(outputPrefix, id, options.width(), hash, outputExt,
+                    slugifyOutput);
             final GeneratedImage generatedImage = new GeneratedImage(id, options.width(), options.height(),
                     options.format(), outputExt, hash, outputPath);
             consumer.accept(generatedImage);
@@ -44,7 +46,20 @@ public class ImageBuilder {
         return this;
     }
 
+    /**
+     * Mark this image as used as is (see {@link Image#passThrough()}); only the format of its info is known.
+     */
+    public ImageBuilder passThrough(String extension) {
+        this.passThrough = true;
+        this.info = new OriginalInfo(extension, 0, 0);
+        return this;
+    }
+
+    public boolean isPassThrough() {
+        return passThrough;
+    }
+
     public Image build() {
-        return new Image(id, info, List.copyOf(generatedMap.values()));
+        return new Image(id, info, List.copyOf(generatedMap.values()), passThrough);
     }
 }

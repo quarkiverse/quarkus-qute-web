@@ -14,17 +14,27 @@ import app.photofox.vipsffm.enums.VipsInteresting;
 import io.quarkiverse.qute.web.image.converter.ImageConverter;
 import io.quarkiverse.qute.web.image.converter.ImageInfo;
 import io.quarkiverse.qute.web.image.converter.ImageOptions;
+import io.quarkiverse.qute.web.image.converter.UnsupportedFormatException;
 
 public class VipsConverter implements ImageConverter {
 
     @Override
+    public String id() {
+        return "vips";
+    }
+
+    @Override
     public ImageInfo readInfo(byte[] sourceImage) {
         final ImageInfo[] result = new ImageInfo[1];
-        Vips.run(arena -> {
-            VImage image = VImage.newFromBytes(arena, sourceImage);
-            result[0] = new ImageInfo(detectFormat(sourceImage),
-                    image.getWidth(), image.getHeight());
-        });
+        try {
+            Vips.run(arena -> {
+                VImage image = VImage.newFromBytes(arena, sourceImage);
+                result[0] = new ImageInfo(detectFormat(sourceImage),
+                        image.getWidth(), image.getHeight());
+            });
+        } catch (VipsError e) {
+            throw new UnsupportedFormatException("libvips cannot read this image: " + e.getMessage());
+        }
         return result[0];
     }
 

@@ -8,22 +8,23 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import io.quarkiverse.qute.web.image.deployment.items.QuteImageExpressionBuildItem;
 import io.quarkiverse.qute.web.image.deployment.items.QuteImageTargetDirBuildItem;
 import io.quarkiverse.qute.web.image.deployment.items.QuteImageTemplateToScanBuildItem;
 import io.quarkiverse.qute.web.image.deployment.items.QuteImageTemplateToScanBuildItem.ImageRef;
 import io.quarkiverse.qute.web.image.runtime.ImageConfig;
+import io.quarkiverse.qute.web.image.runtime.ImageUtils;
 import io.quarkiverse.qute.web.image.runtime.PresetConfig;
 import io.quarkus.deployment.annotations.BuildProducer;
 import io.quarkus.deployment.annotations.BuildStep;
-import io.quarkus.deployment.builditem.LaunchModeBuildItem;
 import io.quarkus.deployment.pkg.builditem.OutputTargetBuildItem;
-import io.quarkus.deployment.util.FileUtil;
 import io.quarkus.qute.Expression;
 import io.quarkus.qute.SectionBlock;
 import io.quarkus.qute.TemplateNode;
@@ -33,14 +34,14 @@ import io.quarkus.qute.deployment.TemplatesAnalysisBuildItem;
 
 public class QuteImageScanProcessor {
 
-    public static final String TARGET_DIR_NAME = "qute-image/";
-
     @BuildStep
-    QuteImageTargetDirBuildItem initTargetDir(OutputTargetBuildItem outputTarget, LaunchModeBuildItem launchMode) {
-        final String targetDirName = TARGET_DIR_NAME + launchMode.getLaunchMode().getDefaultProfile();
-        final Path targetDir = outputTarget.getOutputDirectory().resolve(targetDirName);
+    QuteImageTargetDirBuildItem initTargetDir(ImageConfig config, OutputTargetBuildItem outputTarget) {
+        Path configured = Path.of(config.buildDir());
+        final Path targetDir = configured.isAbsolute() ? configured
+                : outputTarget.getOutputDirectory().resolve(configured);
         try {
-            FileUtil.deleteDirectory(targetDir);
+            // persistent across builds on purpose: existing variants are reused (see QuteImageProcessor)
+            Files.createDirectories(targetDir);
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
@@ -52,6 +53,7 @@ public class QuteImageScanProcessor {
             ImageConfig config,
             EffectiveTemplatePathsBuildItem effectiveTemplatePaths,
             BuildProducer<QuteImageTemplateToScanBuildItem> quteRuntimeTemplateBuildItemBuildProducer,
+            BuildProducer<QuteImageExpressionBuildItem> expressionProducer,
             TemplatesAnalysisBuildItem templatesAnalysisBuildItem) {
         final Map<String, TemplatePathBuildItem> byId = effectiveTemplatePaths.getTemplatePaths().stream()
                 .collect(Collectors.toMap(TemplatePathBuildItem::getPath, Function.identity()));
@@ -67,16 +69,18 @@ public class QuteImageScanProcessor {
             List<ImageRef> refs = new ArrayList<>();
             // Scan {#img} section tags
             analysis.findNodes(QuteImageScanProcessor::isImageSection).stream()
-                    .map(imageTagSectionMapper(config)).filter(Objects::nonNull).forEach(refs::add);
-            // Scan {img:url(...)} and {img:tag(...)} namespace expressions
+                    .map(imageTagSectionMapper(config, expressionProducer)).filter(Objects::nonNull).forEach(refs::add);
+            // Scan {img:path(...)} and {img:tag(...)} namespace expressions
             analysis.findNodes(QuteImageScanProcessor::isImageNamespaceExpression).stream()
-                    .map(imageNamespaceExprMapper(config)).filter(Objects::nonNull).forEach(refs::add);
+                    .map(imageNamespaceExprMapper(config, expressionProducer)).filter(Objects::nonNull)
+                    .forEach(refs::add);
             quteRuntimeTemplateBuildItemBuildProducer
                     .produce(new QuteImageTemplateToScanBuildItem(location, refs, analysis.path));
         }
     }
 
-    private static Function<TemplateNode, ImageRef> imageTagSectionMapper(ImageConfig config) {
+    private static Function<TemplateNode, ImageRef> imageTagSectionMapper(ImageConfig config,
+            BuildProducer<QuteImageExpressionBuildItem> expressionProducer) {
         return sectionNode -> {
             final List<SectionBlock> blocks = sectionNode.asSection().getBlocks();
             if (blocks.size() != 1) {
@@ -86,14 +90,18 @@ public class QuteImageScanProcessor {
             if (parameters.containsKey("src")) {
                 Expression expr = parameters.get("src");
                 Expression presetExpr = parameters.get("preset");
+                String templateId = sectionNode.getOrigin().getTemplateId();
                 if (!expr.isLiteral()) {
+                    expressionProducer.produce(toExpressionItem(templateId, expr, presetExpr, "{#img}"));
                     return null;
                 }
                 Object literal = expr.getLiteral();
                 if (!(literal instanceof String file)) {
                     throw new RuntimeException("Invalid image literal: " + literal + " (must be a string literal)");
                 }
-                String templateId = sectionNode.getOrigin().getTemplateId();
+                if (ImageUtils.isRemote(file)) {
+                    return null;
+                }
                 return resolveImageRef(config, templateId, file, presetExpr, "{#img}");
             } else {
                 throw new RuntimeException(
@@ -102,7 +110,8 @@ public class QuteImageScanProcessor {
         };
     }
 
-    private static Function<TemplateNode, ImageRef> imageNamespaceExprMapper(ImageConfig config) {
+    private static Function<TemplateNode, ImageRef> imageNamespaceExprMapper(ImageConfig config,
+            BuildProducer<QuteImageExpressionBuildItem> expressionProducer) {
         return exprNode -> {
             Expression expr = exprNode.asExpression().getExpressions().get(0);
             List<Expression.Part> parts = expr.getParts();
@@ -115,17 +124,71 @@ public class QuteImageScanProcessor {
                 return null;
             }
             Expression srcExpr = params.get(0);
+            Expression presetExpr = params.size() > 1 ? params.get(1) : null;
+            String templateId = exprNode.getOrigin().getTemplateId();
+            String context = "{img:" + method.getName() + "(...)}";
             if (!srcExpr.isLiteral()) {
+                expressionProducer.produce(toExpressionItem(templateId, srcExpr, presetExpr, context));
                 return null;
             }
             Object literal = srcExpr.getLiteral();
             if (!(literal instanceof String file)) {
                 throw new RuntimeException("Invalid image literal: " + literal + " (must be a string literal)");
             }
-            Expression presetExpr = params.size() > 1 ? params.get(1) : null;
-            String templateId = exprNode.getOrigin().getTemplateId();
-            return resolveImageRef(config, templateId, file, presetExpr,
-                    "{img:" + method.getName() + "(...)}");
+            if (ImageUtils.isRemote(file)) {
+                return null;
+            }
+            return resolveImageRef(config, templateId, file, presetExpr, context);
+        };
+    }
+
+    private static QuteImageExpressionBuildItem toExpressionItem(String templateId, Expression srcExpr,
+            Expression presetExpr, String context) {
+        String presetExpression = presetExpr == null ? "'default'" : toParsableString(presetExpr);
+        List<Expression.Part> parts = srcExpr.getParts();
+        String rootTypeInfo = parts.isEmpty() ? null : parts.get(0).getTypeInfo();
+        String origin = context + " at line " + srcExpr.getOrigin().getLine();
+        return new QuteImageExpressionBuildItem(templateId, toParsableString(srcExpr), presetExpression,
+                rootTypeInfo, origin);
+    }
+
+    /**
+     * {@link Expression#toOriginalString()} renders infix operators with their symbolic virtual method names
+     * ({@code a.?:(b)} for {@code a ?: b}), which the parser does not accept back. This renders the same
+     * expression with the word aliases Qute's resolvers also answer to, so the result can be parsed again.
+     */
+    static String toParsableString(Expression expr) {
+        StringBuilder builder = new StringBuilder();
+        if (expr.getNamespace() != null) {
+            builder.append(expr.getNamespace()).append(':');
+        }
+        for (Iterator<Expression.Part> iterator = expr.getParts().iterator(); iterator.hasNext();) {
+            Expression.Part part = iterator.next();
+            if (part.isVirtualMethod()) {
+                Expression.VirtualMethodPart method = part.asVirtualMethod();
+                builder.append(parsableMethodName(method.getName())).append('(');
+                for (Iterator<Expression> params = method.getParameters().iterator(); params.hasNext();) {
+                    builder.append(toParsableString(params.next()));
+                    if (params.hasNext()) {
+                        builder.append(", ");
+                    }
+                }
+                builder.append(')');
+            } else {
+                builder.append(part.getName());
+            }
+            if (iterator.hasNext()) {
+                builder.append('.');
+            }
+        }
+        return builder.toString();
+    }
+
+    private static String parsableMethodName(String name) {
+        return switch (name) {
+            case "?:", ":" -> "or";
+            case "?" -> "ifTruthy";
+            default -> name;
         };
     }
 

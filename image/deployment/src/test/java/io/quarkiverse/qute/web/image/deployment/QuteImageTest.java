@@ -271,13 +271,53 @@ public class QuteImageTest {
     }
 
     @Test
-    public void testNamespaceUrl() {
+    public void testNamespacePath() {
         Document doc = fetchAndParse("/images.html");
         Element urlDiv = doc.getElementById("ns-url");
         String url = urlDiv.text().trim();
-        assertThat("img:url should return a generated image URL",
+        assertThat("img:path should return a generated image path",
                 url, containsString("/static/images/generated/"));
-        assertThat("img:url should return a jpg URL", url, containsString(".jpg"));
+        assertThat("img:path should return a jpg path", url, containsString(".jpg"));
+    }
+
+    @Test
+    public void testRemoteLiteralPassesThrough() {
+        Document doc = fetchAndParse("/remote.html");
+        Element img = doc.select("img").first();
+        assertThat(img.attr("src"), is("https://example.com/remote.jpg"));
+        assertThat(img.attr("srcset"), is(""));
+        assertThat(doc.getElementById("p").text(), is("https://example.com/remote.jpg"));
+    }
+
+    @Test
+    public void testVectorSourcePassesThrough() {
+        Document doc = fetchAndParse("/vector.html");
+        Element img = doc.select("img").first();
+        assertThat(img.attr("src"), is("/static/images/logo.svg"));
+        assertThat(img.attr("srcset"), is(""));
+        assertThat(img.attr("width"), is(""));
+        assertThat(doc.select("picture").size(), is(0));
+        assertThat(doc.getElementById("p").text(), is("/static/images/logo.svg"));
+    }
+
+    /**
+     * ImageIO has no WebP reader: the source cannot be read and passes through with a build-time warning.
+     */
+    @Test
+    public void testUnreadableSourcePassesThrough() {
+        Document doc = fetchAndParse("/webp.html");
+        Element img = doc.select("img").first();
+        assertThat(img.attr("src"), is("/static/images/photo.webp"));
+        assertThat(img.attr("srcset"), is(""));
+        assertThat(img.attr("width"), is(""));
+        assertThat(doc.select("picture").size(), is(0));
+        assertThat(doc.getElementById("p").text(), is("/static/images/photo.webp"));
+    }
+
+    @Test
+    public void testBlankSrcRendersNothing() {
+        String body = RestAssured.get("/rest/dynamic?src=").then().statusCode(200).extract().asString();
+        assertThat(body, not(containsString("<img")));
     }
 
     @Test

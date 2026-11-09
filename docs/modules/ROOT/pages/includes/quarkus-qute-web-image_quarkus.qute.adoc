@@ -28,6 +28,90 @@ endif::add-copy-button-to-env-var[]
 |boolean
 |`+++true+++`
 
+a|icon:lock[title=Fixed at build time] [[quarkus-qute-web-image_quarkus-qute-image-strict]] [.property-path]##link:#quarkus-qute-web-image_quarkus-qute-image-strict[`quarkus.qute.image.strict`]##
+ifdef::add-copy-button-to-config-props[]
+config_property_copy_button:+++quarkus.qute.image.strict+++[]
+endif::add-copy-button-to-config-props[]
+
+
+[.description]
+--
+When true, an image source that was not processed at build time is a rendering error instead of falling back to a plain `<img>` pointing at the source. Remote http(s) URLs are never looked up and always render as is; a null or blank source renders nothing in both modes.
+
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_QUTE_IMAGE_STRICT+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_QUTE_IMAGE_STRICT+++`
+endif::add-copy-button-to-env-var[]
+--
+|boolean
+|`+++false+++`
+
+a|icon:lock[title=Fixed at build time] [[quarkus-qute-web-image_quarkus-qute-image-output-path]] [.property-path]##link:#quarkus-qute-web-image_quarkus-qute-image-output-path[`quarkus.qute.image.output-path`]##
+ifdef::add-copy-button-to-config-props[]
+config_property_copy_button:+++quarkus.qute.image.output-path+++[]
+endif::add-copy-button-to-config-props[]
+
+
+[.description]
+--
+The public path under which generated images are served and, for static output, written. Must start with a slash and not end with one.
+
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_QUTE_IMAGE_OUTPUT_PATH+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_QUTE_IMAGE_OUTPUT_PATH+++`
+endif::add-copy-button-to-env-var[]
+--
+|string
+|`+++/static/images/generated+++`
+
+a|icon:lock[title=Fixed at build time] [[quarkus-qute-web-image_quarkus-qute-image-build-dir]] [.property-path]##link:#quarkus-qute-web-image_quarkus-qute-image-build-dir[`quarkus.qute.image.build-dir`]##
+ifdef::add-copy-button-to-config-props[]
+config_property_copy_button:+++quarkus.qute.image.build-dir+++[]
+endif::add-copy-button-to-config-props[]
+
+
+[.description]
+--
+The directory where generated images are written at build time. Relative paths are resolved against the build output directory (for instance `target/`). The directory is kept between builds: a variant whose file already exists is reused, and its name changes whenever the source bytes, width, format, crop, quality or converter change.
+
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_QUTE_IMAGE_BUILD_DIR+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_QUTE_IMAGE_BUILD_DIR+++`
+endif::add-copy-button-to-env-var[]
+--
+|string
+|`+++qute-image+++`
+
+a|icon:lock[title=Fixed at build time] [[quarkus-qute-web-image_quarkus-qute-image-passthrough]] [.property-path]##link:#quarkus-qute-web-image_quarkus-qute-image-passthrough[`quarkus.qute.image.passthrough`]##
+ifdef::add-copy-button-to-config-props[]
+config_property_copy_button:+++quarkus.qute.image.passthrough+++[]
+endif::add-copy-button-to-config-props[]
+
+
+[.description]
+--
+Source file extensions that are never converted: the image is used as is, without generated variants (no srcset, no picture, no width or height). Vectors are listed by default since rasterizing them makes them larger and blurrier. Case-insensitive. To let a converter rasterize SVGs, set a value that matches no extension, for instance `none` (an empty value falls back to the default).
+
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_QUTE_IMAGE_PASSTHROUGH+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_QUTE_IMAGE_PASSTHROUGH+++`
+endif::add-copy-button-to-env-var[]
+--
+|list of string
+|`+++svg+++`
+
 a|icon:lock[title=Fixed at build time] [[quarkus-qute-web-image_quarkus-qute-image-presets-presets-formats]] [.property-path]##link:#quarkus-qute-web-image_quarkus-qute-image-presets-presets-formats[`quarkus.qute.image.presets."presets".formats`]##
 ifdef::add-copy-button-to-config-props[]
 config_property_copy_button:+++quarkus.qute.image.presets."presets".formats+++[]

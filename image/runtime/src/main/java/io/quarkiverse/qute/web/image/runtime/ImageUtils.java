@@ -90,6 +90,17 @@ public interface ImageUtils {
         return id + "|" + name;
     }
 
+    /**
+     * @return true when the source is an absolute http(s) URL, which is never converted and always rendered as is
+     */
+    static boolean isRemote(String src) {
+        if (src == null) {
+            return false;
+        }
+        String lower = src.toLowerCase(Locale.ROOT);
+        return lower.startsWith("http://") || lower.startsWith("https://");
+    }
+
     static Path generatedImagePath(Path targetPath,
             GeneratedImage generatedImage) {
         return targetPath.resolve(generatedImage.outputPath().substring(1));
@@ -100,25 +111,19 @@ public interface ImageUtils {
         return i > 0 ? path.substring(0, i) : path;
     }
 
-    static String computeOutputPath(String baseName, String imageDigest, Integer width, String settingsHash,
+    /**
+     * The public path of a generated variant.
+     *
+     * @param outputPrefix the configured output path (for instance {@code /static/images/generated}), with a leading
+     *        slash and no trailing slash
+     * @param width the variant width, or null for the original
+     */
+    static String computeOutputPath(String outputPrefix, ImageId id, Integer width, String settingsHash,
             String ext, boolean slugify) {
         final String ref = width == null ? "original" : width + "-" + settingsHash;
-        String name = slugify ? slugify(baseName) : baseName;
+        String name = slugify ? slugify(id.baseName()) : id.baseName();
         String fileName = "%s-%s.%s".formatted(name, ref, ext);
-        return Path.of("/static", "images/generated/", imageDigest, fileName).toString().replace('\\', '/');
-    }
-
-    static String computeOutputPath(String baseName, String imageDigest, Integer width, String settingsHash,
-            String ext) {
-        return computeOutputPath(baseName, imageDigest, width, settingsHash, ext, false);
-    }
-
-    static String computeOutputPath(ImageId id, Integer width, String settingsHash, String ext) {
-        return computeOutputPath(id.baseName(), id.digest(), width, settingsHash, ext, false);
-    }
-
-    static String computeOutputPath(ImageId id, Integer width, String settingsHash, String ext, boolean slugify) {
-        return computeOutputPath(id.baseName(), id.digest(), width, settingsHash, ext, slugify);
+        return outputPrefix + "/" + id.digest() + "/" + fileName;
     }
 
     static String slugify(String input) {

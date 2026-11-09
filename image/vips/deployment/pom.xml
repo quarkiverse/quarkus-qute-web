@@ -15,9 +15,9 @@
             <artifactId>quarkus-arc-deployment</artifactId>
         </dependency>
         <dependency>
-            <groupId>io.quarkiverse.qute.web</groupId>
-            <artifactId>quarkus-qute-web-image-vips-converter</artifactId>
-            <version>${project.version}</version>
+            <groupId>app.photofox.vips-ffm</groupId>
+            <artifactId>vips-ffm-core</artifactId>
+            <version>${vips-ffm.version}</version>
         </dependency>
         <dependency>
             <groupId>io.quarkiverse.qute.web</groupId>

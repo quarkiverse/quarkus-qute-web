@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletionStage;
 
-import jakarta.enterprise.inject.Instance;
 import jakarta.inject.Inject;
 
 import io.quarkiverse.qute.web.image.runtime.model.ImageTag;
@@ -26,10 +25,10 @@ public class ImageNamespaceResolver implements NamespaceResolver {
     Images images;
 
     @Inject
-    Instance<DynamicImageResolver> dynamicResolver;
+    Engine engine;
 
     @Inject
-    Engine engine;
+    ImageConfig config;
 
     @Override
     public String getNamespace() {
@@ -51,14 +50,17 @@ public class ImageNamespaceResolver implements NamespaceResolver {
                 String src = srcObj != null ? srcObj.toString() : null;
                 String preset = presetObj != null ? presetObj.toString() : "default";
                 String templateId = context.resolutionContext().getTemplate().getId();
+                if (src == null || src.isBlank()) {
+                    return CompletedStage.of("");
+                }
 
                 ImageTag imageTag = images.get(templateId, src, preset);
-                if (imageTag == null && dynamicResolver.isResolvable()) {
-                    imageTag = dynamicResolver.get().resolve(src, preset);
+                if (imageTag == null) {
+                    ImageSectionHelperFactory.checkMiss(config, src, preset, templateId);
                 }
 
                 return switch (method) {
-                    case "url" -> resolveUrl(imageTag, src);
+                    case "path" -> resolvePath(imageTag, src);
                     case "tag" -> resolveTag(imageTag, src);
                     default -> CompletedStage.of(Results.NotFound.EMPTY);
                 };
@@ -66,7 +68,7 @@ public class ImageNamespaceResolver implements NamespaceResolver {
         });
     }
 
-    private CompletionStage<Object> resolveUrl(ImageTag imageTag, String src) {
+    private CompletionStage<Object> resolvePath(ImageTag imageTag, String src) {
         if (imageTag == null) {
             return CompletedStage.of(src != null ? src : "");
         }

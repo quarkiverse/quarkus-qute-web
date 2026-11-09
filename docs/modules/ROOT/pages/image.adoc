@@ -45,12 +45,43 @@ When multiple output formats are configured (requires the <<vips,vips extension>
 </picture>
 ----
 
+You can also get the generated path alone, or the full tag, from the `img` namespace:
+
+[source,html]
+----
+<a href="{img:path('/images/bar.png', 'thumbnail')}">Thumbnail</a>
+{img:tag('/images/bar.png', 'thumbnail')}
+----
+
 === Image paths
 
 Relative image paths will be resolved relative to the template that includes the image, the original file will also be served.
 
 Absolute image paths (starting with `/`) will be resolved from the image directories of your application (e.g., `src/main/resources/web/`
 or `/public` in the case of https://iamroq.com[Roq]).
+
+Remote `http://` and `https://` URLs are never converted: the tag renders a plain `<img>` pointing at the URL,
+and `img:path` returns the URL unchanged.
+
+A `src` that evaluates to `null` or an empty string renders nothing.
+
+=== Sources used as is (passthrough)
+
+Some sources are registered without generated variants and rendered as they are: a plain `<img>` pointing at the
+source, no `srcset`, no `<picture>`, no `width` or `height`.
+
+* Extensions listed in `quarkus.qute.image.passthrough` (default: `svg`). Vectors are listed by default since
+  rasterizing them makes them larger and blurrier. To let a converter rasterize them, set a value that matches
+  no extension, for instance `quarkus.qute.image.passthrough=none` (an empty value falls back to the default).
+* Sources the active converter cannot read, for instance WebP without the <<vips,vips extension>>. These are
+  logged as a warning at build time.
+
+=== Strict mode
+
+By default, a `src` that was not processed at build time (typically an expression the build could not resolve)
+falls back to a plain `<img>` pointing at the source. With `quarkus.qute.image.strict=true` it is a rendering error
+instead, so a broken image is caught by the build or the tests rather than shipped. Remote URLs and blank sources
+are not affected.
 
 === Presets
 
@@ -88,14 +119,20 @@ The generated variants are placed in files according to this pattern:
 
 [source]
 ----
-/static/images/generated/{digest}/{basename}-{width}-{hash}.{ext}
+{output-path}/{digest}/{basename}-{width}-{hash}.{ext}
 ----
 
+output-path:: `quarkus.qute.image.output-path`, `/static/images/generated` by default
 digest:: A short hash of the image content
 basename:: The file name of the image, without its extension
 width:: The width of the generated image (or `original`)
-hash:: A short hash of the generation settings
+hash:: A short hash of the generation settings (format, crop, quality and converter)
 ext:: The output format extension (e.g., `webp`, `jpg`)
+
+The files are written to `quarkus.qute.image.build-dir` (`qute-image` by default, relative to the build output
+directory such as `target/`). That directory is kept between builds: a variant whose file already exists is reused,
+and since the file name changes whenever the source bytes, width, format, crop, quality or converter change, a
+reused file is always current. Delete the directory to force a full regeneration.
 
 === Bulk image generation
 
@@ -107,6 +144,22 @@ quarkus.qute.image.generate[0].glob=content/posts/**
 quarkus.qute.image.generate[0].presets=default
 ----
 
+
+[[integrating]]
+== Integrating from another extension
+
+Only string literals can be resolved by this extension at build time. A host that knows the template data (a
+static site generator, for instance) can take over the other usages through two build items:
+
+`QuteImageExpressionBuildItem`:: Produced by this extension for every `{#img}` or `img:` usage whose `src` is
+not a literal: the template id, the `src` and `preset` expressions as written, and the line. The host evaluates
+them against its own data.
+`QuteImageToProcessBuildItem`:: Consumed by this extension: a file (or bytes) to convert with a preset, registered
+under the path the template expression produces at render time. Such images are not bound to a template, so any
+template can use them.
+
+Combine with `quarkus.qute.image.strict=true` so that an expression the host could not resolve fails instead
+of rendering a broken image.
 
 [[vips]]
 == WebP/AVIF support (vips)
