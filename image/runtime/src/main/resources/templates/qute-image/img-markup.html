@@ -1,0 +1,16 @@
+{#if tag.src}
+{#if tag.image}
+{#if tag.image.isDirectUrl}{tag.image.imgSrc}{#else if tag.image.isPicture}
+<picture{#for a in tag.attrs.pictureMap.entrySet} {a.key}="{a.value}"{/for}>
+  {#for s in tag.image.sources}
+  <source srcset="{s.srcset}" type="{s.type}">
+  {/for}
+  <img src="{tag.image.imgSrc}"{#for a in tag.attrs.imgMap.entrySet} {a.key}="{a.value}"{/for}>
+</picture>
+{#else}
+<img src="{tag.image.imgSrc}"{#if tag.image.hasImgSrcset} srcset="{tag.image.imgSrcset}"{/if}{#for a in tag.attrs.imgMap.entrySet} {a.key}="{a.value}"{/for}>
+{/if}
+{#else}
+<img src="{tag.src}"{#for a in tag.attrs.imgMap.entrySet} {a.key}="{a.value}"{/for}>
+{/if}
+{/if}

@@ -58,6 +58,9 @@ build/
 
 # Maven
 target/
+
+# npm (pulled by mvnpm/web-bundler)
+node_modules/
 pom.xml.tag
 pom.xml.releaseBackup
 pom.xml.versionsBackup

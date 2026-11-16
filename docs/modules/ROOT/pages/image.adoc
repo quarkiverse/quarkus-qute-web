@@ -1,0 +1,255 @@
+= Quarkus Qute Image
+
+include::./includes/attributes.adoc[]
+
+Add Image Processing support to Qute `{#img 'foo.jpg' /}`. Turn your images into responsive images by automatically generating smaller variants of
+your images at build-time.
+
+== Installation
+
+To install the extension, add the following dependency to your project:
+
+[source,xml,subs=attributes+]
+----
+<dependency>
+    <groupId>io.quarkiverse.qute.web</groupId>
+    <artifactId>quarkus-qute-web-image</artifactId>
+    <version>{project-version}</version>
+</dependency>
+----
+
+== Usage
+
+Use the `{#img}` tag in your Qute templates:
+
+[source,html]
+----
+{#img src='foo.png'/}
+{#img src='/images/bar.png'/}
+----
+
+This generates responsive `<img>` tags with `srcset` for the configured widths:
+
+[source,html]
+----
+<img src="/static/images/generated/1b13/foo-640-a1b2.jpg" srcset="/static/images/generated/1b13/foo-640-a1b2.jpg 640w, ..." loading="lazy" sizes="auto" width="..." height="...">
+----
+
+When multiple output formats are configured (requires the <<vips,vips extension>>), a `<picture>` element is generated instead:
+
+[source,html]
+----
+<picture>
+  <source srcset="/static/images/generated/1b13/foo-640-a1b2.webp 640w, ..." type="image/webp">
+  <img src="/static/images/generated/1b13/foo-640-a1b2.jpg" srcset="..." loading="lazy" sizes="auto" width="..." height="...">
+</picture>
+----
+
+The extension owns the `{#img}` tag: a user tag named `img` (`templates/tags/img.html`, for instance a plain
+fallback shipped for applications without this extension) is excluded while the extension is present.
+
+You can also get the generated path alone, or the full tag, from the `img` namespace:
+
+[source,html]
+----
+<a href="{img:path('/images/bar.png', 'thumbnail')}">Thumbnail</a>
+{img:tag('/images/bar.png', 'thumbnail')}
+----
+
+=== Image paths
+
+Relative image paths are resolved relative to the template that uses the image.
+
+Absolute image paths (starting with `/`) are resolved from the image directories: `src/main/resources/META-INF/resources`,
+Quarkus's own static root, so `/images/photo.jpg` is `META-INF/resources/images/photo.jpg`, plus the directories a host
+registers (https://iamroq.com[Roq] registers its `public/` and `static/` directories).
+
+Remote `https://` URLs are downloaded at build time and converted like local files. The original is cached under
+the build directory (`remote/`), so a URL is fetched once. Plain `http://` needs `quarkus.qute.image.remote.allow-http=true`.
+A download that fails, is not an image, or exceeds 20 MB or 50 megapixels renders the URL as is with a warning, or
+fails the build in <<strict-mode,strict mode>>. `quarkus.qute.image.remote.enabled=false` never downloads, and
+`quarkus.qute.image.remote.timeout` (default `20s`) bounds one download. Remote bytes are parsed at build time: to pin
+the images you trust, commit the build directory (`quarkus.qute.image.build-dir=../.qute-image`).
+
+A `src` that evaluates to `null` or an empty string renders nothing.
+
+=== Sources used as is (passthrough)
+
+Some sources are registered without generated variants and rendered as they are: a plain `<img>` pointing at the
+source, no `srcset`, no `<picture>`, no `width` or `height`.
+
+* Extensions listed in `quarkus.qute.image.passthrough` (default: `svg`). Vectors are listed by default since
+  rasterizing them makes them larger and blurrier. To let a converter rasterize them, set a value that matches
+  no extension, for instance `quarkus.qute.image.passthrough=none` (an empty value falls back to the default).
+* Sources the active converter cannot read, for instance WebP without the <<vips,vips extension>>. These are
+  logged as a warning at build time.
+* Animated sources (a GIF or WebP with more than one frame): a variant would keep the first frame only.
+
+[[strict-mode]]
+=== Strict mode
+
+By default, a `src` that was not processed at build time (typically an expression the build could not resolve)
+falls back to a plain `<img>` pointing at the source, and a remote URL that cannot be downloaded is a warning. With
+`quarkus.qute.image.strict=true` the first is a rendering error and the second fails the build, so a broken image
+is caught by the build or the tests rather than shipped. Blank sources are not affected.
+
+=== Presets
+
+Presets control the output formats, widths, quality, and cropping. The `default` preset is used when no preset is specified:
+
+* **formats**: `webp, jpg` (output formats in preference order; WebP requires the <<vips,vips extension>>)
+* **fallback-format**: `jpg` (format for the `<img>` `src`)
+* **widths**: `640, 1024, 1920, 2560` (responsive breakpoints in pixels)
+* **quality**: `100`
+
+You can define custom presets in `application.properties`:
+
+[source,properties]
+----
+quarkus.qute.image.presets.thumbnail.widths=320,640
+quarkus.qute.image.presets.thumbnail.formats=webp
+quarkus.qute.image.presets.thumbnail.quality=80
+quarkus.qute.image.presets.thumbnail.crop.ratio=1:1
+quarkus.qute.image.presets.thumbnail.crop.keep=center
+----
+
+Then use them in your templates:
+
+[source,html]
+----
+{#img src='photo.jpg' preset='thumbnail'/}
+----
+
+The preset is always a literal (or absent for `default`): the build converts for that preset, so an expression
+there fails the build.
+
+=== Image variants
+
+Smaller image variants are produced at build-time for the configured widths. A width larger than the original
+image is replaced by the original's width, once: a preset always yields a variant, and a small image is never
+upscaled.
+
+The rendered urls carry `quarkus.http.root-path`, so the variants are found wherever the application is served.
+
+The generated variants are placed in files according to this pattern:
+
+[source]
+----
+{output-path}/{digest}/{basename}-{width}-{hash}.{ext}
+----
+
+output-path:: `quarkus.qute.image.output-path`, `/static/images/generated` by default
+digest:: A short hash of the image content
+basename:: The file name of the image, without its extension
+width:: The width of the generated image
+hash:: A short hash of the generation settings (format, crop, quality and converter)
+ext:: The output format extension (e.g., `webp`, `jpg`)
+
+The files are written to `quarkus.qute.image.build-dir` (`qute-image` by default, relative to the build output
+directory such as `target/` or `build/`), next to the cached remote originals. That directory is kept between
+builds: a variant whose file already exists is reused, and since the file name changes whenever the source bytes,
+width, format, crop, quality or converter change, a reused file is always current. Delete the directory to force a
+full regeneration. To keep it in the project, surviving a clean build and under version control if you wish, point
+it outside the build output directory: `quarkus.qute.image.build-dir=../.qute-image`.
+
+The build logs one line when it starts and a summary (sources, downloads, variants generated or reused,
+passthroughs, with sizes and times). `quarkus.qute.image.verbose=true` adds one line per download and per converted
+source, and each variant is logged at DEBUG.
+
+=== Bulk image generation
+
+You can pre-process images matching a glob pattern at build time, even if they are not directly referenced in a template:
+
+[source,properties]
+----
+quarkus.qute.image.generate[0].glob=content/posts/**
+quarkus.qute.image.generate[0].presets=default
+----
+
+
+[[integrating]]
+== Integrating from another extension
+
+Only string literals can be resolved by this extension at build time. A host that knows the template data (a
+static site generator, for instance) can take over the other usages through three build items:
+
+`QuteImageExpressionBuildItem`:: Produced by this extension for every `{#img}` or `img:` usage whose `src` is
+not a literal: the template id, the `src` expression as written, the preset name (`default` when absent or not a
+literal, as for literal sources) and the line. A usage is reported
+once for the template it is written in and once more for every template that renders it through `{#include}`
+or a user tag, under that template's id (the origin still names the actual location). The host can thus bind the
+data of the templates it renders directly, pages for instance, without resolving layouts and tags itself.
+`QuteImageToProcessBuildItem`:: Consumed by this extension: a file (or bytes) to convert with a preset, registered
+under the path the template expression produces at render time. Such images are not bound to a template, so any
+template can use them.
+`QuteImageProcessedBuildItem`:: Produced by this extension once everything is converted: one entry per usage
+(the template, or none for a handed-over image, the path as declared, and the image with its generated variants
+or its passthrough flag). A host uses it to publish the variants, or to hide the originals it keeps elsewhere.
+
+Combine with `quarkus.qute.image.strict=true` so that an expression the host could not resolve fails instead
+of rendering a broken image.
+
+[[vips]]
+== WebP/AVIF support (vips)
+
+The base image extension uses Java ImageIO for processing, which only supports JPEG and PNG output.
+For modern formats like WebP and AVIF, add the vips extension:
+
+[source,xml,subs=attributes+]
+----
+<dependency>
+    <groupId>io.quarkiverse.qute.web</groupId>
+    <artifactId>quarkus-qute-web-image-vips</artifactId>
+    <version>{project-version}</version>
+</dependency>
+----
+
+=== Requirements
+
+* **Java 23+** (uses the Foreign Function & Memory API)
+* **libvips 8.x** installed on your system (8.18+ recommended)
+
+The extension auto-detects libvips via `pkg-config` at build time. You can also set the library paths manually with system properties:
+`-Dvipsffm.libpath.vips.override=/path/to/libvips.so`
+
+=== Installing libvips
+
+**macOS:**
+[source,bash]
+----
+brew install vips
+----
+
+**Fedora/RHEL:**
+[source,bash]
+----
+sudo dnf install vips-devel
+----
+
+**Ubuntu/Debian:**
+[source,bash]
+----
+sudo apt install libvips-dev
+----
+
+**Windows:**
+
+Download pre-built binaries from https://www.libvips.org/install.html[libvips.org] and add the `bin/` directory to your `PATH`.
+
+=== Supported formats
+
+With vips, the following output formats are available:
+
+* **WebP** (`webp`), **AVIF** (`avif`), **JPEG XL** (`jxl`): modern formats with better compression
+* **JPEG** (`jpg`), **PNG** (`png`), **GIF** (`gif`), **TIFF** (`tif`): standard formats
+* **HEIC** (`heic`): Apple's high-efficiency format
+
+Without vips (ImageIO only), output is limited to **JPEG** and **PNG**.
+
+The default preset (`formats: webp, jpg`) produces both WebP and JPEG variants when vips is available, generating a `<picture>` element with multiple sources.
+Unsupported formats are skipped with a warning.
+
+[[extension-configuration-reference]]
+== Extension Configuration Reference
+
+include::includes/quarkus-qute-web-image.adoc[leveloffset=+1, opts=optional]

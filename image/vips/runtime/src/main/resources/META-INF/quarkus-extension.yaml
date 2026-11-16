@@ -1,0 +1,15 @@
+name: Qute Web Image Vips
+description: "libvips converter for Qute Web Image: WebP and AVIF output, more input formats"
+metadata:
+  keywords:
+    - qute
+    - image
+    - processing
+    - imageio
+    - webp
+    - heic
+    - responsive
+  guide: https://docs.quarkiverse.io/quarkus-qute-web/dev/image.html
+  categories:
+    - "web"
+  status: "experimental"

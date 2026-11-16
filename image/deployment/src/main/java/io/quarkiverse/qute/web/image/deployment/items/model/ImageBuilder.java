@@ -1,0 +1,57 @@
+package io.quarkiverse.qute.web.image.deployment.items.model;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Consumer;
+
+import io.quarkiverse.qute.web.image.runtime.ImageUtils;
+import io.quarkiverse.qute.web.image.runtime.model.GeneratedImage;
+import io.quarkiverse.qute.web.image.runtime.model.Image;
+import io.quarkiverse.qute.web.image.runtime.model.ImageId;
+import io.quarkiverse.qute.web.image.runtime.model.OriginalInfo;
+
+public class ImageBuilder {
+    private final ImageId id;
+    private OriginalInfo info;
+    private boolean passThrough;
+    private final Map<String, GeneratedImage> generatedMap = new HashMap<>();
+
+    public ImageBuilder(ImageId id) {
+        this.id = id;
+    }
+
+    public ImageBuilder addGeneratedImage(String outputPrefix, GeneratedImageOptions options, boolean slugifyOutput,
+            Consumer<GeneratedImage> consumer) {
+        String hash = ImageUtils.shortDigest(ImageUtils.digest("%s-%s".formatted(id.toString(), options.settings())));
+        final String outputExt = ImageUtils.extensionFromFormat(options.format());
+        final String generatedKey = options.width() + "-" + hash + "-" + outputExt;
+        generatedMap.computeIfAbsent(generatedKey, key -> {
+            final String outputPath = ImageUtils.computeOutputPath(outputPrefix, id, options.width(), hash, outputExt,
+                    slugifyOutput);
+            final GeneratedImage generatedImage = new GeneratedImage(id, options.width(), options.height(),
+                    options.format(), outputExt, hash, outputPath, options.variantSettings());
+            consumer.accept(generatedImage);
+            return generatedImage;
+        });
+        return this;
+    }
+
+    public ImageBuilder info(OriginalInfo info) {
+        this.info = info;
+        return this;
+    }
+
+    /**
+     * Mark this image as used as is (see {@link Image#passThrough()}); only the format of its info is known.
+     */
+    public ImageBuilder passThrough(String extension) {
+        this.passThrough = true;
+        this.info = new OriginalInfo(extension, 0, 0);
+        return this;
+    }
+
+    public Image build() {
+        return new Image(id, info, List.copyOf(generatedMap.values()), passThrough);
+    }
+}

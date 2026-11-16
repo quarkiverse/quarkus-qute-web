@@ -1,0 +1,14 @@
+{#img 'images/relative.png' data-test='relative'/}
+{#img 'under.png' data-test='under-images'/}
+{#img 'prefixed.png' data-test='underscored'/}
+{#img '/static/images/white_1920_1080.png' data-test='default'/}
+{#img '/static/images/white_1920_1080.png' preset='small' alt='Small image' class='thumb' data-test='small'/}
+{#img '/static/images/white_1920_1080.png' loading='eager' data-test='eager'/}
+{#img '/static/images/quadrants_400_200.png' preset='retina' data-test='retina'/}
+{#img '/static/images/quadrants_400_200.png' preset='square' data-test='square'/}
+<div id="direct">{#img '/static/images/white_1920_1080.png' preset='url-only'/}</div>
+<div id="ns-url">{img:path('/static/images/white_1920_1080.png', 'small')}</div>
+<div id="ns-tag">{img:tag('/static/images/white_1920_1080.png', 'small')}</div>
+{#img '/static/images/quadrants_400_200.png' preset='banner' data-test='banner'/}
+{#img '/static/images/white_1920_1080.png' preset='dual' picture-class='pic' parent-id='par' data-test='dual'/}
+{#img '/static/images/animated.gif' preset='small' data-test='animated'/}
